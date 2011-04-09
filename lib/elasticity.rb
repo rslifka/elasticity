@@ -1,0 +1,3 @@
+module Elasticity
+  # Your code goes here...
+end
