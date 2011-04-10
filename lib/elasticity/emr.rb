@@ -1,0 +1,19 @@
+require "base64"
+
+module Elasticity
+
+  class EMR
+
+    def initialize(aws_access_key_id, aws_secret_access_key)
+      @aws_request = Elasticity::AwsRequest.new(aws_access_key_id, aws_secret_access_key)
+    end
+
+    def describe_jobflows
+      aws_result = @aws_request.aws_emr_request({"Operation" => "DescribeJobFlows"})
+      xml_doc = Nokogiri::XML(aws_result)
+      xml_doc.remove_namespaces!
+      JobFlow.from_members_nodeset(xml_doc.xpath("/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member"))
+    end
+
+  end
+end
