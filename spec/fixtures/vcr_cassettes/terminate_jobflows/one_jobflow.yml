@@ -1,0 +1,32 @@
+--- 
+- !ruby/struct:VCR::HTTPInteraction 
+  request: !ruby/struct:VCR::Request 
+    method: :get
+    uri: !ruby/regexp /^http:\/\/elasticmapreduce.amazonaws.com:80\/\?AWSAccessKeyId=AKIAI7HEMMNKGT6VFFSA&JobFlowIds.member.1=j-1MZ5TVWFJRSKN&Operation=TerminateJobFlows/
+    body:
+    headers: 
+      accept: 
+      - "*/*; q=0.5, application/xml"
+      accept-encoding: 
+      - gzip, deflate
+  response: !ruby/struct:VCR::Response 
+    status: !ruby/struct:VCR::ResponseStatus 
+      code: 200
+      message: OK
+    headers: 
+      x-amzn-requestid: 
+      - 83e0154d-63c6-11e0-bc41-ababd98a870b
+      content-type: 
+      - text/xml
+      date: 
+      - Sun, 10 Apr 2011 23:01:48 GMT
+      content-length: 
+      - "225"
+    body: |
+      <TerminateJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+        <ResponseMetadata>
+          <RequestId>83e0154d-63c6-11e0-bc41-ababd98a870b</RequestId>
+        </ResponseMetadata>
+      </TerminateJobFlowsResponse>
+
+    http_version: "1.1"

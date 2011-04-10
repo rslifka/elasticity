@@ -52,4 +52,55 @@ describe Elasticity::EMR do
 
   end
 
+  describe "#terminate_jobflows" do
+
+    describe "integration happy path" do
+      context "when the job flow exists" do
+        use_vcr_cassette "terminate_jobflows/one_jobflow", :record => :none
+        it "should terminate the specified jobflow" do
+          emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+          emr.terminate_jobflows("j-1MZ5TVWFJRSKN")
+        end
+      end
+    end
+
+    describe "unit tests" do
+
+      context "when the jobflow exists" do
+        before do
+          @terminate_jobflows_xml = <<-RESPONSE
+            <TerminateJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+              <ResponseMetadata>
+                <RequestId>2690d7eb-ed86-11dd-9877-6fad448a8419</RequestId>
+              </ResponseMetadata>
+            </TerminateJobFlowsResponse>
+          RESPONSE
+        end
+        it "should terminate the specific jobflow" do
+          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
+          aws_request.should_receive(:aws_emr_request).with({
+            "Operation" => "TerminateJobFlows",
+            "JobFlowIds.member.1" => "j-1"
+          }).and_return(@terminate_jobflows_xml)
+          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
+          emr.terminate_jobflows("j-1")
+        end
+      end
+
+      context "when the jobflow does not exist" do
+        it "should terminate the specific jobflow" do
+          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
+          aws_request.should_receive(:aws_emr_request).and_raise(RestClient::BadRequest)
+          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
+          lambda {
+            emr.terminate_jobflows("invalid_jobflow_id")
+          }.should raise_error(ArgumentError)
+        end
+      end
+
+    end
+  end
+
 end
