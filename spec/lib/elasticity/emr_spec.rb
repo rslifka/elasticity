@@ -9,7 +9,6 @@ describe Elasticity::EMR do
       it "should return the names of all running job flows" do
         emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
         jobflows = emr.describe_jobflows
-        puts jobflows.map(&:name)
         jobflows.map(&:name).should == ["WM+RS", "Interactive Audience Hive Test", "Audience (Hive)", "Audience Reporting"]
         jobflows.map(&:jobflow_id).should == ["j-1MZ5TVWFJRSKN", "j-38EU2XZQP9KJ4", "j-2TDCVGEEHOFI9", "j-NKKQ429D858I"]
         jobflows.map(&:state).should == ["TERMINATED", "TERMINATED", "TERMINATED", "TERMINATED"]

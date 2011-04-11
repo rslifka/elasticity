@@ -27,7 +27,7 @@ module Elasticity
           "JobFlowIds.member.1" => jobflow_id
         })
       rescue RestClient::BadRequest
-        raise ArgumentError, "Job Flow '#{jobflow_id} does not exist."
+        raise ArgumentError, "Job flow '#{jobflow_id}' does not exist."
       end
     end
 

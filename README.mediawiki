@@ -17,9 +17,9 @@ There are five API actions in the [http://docs.amazonwebservices.com/ElasticMapR
 == DescribeJobFlows ==
 
 <pre>
-  ree-1.8.7-2010.02 :004 > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
-  ree-1.8.7-2010.02 :005 > jobflows = emr.describe_jobflows
-  ree-1.8.7-2010.02 :006 > p jobflows.map(&:name)
+  > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+  > jobflows = emr.describe_jobflows
+  > p jobflows.map(&:name)
   ["Hive Test", "Pig Test", "Interactive Hadoop", "Interactive Hive"]
 </pre>
 
@@ -33,6 +33,21 @@ There are five API actions in the [http://docs.amazonwebservices.com/ElasticMapR
 
 == TerminateJobFlows ==
 
-''(example incoming)''
+When the job flow '''exists''', you will receive no output.  This is because Amazon does not return anything other than a 200 when you terminate a job flow :)  You'll want to continually poll with DescribeJobFlows to see when the job was actually terminated.
 
-__NOTOC__
+<pre>
+  > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+  > emr.terminate_jobflows("no-flow")
+  >
+</pre>
+
+When the job flow '''doesn't exist''':
+
+<pre>
+  > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+  > emr.terminate_jobflows("no-flow")
+  ArgumentError: Job flow 'no-flow' does not exist.
+</pre>
+
+
+<!-- __NOTOC__ -->
