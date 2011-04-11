@@ -29,5 +29,13 @@ module Elasticity
       end
     end
 
+    # Pass the specified params hash directly through to the AWS request
+    # URL.  Use this if you want to perform an operation that hasn't yet
+    # been wrapped by Elasticity or you just want to see the response
+    # XML for yourself :)
+    def direct(params)
+      @aws_request.aws_emr_request(params)
+    end
+
   end
 end

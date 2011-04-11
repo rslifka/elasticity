@@ -103,4 +103,45 @@ describe Elasticity::EMR do
     end
   end
 
+  describe "#direct" do
+
+    describe "integration happy path" do
+      use_vcr_cassette "direct/terminate_jobflow", :record => :none
+      it "should terminate the specified jobflow" do
+        emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+        params = {
+          "Operation" => "TerminateJobFlows",
+          "JobFlowIds.member.1" => "j-1MZ5TVWFJRSKN"
+        }
+        emr.direct(params)
+      end
+    end
+
+    describe "unit tests" do
+      before do
+        @terminate_jobflows_xml = <<-RESPONSE
+          <TerminateJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+            <ResponseMetadata>
+              <RequestId>2690d7eb-ed86-11dd-9877-6fad448a8419</RequestId>
+            </ResponseMetadata>
+          </TerminateJobFlowsResponse>
+        RESPONSE
+      end
+      it "should pass through directly to the request" do
+        aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
+        aws_request.should_receive(:aws_emr_request).with({
+          "Operation" => "TerminateJobFlows",
+          "JobFlowIds.member.1" => "j-1"
+        }).and_return(@terminate_jobflows_xml)
+        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+        emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
+        params = {
+          "Operation" => "TerminateJobFlows",
+          "JobFlowIds.member.1" => "j-1"
+        }
+        emr.direct(params).should == @terminate_jobflows_xml
+      end
+    end
+  end
+
 end

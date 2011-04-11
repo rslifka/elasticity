@@ -4,17 +4,19 @@ Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.
 
 There are five API actions in the [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html EMR API], described below.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of DescribeJobFlows without parameters).
 
+Alternatively, you may opt for "direct" access to the API where you specify the params and Elasticity takes care of the signing for you.  Direct access is described below the API catalog.
+
 '''NOTE''': The AWS plumbing (especially signing/authentication) was used from [http://www.rightscale.com/ RightScale's] amazing [https://github.com/rightscale/right_aws right_aws gem] which works extraordinarily well!
 
-== AddInstanceGroups ==
+=== AddInstanceGroups ===
 
 ''(not yet supported)''
 
-== AddJobFlowSteps ==
+=== AddJobFlowSteps ===
 
 ''(not yet supported)''
 
-== DescribeJobFlows ==
+=== DescribeJobFlows ===
 
 <pre>
   > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
@@ -23,15 +25,15 @@ There are five API actions in the [http://docs.amazonwebservices.com/ElasticMapR
   ["Hive Test", "Pig Test", "Interactive Hadoop", "Interactive Hive"]
 </pre>
 
-== ModifyInstanceGroups ==
+=== ModifyInstanceGroups ===
 
 ''(not yet supported)''
 
-== RunJobFlow ==
+=== RunJobFlow ===
 
 ''(not yet supported)''
 
-== TerminateJobFlows ==
+=== TerminateJobFlows ===
 
 When the job flow '''exists''', you will receive no output.  This is because Amazon does not return anything other than a 200 when you terminate a job flow :)  You'll want to continually poll with DescribeJobFlows to see when the job was actually terminated.
 
@@ -49,5 +51,16 @@ When the job flow '''doesn't exist''':
   ArgumentError: Job flow 'no-flow' does not exist.
 </pre>
 
+= Direct Access =
+
+If you're chomping at the bit to get at some EMR functionality that isn't wrapped (or isn't wrapped in a way you prefer :) feel free to access the AWS EMR API directly by using <pre>EMR.direct()</pre>.  You can find the allowed values in Amazon's EMR API [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html developer documentation].
+
+<pre>
+  > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+  > params = {"Operation" => "DescribeJobFlows"}
+  > result_xml = emr.direct(params)
+  > result_xml[0..42]
+  <DescribeJobFlowsResponse xmlns=\"http://ela"
+</pre>
 
 <!-- __NOTOC__ -->
