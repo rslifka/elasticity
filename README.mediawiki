@@ -1,5 +1,3 @@
-= Elasticity =
-
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.
 
 There are five API actions in the [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html EMR API], described below.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of DescribeJobFlows without parameters).
