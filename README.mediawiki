@@ -1,6 +1,31 @@
 = Elasticity =
 
-Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  I had hoped right_aws and/or amazon-ec2 would allow this but alas, no dice.
+Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.
 
-There are five API operations in the [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html EMR API].
+There are five API actions in the [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html EMR API], described below.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of DescribeJobFlows without parameters).
 
+'''NOTE''': The AWS plumbing (especially signing/authentication) was used from [http://www.rightscale.com/ RightScale's] amazing [https://github.com/rightscale/right_aws right_aws gem] which works extraordinarily well!
+
+== AddInstanceGroups ==
+
+''(not yet supported)''
+
+== AddJobFlowSteps ==
+
+''(not yet supported)''
+
+== DescribeJobFlows ==
+
+''(example incoming)''
+
+== ModifyInstanceGroups ==
+
+''(not yet supported)''
+
+== RunJobFlow ==
+
+''(not yet supported)''
+
+== TerminateJobFlows ==
+
+''(example incoming)''
