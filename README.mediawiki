@@ -1,0 +1,6 @@
+= Elasticity =
+
+Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  I had hoped right_aws and/or amazon-ec2 would allow this but alas, no dice.
+
+There are five API operations in the [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html EMR API].
+
