@@ -1,3 +1,5 @@
+require 'base64'
+
 require 'rest_client'
 require 'nokogiri'
 

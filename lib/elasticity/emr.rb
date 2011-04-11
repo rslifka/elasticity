@@ -1,5 +1,3 @@
-require "base64"
-
 module Elasticity
 
   class EMR
