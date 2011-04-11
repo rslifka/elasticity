@@ -16,7 +16,12 @@ There are five API actions in the [http://docs.amazonwebservices.com/ElasticMapR
 
 == DescribeJobFlows ==
 
-''(example incoming)''
+<pre>
+  ree-1.8.7-2010.02 :004 > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+  ree-1.8.7-2010.02 :005 > jobflows = emr.describe_jobflows
+  ree-1.8.7-2010.02 :006 > p jobflows.map(&:name)
+  ["Hive Test", "Pig Test", "Interactive Hadoop", "Interactive Hive"]
+</pre>
 
 == ModifyInstanceGroups ==
 
