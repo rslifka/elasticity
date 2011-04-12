@@ -11,6 +11,7 @@ module Elasticity
       aws_result = @aws_request.aws_emr_request({"Operation" => "DescribeJobFlows"})
       xml_doc = Nokogiri::XML(aws_result)
       xml_doc.remove_namespaces!
+      yield aws_result if block_given?
       JobFlow.from_members_nodeset(xml_doc.xpath("/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member"))
     end
 
@@ -20,10 +21,11 @@ module Elasticity
     # flow does not exist.
     def terminate_jobflows(jobflow_id)
       begin
-        @aws_request.aws_emr_request({
+        aws_result = @aws_request.aws_emr_request({
           "Operation" => "TerminateJobFlows",
           "JobFlowIds.member.1" => jobflow_id
         })
+        yield aws_result if block_given?
       rescue RestClient::BadRequest
         raise ArgumentError, "Job flow '#{jobflow_id}' does not exist."
       end
