@@ -18,7 +18,7 @@ Alternatively, you may opt for "direct" access to the API where you specify the 
 
 == DescribeJobFlows ==
 
-<code>DescribeJobFlows</code> returns detailed information as to the state of all jobs.  Currently this is wrapped in an <code>Elasticity::JobFlow</code> that contains the <code>name</code>, <code>jobflow_id</code> and <code>state</state>.  
+DescribeJobFlows returns detailed information as to the state of all jobs.  Currently this is wrapped in an <code>Elasticity::JobFlow</code> that contains the <code>name</code>, <code>jobflow_id</code> and <code>state</code>.  
 
 <pre>
   > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
