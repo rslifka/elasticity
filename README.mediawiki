@@ -1,10 +1,12 @@
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.
 
-There are five API actions in the [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html EMR API], described below.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of DescribeJobFlows without parameters).
+There are five API actions in the [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html EMR API], described below.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of <code>DescribeJobFlows</code> without parameters).
 
-Alternatively, you may opt for "direct" access to the API where you specify the params and Elasticity takes care of the signing for you.  Direct access is described below the API catalog.
+Each Elasticity call provides some level of wrapping to save you the trouble of having to parse XML and deal with common status codes.
 
-'''NOTE''': The AWS plumbing (especially signing/authentication) was used from [http://www.rightscale.com/ RightScale's] amazing [https://github.com/rightscale/right_aws right_aws gem] which works extraordinarily well!
+Alternatively, you may opt for "direct" access to the API where you specify the params and Elasticity takes care of the signing for you, responding with the XML from Amazon.  Direct access is described below the API catalog.
+
+'''CREDITS''': AWS signing was used from [http://www.rightscale.com/ RightScale's] amazing [https://github.com/rightscale/right_aws right_aws gem] which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.
 
 == AddInstanceGroups ==
 
@@ -15,6 +17,8 @@ Alternatively, you may opt for "direct" access to the API where you specify the 
 ''(not yet supported)''
 
 == DescribeJobFlows ==
+
+<code>DescribeJobFlows</code> returns detailed information as to the state of all jobs.  Currently this is wrapped in an <code>Elasticity::JobFlow</code> that contains the <code>name</code>, <code>jobflow_id</code> and <code>state</state>.  
 
 <pre>
   > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
@@ -33,11 +37,11 @@ Alternatively, you may opt for "direct" access to the API where you specify the 
 
 == TerminateJobFlows ==
 
-When the job flow '''exists''', you will receive no output.  This is because Amazon does not return anything other than a 200 when you terminate a job flow :)  You'll want to continually poll with DescribeJobFlows to see when the job was actually terminated.
+When the job flow '''exists''', you will receive no output.  This is because Amazon does not return anything other than a 200 when you terminate a job flow :)  You'll want to continuously poll with DescribeJobFlows to see when the job was actually terminated.
 
 <pre>
   > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
-  > emr.terminate_jobflows("no-flow")
+  > emr.terminate_jobflows("j-BOWBV7884XD0")
   >
 </pre>
 
