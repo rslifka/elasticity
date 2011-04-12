@@ -53,16 +53,26 @@ When the job flow '''doesn't exist''':
   ArgumentError: Job flow 'no-flow' does not exist.
 </pre>
 
-= Direct Access =
+= Direct Response Access =
 
-If you're chomping at the bit to get at some EMR functionality that isn't wrapped (or isn't wrapped in a way you prefer :) feel free to access the AWS EMR API directly by using <code>EMR.direct()</code>.  You can find the allowed values in Amazon's EMR API [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html developer documentation].
+If you're fine with Elasticity's invocation wrapping and would prefer to get at the resulting XML rather than the wrapped response, throw a block our way and we'll yield the result.  This still saves you the trouble of having to create the params and sign the request yet gives you direct access to the response XML for your parsing pleasure.
+
+<pre>
+  > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+  > emr.describe_jobflows{|xml| puts xml[0..77]}
+  <DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/200
+</pre>
+
+= Direct Request/Response Access =
+
+If you're chomping at the bit to initiate some EMR functionality that isn't wrapped (or isn't wrapped in a way you prefer :) feel free to access the AWS EMR API directly by using <code>EMR.direct()</code>.  You can find the allowed values in Amazon's EMR API [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html developer documentation].
 
 <pre>
   > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
   > params = {"Operation" => "DescribeJobFlows"}
   > result_xml = emr.direct(params)
-  > result_xml[0..42]
-  <DescribeJobFlowsResponse xmlns=\"http://ela"
+  > result_xml[0..78]
+  <DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009
 </pre>
 
 <!-- __NOTOC__ -->
