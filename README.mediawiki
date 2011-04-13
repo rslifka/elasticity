@@ -29,7 +29,7 @@ DescribeJobFlows returns detailed information as to the state of all jobs.  Curr
 
 == ModifyInstanceGroups ==
 
-''(not yet supported)''
+http://zef.me/wp-content/uploads/2008/02/funny-cat.jpg
 
 == RunJobFlow ==
 
