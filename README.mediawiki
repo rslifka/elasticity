@@ -6,6 +6,8 @@ Each Elasticity call provides some level of wrapping to save you the trouble of 
 
 Alternatively, you may opt for "direct" access to the API where you specify the params and Elasticity takes care of the signing for you, responding with the XML from Amazon.  Direct access is described below the API catalog.
 
+'''BACKLOG''': Have a look at the backlog  [https://www.pivotaltracker.com/projects/272429 here] (Pivotal Tracker).
+
 '''CREDITS''': AWS signing was used from [http://www.rightscale.com/ RightScale's] amazing [https://github.com/rightscale/right_aws right_aws gem] which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.
 
 == AddInstanceGroups ==
@@ -37,9 +39,21 @@ A job flow contains several "instance groups" of various types.  These instances
   >
 </pre>
 
-'''NOTE''': The MASTER instance group instance count cannot be modified as [http://www.imdb.com/media/rm429429248/tt0091203 there can be only one].  If you attempt to modify this group, you will receive the following error:
+If there's an error, you'll receive an ArgumentError containing the message from Amazon.  For example if you attempt to modify an instance group that's part of a terminated job flow:
 
-<code>A master instance group may not be modified</code>
+<pre>
+  > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+  > emr.modify_instance_groups({"ig-some_terminated_group" => 3})
+  ArgumentError: An instance group may only be modified when the job flow is running or waiting
+</pre>
+
+Or if you attempt to increase the instance count of the MASTER instance group:
+
+<pre>
+  > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+  > emr.modify_instance_groups({"ig-some_terminated_group" => 3})
+  ArgumentError: A master instance group may not be modified
+</pre>
 
 == RunJobFlow ==
 
