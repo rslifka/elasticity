@@ -29,7 +29,17 @@ DescribeJobFlows returns detailed information as to the state of all jobs.  Curr
 
 == ModifyInstanceGroups ==
 
-[http://zef.me/wp-content/uploads/2008/02/funny-cat.jpg]
+A job flow contains several "instance groups" of various types.  These instances are where the work for your EMR task occurs.  After a job flow has been created, you can find these instance groups in the AWS web UI by clicking on a job flow and then clicking on the "Instance Groups" tab.
+
+<pre>
+  > emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+  > emr.modify_instance_groups({"ig-2T1HNUO61BG3O" => 3})
+  >
+</pre>
+
+'''NOTE''': The MASTER instance group instance count cannot be modified as [http://www.imdb.com/media/rm429429248/tt0091203 there can be only one].  If you attempt to modify this group, you will receive the following error:
+
+<code>A master instance group may not be modified</code>
 
 == RunJobFlow ==
 
