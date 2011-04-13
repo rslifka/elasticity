@@ -1,0 +1,32 @@
+--- 
+- !ruby/struct:VCR::HTTPInteraction 
+  request: !ruby/struct:VCR::Request 
+    method: :get
+    uri: !ruby/regexp /^http:\/\/elasticmapreduce.amazonaws.com:80\/\?AWSAccessKeyId=AKIAI7HEMMNKGT6VFFSA&InstanceGroups.member.1.InstanceCount=2&InstanceGroups.member.1.InstanceGroupId=ig-2T1HNUO61BG3O&Operation=ModifyInstanceGroups/
+    body: 
+    headers: 
+      accept: 
+      - "*/*; q=0.5, application/xml"
+      accept-encoding: 
+      - gzip, deflate
+  response: !ruby/struct:VCR::Response 
+    status: !ruby/struct:VCR::ResponseStatus 
+      code: 200
+      message: OK
+    headers: 
+      x-amzn-requestid: 
+      - 4ef75373-659c-11e0-bdf6-e3d62a364c28
+      content-type: 
+      - text/xml
+      date: 
+      - Wed, 13 Apr 2011 07:04:43 GMT
+      content-length: 
+      - "231"
+    body: |
+      <ModifyInstanceGroupsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+        <ResponseMetadata>
+          <RequestId>4ef75373-659c-11e0-bdf6-e3d62a364c28</RequestId>
+        </ResponseMetadata>
+      </ModifyInstanceGroupsResponse>
+
+    http_version: "1.1"
