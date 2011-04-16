@@ -1,8 +1,14 @@
-Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.
+Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently wrap the API operations in a manner that makes working with EMR job flows from Ruby more enjoyable.  At the very least, using Elasticity allows you to easily experiment with the EMR API :)
 
-There are five API actions in the [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html EMR API], described below.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of <code>DescribeJobFlows</code> without parameters).
+In addition to the [http://aws.amazon.com/elasticmapreduce/ AWS EMR subsite], there are three primary resources of reference information for EMR:
 
-Each Elasticity call provides some level of wrapping to save you the trouble of having to parse XML and deal with common status codes.
+* [http://docs.amazonwebservices.com/ElasticMapReduce/latest/GettingStartedGuide/ Amazon EMR Getting Started Guide]
+* [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/ Amazon EMR Developer Guide]
+* [http://docs.amazonwebservices.com/ElasticMapReduce/latest/API/ Amazon EMR API Reference]
+
+Unfortunately, the documentation is sometimes incorrect and sometimes missing.  E.g. the allowable values for AddInstanceGroups are present in the [http://awsdocs.s3.amazonaws.com/ElasticMapReduce/20090331/emr-api-20090331.pdf PDF] version of the API reference but not in the [http://docs.amazonwebservices.com/ElasticMapReduce/latest/API/ HTML] version.  Elasticity implements the API as specified in the PDF reference as that is the most complete description I could find.
+
+Elasticity wraps (well, eventually!) all of the EMR API calls.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of <code>DescribeJobFlows</code> without parameters).
 
 Alternatively, you may opt for "direct" access to the API where you specify the params and Elasticity takes care of the signing for you, responding with the XML from Amazon.  Direct access is described below the API catalog.
 
