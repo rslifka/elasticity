@@ -165,14 +165,14 @@ describe Elasticity::EMR do
       context "when a block is provided" do
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).with({"Operation" => "DescribeJobFlows"}).and_return(@describe_jobflows_xml)
+          aws_request.should_receive(:aws_emr_request).and_return("describe!")
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           xml_result = nil
           emr.describe_jobflows do |xml|
             xml_result = xml
           end
-          xml_result.should == @describe_jobflows_xml
+          xml_result.should == "describe!"
         end
       end
     end
@@ -194,7 +194,6 @@ describe Elasticity::EMR do
     describe "unit tests" do
 
       context "when the jobflow exists" do
-
         before do
           @terminate_jobflows_xml = <<-RESPONSE
             <TerminateJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
@@ -204,7 +203,6 @@ describe Elasticity::EMR do
             </TerminateJobFlowsResponse>
           RESPONSE
         end
-
         it "should terminate the specific jobflow" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
           aws_request.should_receive(:aws_emr_request).with({
@@ -215,24 +213,6 @@ describe Elasticity::EMR do
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           emr.terminate_jobflows("j-1")
         end
-
-        context "when a block is given" do
-          it "should yield the XML result" do
-            aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-            aws_request.should_receive(:aws_emr_request).with({
-              "Operation" => "TerminateJobFlows",
-              "JobFlowIds.member.1" => "j-1"
-            }).and_return(@terminate_jobflows_xml)
-            Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-            emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-            xml_result = nil
-            emr.terminate_jobflows("j-1") do |xml|
-              xml_result = xml
-            end
-            xml_result.should == @terminate_jobflows_xml
-          end
-        end
-
       end
 
       context "when the jobflow does not exist" do
@@ -244,6 +224,20 @@ describe Elasticity::EMR do
           lambda {
             emr.terminate_jobflows("invalid_jobflow_id")
           }.should raise_error(ArgumentError)
+        end
+      end
+
+      context "when a block is given" do
+        it "should yield the XML result" do
+          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
+          aws_request.should_receive(:aws_emr_request).and_return("terminated!")
+          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
+          xml_result = nil
+          emr.terminate_jobflows("j-1") do |xml|
+            xml_result = xml
+          end
+          xml_result.should == "terminated!"
         end
       end
 
@@ -280,25 +274,16 @@ describe Elasticity::EMR do
       end
 
       context "when a block is given" do
-        before do
-          @modify_instance_groups_xml = <<-RESPONSE
-            <ModifyInstanceGroupsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-              <ResponseMetadata>
-                <RequestId>4ef75373-659c-11e0-bdf6-e3d62a364c28</RequestId>
-              </ResponseMetadata>
-            </ModifyInstanceGroupsResponse>
-          RESPONSE
-        end
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).and_return(@modify_instance_groups_xml)
+          aws_request.should_receive(:aws_emr_request).and_return("xml result!")
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           xml_result = nil
           emr.modify_instance_groups({"ig-1" => 2}) do |xml|
             xml_result = xml
           end
-          xml_result.should == @modify_instance_groups_xml
+          xml_result.should == "xml result!"
         end
       end
 
