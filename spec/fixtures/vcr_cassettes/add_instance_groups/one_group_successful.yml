@@ -1,0 +1,38 @@
+--- 
+- !ruby/struct:VCR::HTTPInteraction 
+  request: !ruby/struct:VCR::Request 
+    method: :get
+    uri: !ruby/regexp /^http:\/\/elasticmapreduce.amazonaws.com:80\/\?AWSAccessKeyId=AKIAI7HEMMNKGT6VFFSA&InstanceGroups.member.1.InstanceCount=1&InstanceGroups.member.1.InstanceRole=TASK&InstanceGroups.member.1.InstanceType=m1.small&InstanceGroups.member.1.Market=ON_DEMAND&InstanceGroups.member.1.Name=Go%20Canucks%20Go!&JobFlowId=j-OALI7TZTQMHX&Operation=AddInstanceGroups/
+    body: 
+    headers: 
+      accept: 
+      - "*/*; q=0.5, application/xml"
+      accept-encoding: 
+      - gzip, deflate
+  response: !ruby/struct:VCR::Response 
+    status: !ruby/struct:VCR::ResponseStatus 
+      code: 200
+      message: OK
+    headers: 
+      x-amzn-requestid: 
+      - ddd0d158-67eb-11e0-ba06-2b5c43005be2
+      content-type: 
+      - text/xml
+      date: 
+      - Sat, 16 Apr 2011 05:39:15 GMT
+      content-length: 
+      - "411"
+    body: |
+      <AddInstanceGroupsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+        <AddInstanceGroupsResult>
+          <JobFlowId>j-OALI7TZTQMHX</JobFlowId>
+          <InstanceGroupIds>
+            <member>ig-2GOVEN6HVJZID</member>
+          </InstanceGroupIds>
+        </AddInstanceGroupsResult>
+        <ResponseMetadata>
+          <RequestId>ddd0d158-67eb-11e0-ba06-2b5c43005be2</RequestId>
+        </ResponseMetadata>
+      </AddInstanceGroupsResponse>
+
+    http_version: "1.1"
