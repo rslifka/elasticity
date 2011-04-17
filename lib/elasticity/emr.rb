@@ -8,7 +8,7 @@ module Elasticity
 
     # Lists all jobflows in all states.
     def describe_jobflows
-      aws_result = @aws_request.aws_emr_request({"Operation" => "DescribeJobFlows"})
+      aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(:operation => "DescribeJobFlows"))
       xml_doc = Nokogiri::XML(aws_result)
       xml_doc.remove_namespaces!
       yield aws_result if block_given?
@@ -36,19 +36,12 @@ module Elasticity
     #  ["ig-2GOVEN6HVJZID", "ig-1DU9M2UQMM051", "ig-3DZRW4Y2X4S", ...]
     def add_instance_groups(jobflow_id, instance_group_configs)
       params = {
-        "Operation" => "AddInstanceGroups",
-        "JobFlowId" => jobflow_id
+        :operation => "AddInstanceGroups",
+        :job_flow_id => jobflow_id,
+        :instance_groups => instance_group_configs
       }
-      instance_group_configs.each_with_index do |ig_config, index|
-        params.merge!("InstanceGroups.member.#{index+1}.BidPrice" => ig_config[:bid_price]) if ig_config[:bid_price]
-        params.merge!("InstanceGroups.member.#{index+1}.InstanceCount" => ig_config[:count]) if ig_config[:count]
-        params.merge!("InstanceGroups.member.#{index+1}.InstanceRole" => ig_config[:role]) if ig_config[:role]
-        params.merge!("InstanceGroups.member.#{index+1}.InstanceType" => ig_config[:type]) if ig_config[:type]
-        params.merge!("InstanceGroups.member.#{index+1}.Market" => ig_config[:market]) if ig_config[:market]
-        params.merge!("InstanceGroups.member.#{index+1}.Name" => ig_config[:name]) if ig_config[:name]
-      end
       begin
-        aws_result = @aws_request.aws_emr_request(params)
+        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
         xml_doc = Nokogiri::XML(aws_result)
         xml_doc.remove_namespaces!
         instance_group_ids = []
@@ -58,7 +51,7 @@ module Elasticity
         yield aws_result if block_given?
         instance_group_ids
       rescue RestClient::BadRequest => e
-        raise ArgumentError, parse_error_response(e.http_body)
+        raise ArgumentError, EMR.parse_error_response(e.http_body)
       end
     end
 
@@ -71,18 +64,15 @@ module Elasticity
     #
     # {"ig-1" => 40, "ig-2" => 5, ...}
     def modify_instance_groups(instance_group_config)
-      params = {"Operation" => "ModifyInstanceGroups"}
-      instance_group_config.keys.each_with_index do |instance_group, index|
-        params.merge!(
-          "InstanceGroups.member.#{index+1}.InstanceGroupId" => instance_group,
-          "InstanceGroups.member.#{index+1}.InstanceCount" => instance_group_config[instance_group]
-        )
-      end
+      params = {
+        :operation => "ModifyInstanceGroups",
+        :instance_groups => instance_group_config.map{|k,v| {:instance_group_id => k, :instance_count => v}}
+      }
       begin
-        aws_result = @aws_request.aws_emr_request(params)
+        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
         yield aws_result if block_given?
       rescue RestClient::BadRequest => e
-        raise ArgumentError, parse_error_response(e.http_body)
+        raise ArgumentError, EMR.parse_error_response(e.http_body)
       end
     end
 
@@ -91,32 +81,77 @@ module Elasticity
     # the state of the jobflow.  Raises ArgumentError if the specified job
     # flow does not exist.
     def terminate_jobflows(jobflow_id)
+      params = {
+        :operation => "TerminateJobFlows",
+        :job_flow_ids => [jobflow_id]
+      }
       begin
-        aws_result = @aws_request.aws_emr_request({
-          "Operation" => "TerminateJobFlows",
-          "JobFlowIds.member.1" => jobflow_id
-        })
+        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
         yield aws_result if block_given?
       rescue RestClient::BadRequest
         raise ArgumentError, "Job flow '#{jobflow_id}' does not exist."
       end
     end
 
-    # Pass the specified params hash directly through to the AWS request
-    # URL.  Use this if you want to perform an operation that hasn't yet
-    # been wrapped by Elasticity or you just want to see the response
-    # XML for yourself :)
+    # Pass the specified params hash directly through to the AWS request URL.
+    # Use this if you want to perform an operation that hasn't yet been wrapped
+    # by Elasticity or you just want to see the response XML for yourself :)
     def direct(params)
       @aws_request.aws_emr_request(params)
     end
 
     private
 
-    def parse_error_response(error_xml)
-      xml_doc = Nokogiri::XML(error_xml)
-      xml_doc.remove_namespaces!
-      xml_doc.xpath("/ErrorResponse/Error/Message").text
+    class << self
+
+      # AWS error responses all follow the same form.  Extract the message from
+      # the error document.
+      def parse_error_response(error_xml)
+        xml_doc = Nokogiri::XML(error_xml)
+        xml_doc.remove_namespaces!
+        xml_doc.xpath("/ErrorResponse/Error/Message").text
+      end
+
+      # Since we use the same structure as AWS, we can generate AWS param names
+      # from the Ruby versions of those names (and the param nesting).
+      def convert_ruby_to_aws(params)
+        result = {}
+        params.each do |key, value|
+          case value
+            when Array
+              prefix = "#{camelize(key.to_s)}.member"
+              value.each_with_index do |item, index|
+                if item.is_a?(String)
+                  result["#{prefix}.#{index+1}"] = item
+                else
+                  convert_ruby_to_aws(item).each do |nested_key, nested_value|
+                    result["#{prefix}.#{index+1}.#{nested_key}"] = nested_value
+                  end
+                end
+              end
+            when Hash
+              prefix = "#{camelize(key.to_s)}"
+              convert_ruby_to_aws(value).each do |nested_key, nested_value|
+                result["#{prefix}.#{nested_key}"] = nested_value
+              end
+            else
+              result[camelize(key.to_s)] = value
+          end
+        end
+        result
+      end
+
+      # (Used from Rails' ActiveSupport)
+      def camelize(lower_case_and_underscored_word, first_letter_in_uppercase = true)
+        if first_letter_in_uppercase
+          lower_case_and_underscored_word.to_s.gsub(/\/(.?)/) { "::" + $1.upcase }.gsub(/(^|_)(.)/) { $2.upcase }
+        else
+          lower_case_and_underscored_word.first + camelize(lower_case_and_underscored_word)[1..-1]
+        end
+      end
+
     end
 
   end
+
 end
