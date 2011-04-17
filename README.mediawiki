@@ -1,8 +1,8 @@
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently wrap the API operations in a manner that makes working with EMR job flows from Ruby more enjoyable.  At the very least, using Elasticity allows you to easily experiment with the EMR API :)
 
-'''BACKLOG''': Have a look at the backlog  [https://www.pivotaltracker.com/projects/272429 here] (Pivotal Tracker).
+'''BACKLOG''': Have a look at the backlog  [https://www.pivotaltracker.com/projects/272429 here] (Pivotal Tracker) to see where this is headed.
 
-'''CREDITS''': AWS signing was used from [http://www.rightscale.com/ RightScale's] amazing [https://github.com/rightscale/right_aws right_aws gem] which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.
+'''CREDITS''': AWS signing was used from [http://www.rightscale.com/ RightScale's] amazing [https://github.com/rightscale/right_aws right_aws gem] which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.  Used camelize from ActiveSupport as well, thank you \Rails :)
 
 = Installation and Usage =
 
@@ -14,9 +14,9 @@ All you have to do is <code>require 'elasticity'</code> and you're all set!
 
 = API Reference =
 
-Elasticity wraps (well, eventually!) all of the EMR API calls.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of <code>DescribeJobFlows</code> without parameters).
+Elasticity wraps all of the EMR API calls.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of <code>DescribeJobFlows</code> without parameters).
 
-Alternatively, you may opt for "direct" access to the API where you specify the params and Elasticity takes care of the signing for you, responding with the XML from Amazon.  Direct access is described below the API catalog.
+You may opt for "direct" access to the API where you specify the params and Elasticity takes care of the signing for you, responding with the XML from Amazon.  Direct access is described below the API catalog.
 
 In addition to the [http://aws.amazon.com/elasticmapreduce/ AWS EMR subsite], there are three primary resources of reference information for EMR:
 
@@ -32,11 +32,11 @@ AddInstanceGroups adds a group of instances to an existing job flow.  The availa
 
 <pre>
   instance_group_config = {
-    :count  => 1,
-    :role   => "TASK",
-    :type   => "m1.small",
+    :instance_count => 1,
+    :instance_role => "TASK",
+    :instance_type => "m1.small",
     :market => "ON_DEMAND",
-    :name   => "Go Canucks!"
+    :name => "Go Canucks Go!"
   }
   emr.add_instance_groups("j-26LIXPUNSC0M3", [instance_group_config])
   

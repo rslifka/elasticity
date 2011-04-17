@@ -22,11 +22,11 @@ module Elasticity
     #
     # instance_group_config = {
     #   :bid_price => 5,
-    #   :count => 1,
-    #   :role => "TASK",
-    #   :type => "m1.small",
+    #   :instance_count => 1,
+    #   :instance_role => "TASK",
     #   :market => "SPOT",
     #   :name => "Go Canucks Go!"
+    #   :type => "m1.small",
     # }
     #
     # add_instance_groups takes an array of {}.
