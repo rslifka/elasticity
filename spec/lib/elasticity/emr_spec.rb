@@ -2,6 +2,9 @@ require 'spec_helper'
 
 describe Elasticity::EMR do
 
+  AWS_ACCESS_KEY_ID = ENV["aws_access_key_id"]
+  AWS_SECRET_KEY    = ENV["aws_secret_key"]
+
   describe "#add_instance_groups" do
 
     describe "integration happy path" do
@@ -9,7 +12,7 @@ describe Elasticity::EMR do
       context "when properly specified" do
         use_vcr_cassette "add_instance_groups/one_group_successful", :record => :none
         it "should add the instance groups" do
-          emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
           instance_group_config = {
             :instance_count => 1,
             :instance_role => "TASK",
@@ -25,7 +28,7 @@ describe Elasticity::EMR do
       context "when improperly specified" do
         use_vcr_cassette "add_instance_groups/one_group_unsuccessful", :record => :none
         it "should add the instance groups" do
-          emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
           instance_group_config = {
             :bid_price => 0,
             :instance_count => 1,
@@ -119,7 +122,7 @@ describe Elasticity::EMR do
     describe "integration happy path" do
       use_vcr_cassette "describe_jobflows/all_jobflows", :record => :none
       it "should return the names of all running job flows" do
-        emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+        emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         jobflows = emr.describe_jobflows
         jobflows.map(&:name).should == ["WM+RS", "Interactive Audience Hive Test", "Audience (Hive)", "Audience Reporting"]
         jobflows.map(&:jobflow_id).should == ["j-1MZ5TVWFJRSKN", "j-38EU2XZQP9KJ4", "j-2TDCVGEEHOFI9", "j-NKKQ429D858I"]
@@ -185,7 +188,7 @@ describe Elasticity::EMR do
       context "when the instance group exists" do
         use_vcr_cassette "modify_instance_groups/set_instances_to_3", :record => :none
         it "should terminate the specified jobflow" do
-          emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
           instance_group_config = {"ig-2T1HNUO61BG3O" => 2}
           emr.modify_instance_groups(instance_group_config)
         end
@@ -260,7 +263,7 @@ describe Elasticity::EMR do
       context "when the job flow exists" do
         use_vcr_cassette "terminate_jobflows/one_jobflow", :record => :none
         it "should terminate the specified jobflow" do
-          emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
           emr.terminate_jobflows("j-1MZ5TVWFJRSKN")
         end
       end
@@ -324,7 +327,7 @@ describe Elasticity::EMR do
     describe "integration happy path" do
       use_vcr_cassette "direct/terminate_jobflow", :record => :none
       it "should terminate the specified jobflow" do
-        emr = Elasticity::EMR.new(ENV["aws_access_key_id"], ENV["aws_secret_key"])
+        emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         params = {
           "Operation" => "TerminateJobFlows",
           "JobFlowIds.member.1" => "j-1MZ5TVWFJRSKN"
