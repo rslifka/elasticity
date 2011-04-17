@@ -98,6 +98,10 @@ Or if you attempt to increase the instance count of the MASTER instance group:
 
 ''(not yet supported)''
 
+== SetTerminationProtection ==
+
+''(not yet supported)''
+
 == TerminateJobFlows ==
 
 When the job flow '''exists''', you will receive no output.  This is because Amazon does not return anything other than a 200 when you terminate a job flow :)  You'll want to continuously poll with DescribeJobFlows to see when the job was actually terminated.
