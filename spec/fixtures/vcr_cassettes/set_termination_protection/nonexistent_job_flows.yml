@@ -1,0 +1,35 @@
+--- 
+- !ruby/struct:VCR::HTTPInteraction 
+  request: !ruby/struct:VCR::Request 
+    method: :get
+    uri: !ruby/regexp /^http:\/\/elasticmapreduce.amazonaws.com:80\/\?AWSAccessKeyId=AKIAI7HEMMNKGT6VFFSA&JobFlowIds.member.1=j-1B4D1XP0C0A35&JobFlowIds.member.2=j-2&Operation=SetTerminationProtection.*&TerminationProtected=true/
+    body: 
+    headers: 
+      accept: 
+      - "*/*; q=0.5, application/xml"
+      accept-encoding: 
+      - gzip, deflate
+  response: !ruby/struct:VCR::Response 
+    status: !ruby/struct:VCR::ResponseStatus 
+      code: 400
+      message: Bad Request
+    headers: 
+      x-amzn-requestid: 
+      - dc0ce847-6923-11e0-9da4-8d278034dea6
+      content-type: 
+      - text/xml
+      date: 
+      - Sun, 17 Apr 2011 18:52:35 GMT
+      content-length: 
+      - "289"
+    body: |
+      <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+        <Error>
+          <Type>Sender</Type>
+          <Code>ValidationError</Code>
+          <Message>Specified job flow ID not valid</Message>
+        </Error>
+        <RequestId>dc0ce847-6923-11e0-9da4-8d278034dea6</RequestId>
+      </ErrorResponse>
+
+    http_version: "1.1"

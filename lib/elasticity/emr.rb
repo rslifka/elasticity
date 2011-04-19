@@ -76,6 +76,28 @@ module Elasticity
       end
     end
 
+    # Enabled or disable "termination protection" on the specified job flows.
+    # Termination protection prevents a job flow from being terminated by a
+    # user initiated action, although the job flow will still terminate
+    # naturally.
+    #
+    # Takes an [] of job flow IDs.
+    #
+    # ["j-1B4D1XP0C0A35", "j-1YG2MYL0HVYS5", ...]
+    def set_termination_protection(jobflow_ids, protection_enabled=true)
+      params = {
+        :operation => "SetTerminationProtection",
+        :termination_protected => protection_enabled,
+        :job_flow_ids => jobflow_ids
+      }
+      begin
+        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
+        yield aws_result if block_given?
+      rescue RestClient::BadRequest => e
+        raise ArgumentError, EMR.parse_error_response(e.http_body)
+      end
+    end
+
     # Terminate the specified jobflow.  Amazon does not define a return value
     # for this operation, so you'll need to poll #describe_jobflows to see
     # the state of the jobflow.  Raises ArgumentError if the specified job
