@@ -1,6 +1,6 @@
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently wrap the API operations in a manner that makes working with EMR job flows from Ruby more enjoyable.  At the very least, using Elasticity allows you to easily experiment with the EMR API :)
 
-'''BACKLOG''': Have a look at the backlog  [https://www.pivotaltracker.com/projects/272429 here] (Pivotal Tracker) to see where this is headed.
+'''BACKLOG''': Have a look at the backlog  [https://www.pivotaltracker.com/projects/272429 here] to see where this is headed.
 
 '''CREDITS''': AWS signing was used from [http://www.rightscale.com/ RightScale's] amazing [https://github.com/rightscale/right_aws right_aws gem] which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.  Used camelize from ActiveSupport as well, thank you \Rails :)
 
@@ -31,6 +31,7 @@ Unfortunately, the documentation is sometimes incorrect and sometimes missing.  
 AddInstanceGroups adds a group of instances to an existing job flow.  The available instance configuration options are listed in the EMR API reference.  They've been converted to be more Ruby-like in the wrappers, as shown in the example below.
 
 <pre>
+  emr = Elasticity::EMR.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
   instance_group_config = {
     :instance_count => 1,
     :instance_role => "TASK",
@@ -152,7 +153,7 @@ If you're fine with Elasticity's invocation wrapping and would prefer to get at 
 
 = Direct Request/Response Access =
 
-If you're chomping at the bit to initiate some EMR functionality that isn't wrapped (or isn't wrapped in a way you prefer :) feel free to access the AWS EMR API directly by using <code>EMR.direct()</code>.  You can find the allowed values in Amazon's EMR API [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html developer documentation].
+If you're chomping at the bit to initiate some EMR functionality that isn't wrapped (or isn't wrapped in a way you prefer :) feel free to access the AWS EMR API directly by using <code>EMR.direct()</code>.  You can find the allowed values in Amazon's EMR API [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html developer documentation].  Even though you have to specify the params, we're still saving you the hassle of having sign the request :)
 
 <pre>
   emr = Elasticity::EMR.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
