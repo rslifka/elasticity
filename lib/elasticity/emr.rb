@@ -66,11 +66,27 @@ module Elasticity
     def modify_instance_groups(instance_group_config)
       params = {
         :operation => "ModifyInstanceGroups",
-        :instance_groups => instance_group_config.map{|k,v| {:instance_group_id => k, :instance_count => v}}
+        :instance_groups => instance_group_config.map { |k, v| {:instance_group_id => k, :instance_count => v} }
       }
       begin
         aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
         yield aws_result if block_given?
+      rescue RestClient::BadRequest => e
+        raise ArgumentError, EMR.parse_error_response(e.http_body)
+      end
+    end
+
+    # TODO DOCUMENT ME
+    def run_job_flow(job_flow_config)
+      params = {
+        :operation => "RunJobFlow",
+      }.merge!(job_flow_config)
+      begin
+        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
+        yield aws_result if block_given?
+        xml_doc = Nokogiri::XML(aws_result)
+        xml_doc.remove_namespaces!
+        xml_doc.xpath("/RunJobFlowResponse/RunJobFlowResult/JobFlowId").text
       rescue RestClient::BadRequest => e
         raise ArgumentError, EMR.parse_error_response(e.http_body)
       end

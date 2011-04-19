@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Elasticity::EMR do
 
   AWS_ACCESS_KEY_ID = ENV["AWS_ACCESS_KEY_ID"]
-  AWS_SECRET_KEY    = ENV["AWS_SECRET_KEY"]
+  AWS_SECRET_KEY = ENV["AWS_SECRET_KEY"]
 
   describe "#add_instance_groups" do
 
@@ -253,6 +253,162 @@ describe Elasticity::EMR do
 
       end
 
+    end
+
+  end
+
+  describe "#run_jobflow" do
+
+    describe "integration happy path" do
+
+      context "when the job flow is properly specified" do
+        use_vcr_cassette "run_jobflow/word_count", :record => :none
+        it "should start the specified job flow" do
+          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+          jobflow_id = emr.run_job_flow({
+            :name => "Elasticity Test Flow (EMR Pig Script)",
+            :instances => {
+              :ec2_key_name => "sharethrough-dev",
+              :hadoop_version => "0.20",
+              :instance_count => 2,
+              :master_instance_type => "m1.small",
+              :placement => {
+                :availability_zone => "us-east-1a"
+              },
+              :slave_instance_type => "m1.small",
+            },
+            :steps => [
+              {
+                :action_on_failure => "TERMINATE_JOB_FLOW",
+                :hadoop_jar_step => {
+                  :args => [
+                    "s3://elasticmapreduce/libs/pig/pig-script",
+                      "--base-path",
+                      "s3://elasticmapreduce/libs/pig/",
+                      "--install-pig"
+                  ],
+                  :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
+                },
+                :name => "Setup Pig"
+              },
+                {
+                  :action_on_failure => "TERMINATE_JOB_FLOW",
+                  :hadoop_jar_step => {
+                    :args => [
+                      "s3://elasticmapreduce/libs/pig/pig-script",
+                        "--run-pig-script",
+                        "--args",
+                        "-p",
+                        "INPUT=s3n://elasticmapreduce/samples/pig-apache/input",
+                        "-p",
+                        "OUTPUT=s3n://slif-elasticity/pig-apache/output/2011-04-19",
+                        "s3n://elasticmapreduce/samples/pig-apache/do-reports.pig"
+                    ],
+                    :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
+                  },
+                  :name => "Run Pig Script"
+                }
+            ]
+          })
+          jobflow_id.should == "j-G6N5HA528AD4"
+        end
+      end
+    end
+
+    describe "unit tests" do
+      it "should return the job flow ID of the new job" do
+        run_jobflow_response = <<-RESPONSE
+          <RunJobFlowResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+            <RunJobFlowResult>
+              <JobFlowId>j-N500G8Y8U7ZQ</JobFlowId>
+            </RunJobFlowResult>
+            <ResponseMetadata>
+              <RequestId>a6dddf4c-6a49-11e0-b6c0-e9580d1f7304</RequestId>
+            </ResponseMetadata>
+          </RunJobFlowResponse>
+        RESPONSE
+        aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+        aws_request.should_receive(:aws_emr_request).and_return(run_jobflow_response)
+        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+        emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+        jobflow_id = emr.run_job_flow({})
+        jobflow_id.should == "j-N500G8Y8U7ZQ"
+      end
+
+      it "should run the specified job flow" do
+        aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+        aws_request.should_receive(:aws_emr_request).with({
+          "Operation" => "RunJobFlow",
+          "Name" => "Job flow name",
+          "Instances.MasterInstanceType" => "m1.small",
+          "Instances.Placement.AvailabilityZone" => "us-east-1a",
+          "Steps.member.1.Name" => "Streaming Job",
+          "Steps.member.1.ActionOnFailure" => "TERMINATE_JOB_FLOW",
+          "Steps.member.1.HadoopJarStep.Jar" => "/home/hadoop/contrib/streaming/hadoop-streaming.jar",
+          "Steps.member.1.HadoopJarStep.Args.member.1" => "-input",
+          "Steps.member.1.HadoopJarStep.Args.member.2" => "s3n://elasticmapreduce/samples/wordcount/input"
+        })
+        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+        emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+        emr.run_job_flow({
+          :name => "Job flow name",
+          :instances => {
+            :master_instance_type => "m1.small",
+            :placement => {
+              :availability_zone => "us-east-1a"
+            }
+          },
+          :steps => [
+            {
+              :action_on_failure => "TERMINATE_JOB_FLOW",
+              :name => "Streaming Job",
+              :hadoop_jar_step => {
+                :args => ["-input", "s3n://elasticmapreduce/samples/wordcount/input"],
+                :jar => "/home/hadoop/contrib/streaming/hadoop-streaming.jar",
+              }
+            }
+          ]
+        })
+      end
+
+      context "when there is an error" do
+        before do
+          @error_message = "1 validation error detected: Value null at 'instanceGroups.1.member.instanceCount' failed to satisfy constraint: Member must not be null"
+          @error_xml = <<-ERROR
+            <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+              <Error>
+                <Message>#{@error_message}</Message>
+              </Error>
+            </ErrorResponse>
+          ERROR
+        end
+
+        it "should raise an ArgumentError with the error message" do
+          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
+          @exception = RestClient::BadRequest.new
+          @exception.should_receive(:http_body).and_return(@error_xml)
+          aws_request.should_receive(:aws_emr_request).and_raise(@exception)
+          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
+          lambda {
+            emr.run_job_flow({})
+          }.should raise_error(ArgumentError, @error_message)
+        end
+      end
+
+      context "when a block is given" do
+        it "should yield the XML result" do
+          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
+          aws_request.should_receive(:aws_emr_request).and_return("jobflow_id!")
+          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
+          xml_result = nil
+          emr.run_job_flow({}) do |xml|
+            xml_result = xml
+          end
+          xml_result.should == "jobflow_id!"
+        end
+      end
     end
 
   end

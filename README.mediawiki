@@ -96,7 +96,15 @@ Or if you attempt to increase the instance count of the MASTER instance group:
 
 == RunJobFlow ==
 
-''(not yet supported)''
+RunJobFlow creates and starts a new job flow.  Specifying the arguments to RunJobFlow is a bit of a hot mess at the moment, requiring you to understand the EMR syntax as well as the data structure for specifying jobs.  Here's a beefy example:
+
+<pre>
+  emr = Elasticity::EMR.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+
+  >
+</pre>
+
+Currently Elasticity doesn't do much to ease this pain although this is what I would like to focus on in coming releases.  Feel free to ship ideas my way.  In the meantime, have a look at the EMR API [http://awsdocs.s3.amazonaws.com/ElasticMapReduce/20090331/emr-api-20090331.pdf PDF] under the RunJobFlow action and riff off of the example here.
 
 == SetTerminationProtection ==
 
