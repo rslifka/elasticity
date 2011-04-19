@@ -31,6 +31,7 @@ Unfortunately, the documentation is sometimes incorrect and sometimes missing.  
 AddInstanceGroups adds a group of instances to an existing job flow.  The available instance configuration options are listed in the EMR API reference.  They've been converted to be more Ruby-like in the wrappers, as shown in the example below.
 
 <pre>
+  emr = Elasticity::EMR.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
   instance_group_config = {
     :instance_count => 1,
     :instance_role => "TASK",
