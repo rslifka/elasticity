@@ -1,6 +1,6 @@
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently wrap the API operations in a manner that makes working with EMR job flows from Ruby more enjoyable.  At the very least, using Elasticity allows you to easily experiment with the EMR API :)
 
-'''BACKLOG''': Have a look at the backlog  [https://www.pivotaltracker.com/projects/272429 here] to see where this is headed.
+'''BACKLOG''': Have a look at the [https://www.pivotaltracker.com/projects/272429 backlog] to see where this is headed.
 
 '''CREDITS''': AWS signing was used from [http://www.rightscale.com/ RightScale's] amazing [https://github.com/rightscale/right_aws right_aws gem] which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.  Used camelize from ActiveSupport as well, thank you \Rails :)
 
@@ -101,8 +101,53 @@ RunJobFlow creates and starts a new job flow.  Specifying the arguments to RunJo
 
 <pre>
   emr = Elasticity::EMR.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+  jobflow_id = emr.run_job_flow({
+    :name => "Elasticity Test Flow (EMR Pig Script)",
+    :instances => {
+      :ec2_key_name => "sharethrough-dev",
+      :hadoop_version => "0.20",
+      :instance_count => 2,
+      :master_instance_type => "m1.small",
+      :placement => {
+        :availability_zone => "us-east-1a"
+      },
+      :slave_instance_type => "m1.small",
+    },
+    :steps => [
+      {
+        :action_on_failure => "TERMINATE_JOB_FLOW",
+        :hadoop_jar_step => {
+          :args => [
+            "s3://elasticmapreduce/libs/pig/pig-script",
+              "--base-path",
+              "s3://elasticmapreduce/libs/pig/",
+              "--install-pig"
+          ],
+          :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
+        },
+        :name => "Setup Pig"
+      },
+        {
+          :action_on_failure => "TERMINATE_JOB_FLOW",
+          :hadoop_jar_step => {
+            :args => [
+              "s3://elasticmapreduce/libs/pig/pig-script",
+                "--run-pig-script",
+                "--args",
+                "-p",
+                "INPUT=s3n://elasticmapreduce/samples/pig-apache/input",
+                "-p",
+                "OUTPUT=s3n://slif-elasticity/pig-apache/output/2011-04-19",
+                "s3n://elasticmapreduce/samples/pig-apache/do-reports.pig"
+            ],
+            :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
+          },
+          :name => "Run Pig Script"
+        }
+    ]
+  })
 
-  >
+  > "j-129V5AQFMKO1C"
 </pre>
 
 Currently Elasticity doesn't do much to ease this pain although this is what I would like to focus on in coming releases.  Feel free to ship ideas my way.  In the meantime, have a look at the EMR API [http://awsdocs.s3.amazonaws.com/ElasticMapReduce/20090331/emr-api-20090331.pdf PDF] under the RunJobFlow action and riff off of the example here.
@@ -153,7 +198,7 @@ If you're fine with Elasticity's invocation wrapping and would prefer to get at 
 
 = Direct Request/Response Access =
 
-If you're chomping at the bit to initiate some EMR functionality that isn't wrapped (or isn't wrapped in a way you prefer :) feel free to access the AWS EMR API directly by using <code>EMR.direct()</code>.  You can find the allowed values in Amazon's EMR API [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html developer documentation].  Even though you have to specify the params, we're still saving you the hassle of having sign the request :)
+If you're chomping at the bit to initiate some EMR functionality that isn't wrapped (or isn't wrapped in a way you prefer :) feel free to access the AWS EMR API directly by using <code>EMR.direct()</code>.  You can find the allowed values in Amazon's EMR API [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/index.html developer documentation].
 
 <pre>
   emr = Elasticity::EMR.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
