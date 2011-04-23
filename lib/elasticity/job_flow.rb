@@ -5,6 +5,11 @@ module Elasticity
     attr_accessor :name
     attr_accessor :jobflow_id
     attr_accessor :state
+    attr_accessor :steps
+
+    def initialize
+      @steps = []
+    end
 
     class << self
 
@@ -15,6 +20,7 @@ module Elasticity
         jobflow.name = xml_element.xpath("./Name").text
         jobflow.jobflow_id = xml_element.xpath("./JobFlowId").text
         jobflow.state = xml_element.xpath("./ExecutionStatusDetail/State").text
+        jobflow.steps = JobFlowStep.from_members_nodeset(xml_element.xpath("./Steps/member"))
         jobflow
       end
 

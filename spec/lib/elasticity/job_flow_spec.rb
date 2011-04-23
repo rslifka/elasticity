@@ -13,6 +13,24 @@ describe Elasticity::JobFlow do
               <ExecutionStatusDetail>
                 <State>TERMINATED</State>
               </ExecutionStatusDetail>
+              <Steps>
+                <member>
+                  <StepConfig>
+                    <Name>Setup Hive</Name>
+                  </StepConfig>
+                  <ExecutionStatusDetail>
+                    <State>FAILED</State>
+                  </ExecutionStatusDetail>
+                </member>
+                <member>
+                  <StepConfig>
+                    <Name>Run Hive Script</Name>
+                  </StepConfig>
+                  <ExecutionStatusDetail>
+                    <State>PENDING</State>
+                  </ExecutionStatusDetail>
+                </member>
+              </Steps>
             </member>
             <member>
               <JobFlowId>j-h</JobFlowId>
@@ -25,9 +43,9 @@ describe Elasticity::JobFlow do
         </DescribeJobFlowsResult>
       </DescribeJobFlowsResponse>
     JOBFLOWS
-    @describe_jobflows_document = Nokogiri::XML(describe_jobflows_xml)
-    @describe_jobflows_document.remove_namespaces!
-    @members_nodeset = @describe_jobflows_document.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member')
+    describe_jobflows_document = Nokogiri::XML(describe_jobflows_xml)
+    describe_jobflows_document.remove_namespaces!
+    @members_nodeset = describe_jobflows_document.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member')
   end
 
   describe ".from_xml" do
@@ -36,6 +54,8 @@ describe Elasticity::JobFlow do
       jobflow.name.should == "Pig Job"
       jobflow.jobflow_id.should == "j-p"
       jobflow.state.should == "TERMINATED"
+      jobflow.steps.map(&:name).should == ["Setup Hive", "Run Hive Script"]
+      jobflow.steps.map(&:state).should == ["FAILED", "PENDING"]
     end
   end
 
