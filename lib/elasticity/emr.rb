@@ -20,20 +20,19 @@ module Elasticity
     # not all of these options are required (or valid!) at once.  Please see the
     # EMR docs for details although even then you're going to need to experiment :)
     #
-    # instance_group_config = {
-    #   :bid_price => 5,
-    #   :instance_count => 1,
-    #   :instance_role => "TASK",
-    #   :market => "SPOT",
-    #   :name => "Go Canucks Go!"
-    #   :type => "m1.small",
-    # }
+    #   instance_group_config = {
+    #     :bid_price => 5,
+    #     :instance_count => 1,
+    #     :instance_role => "TASK",
+    #     :market => "SPOT",
+    #     :name => "Go Canucks Go!"
+    #     :type => "m1.small",
+    #   }
     #
-    # add_instance_groups takes an array of {}.
-    #
-    # Returns an array of the instance IDs that were created by the specified configs.
+    # add_instance_groups takes an array of {}.  Returns an array of the instance IDs
+    # that were created by the specified configs.
     # 
-    #  ["ig-2GOVEN6HVJZID", "ig-1DU9M2UQMM051", "ig-3DZRW4Y2X4S", ...]
+    #   ["ig-2GOVEN6HVJZID", "ig-1DU9M2UQMM051", "ig-3DZRW4Y2X4S", ...]
     def add_instance_groups(jobflow_id, instance_group_configs)
       params = {
         :operation => "AddInstanceGroups",
@@ -57,23 +56,23 @@ module Elasticity
 
     # Add a step (or steps) to the specified job flow.
     #
-    #  emr.add_jobflow_step("j-123", {
-    #    :steps => [
-    #      {
-    #        :action_on_failure => "TERMINATE_JOB_FLOW",
-    #        :hadoop_jar_step => {
-    #          :args => [
-    #            "s3://elasticmapreduce/libs/pig/pig-script",
-    #              "--base-path",
-    #              "s3://elasticmapreduce/libs/pig/",
-    #              "--install-pig"
-    #          ],
-    #          :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
-    #        },
-    #        :name => "Setup Pig"
-    #      }
-    #    ]
-    #  })
+    #   emr.add_jobflow_step("j-123", {
+    #     :steps => [
+    #       {
+    #         :action_on_failure => "TERMINATE_JOB_FLOW",
+    #         :hadoop_jar_step => {
+    #           :args => [
+    #             "s3://elasticmapreduce/libs/pig/pig-script",
+    #               "--base-path",
+    #               "s3://elasticmapreduce/libs/pig/",
+    #               "--install-pig"
+    #           ],
+    #           :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
+    #         },
+    #         :name => "Setup Pig"
+    #       }
+    #     ]
+    #   })
     def add_jobflow_steps(jobflow_id, steps_config)
       params = {
         :operation => "AddJobFlowSteps",
@@ -94,7 +93,7 @@ module Elasticity
     #
     # Takes a {} of instance group IDs => desired instance count.
     #
-    # {"ig-1" => 40, "ig-2" => 5, ...}
+    #   {"ig-1" => 40, "ig-2" => 5, ...}
     def modify_instance_groups(instance_group_config)
       params = {
         :operation => "ModifyInstanceGroups",
@@ -118,51 +117,51 @@ module Elasticity
     # starts by installing Pig then running a Pig script.  It is based off of the
     # Pig demo script from Amazon.
     #
-    #  emr.run_job_flow({
-    #    :name => "Elasticity Test Flow (EMR Pig Script)",
-    #    :instances => {
-    #      :ec2_key_name => "sharethrough-dev",
-    #      :hadoop_version => "0.20",
-    #      :instance_count => 2,
-    #      :master_instance_type => "m1.small",
-    #      :placement => {
-    #        :availability_zone => "us-east-1a"
-    #      },
-    #      :slave_instance_type => "m1.small",
-    #    },
-    #    :steps => [
-    #      {
-    #        :action_on_failure => "TERMINATE_JOB_FLOW",
-    #        :hadoop_jar_step => {
-    #          :args => [
-    #            "s3://elasticmapreduce/libs/pig/pig-script",
-    #              "--base-path",
-    #              "s3://elasticmapreduce/libs/pig/",
-    #              "--install-pig"
-    #          ],
-    #          :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
-    #        },
-    #        :name => "Setup Pig"
-    #      },
-    #        {
-    #          :action_on_failure => "TERMINATE_JOB_FLOW",
-    #          :hadoop_jar_step => {
-    #            :args => [
-    #              "s3://elasticmapreduce/libs/pig/pig-script",
-    #                "--run-pig-script",
-    #                "--args",
-    #                "-p",
-    #                "INPUT=s3n://elasticmapreduce/samples/pig-apache/input",
-    #                "-p",
-    #                "OUTPUT=s3n://slif-elasticity/pig-apache/output/2011-04-19",
-    #                "s3n://elasticmapreduce/samples/pig-apache/do-reports.pig"
-    #            ],
-    #            :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
-    #          },
-    #          :name => "Run Pig Script"
-    #        }
-    #    ]
-    #  })    
+    #   emr.run_job_flow({
+    #     :name => "Elasticity Test Flow (EMR Pig Script)",
+    #     :instances => {
+    #       :ec2_key_name => "sharethrough-dev",
+    #       :hadoop_version => "0.20",
+    #       :instance_count => 2,
+    #       :master_instance_type => "m1.small",
+    #       :placement => {
+    #         :availability_zone => "us-east-1a"
+    #       },
+    #       :slave_instance_type => "m1.small",
+    #     },
+    #     :steps => [
+    #       {
+    #         :action_on_failure => "TERMINATE_JOB_FLOW",
+    #         :hadoop_jar_step => {
+    #           :args => [
+    #             "s3://elasticmapreduce/libs/pig/pig-script",
+    #               "--base-path",
+    #               "s3://elasticmapreduce/libs/pig/",
+    #               "--install-pig"
+    #           ],
+    #           :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
+    #         },
+    #         :name => "Setup Pig"
+    #       },
+    #         {
+    #           :action_on_failure => "TERMINATE_JOB_FLOW",
+    #           :hadoop_jar_step => {
+    #             :args => [
+    #               "s3://elasticmapreduce/libs/pig/pig-script",
+    #                 "--run-pig-script",
+    #                 "--args",
+    #                 "-p",
+    #                 "INPUT=s3n://elasticmapreduce/samples/pig-apache/input",
+    #                 "-p",
+    #                 "OUTPUT=s3n://slif-elasticity/pig-apache/output/2011-04-19",
+    #                 "s3n://elasticmapreduce/samples/pig-apache/do-reports.pig"
+    #             ],
+    #             :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
+    #           },
+    #           :name => "Run Pig Script"
+    #         }
+    #     ]
+    #   })
     def run_job_flow(job_flow_config)
       params = {
         :operation => "RunJobFlow",
@@ -185,7 +184,7 @@ module Elasticity
     #
     # Takes an [] of job flow IDs.
     #
-    # ["j-1B4D1XP0C0A35", "j-1YG2MYL0HVYS5", ...]
+    #   ["j-1B4D1XP0C0A35", "j-1YG2MYL0HVYS5", ...]
     def set_termination_protection(jobflow_ids, protection_enabled=true)
       params = {
         :operation => "SetTerminationProtection",

@@ -8,7 +8,7 @@ module Elasticity
     class << self
 
       # Create a job flow from an AWS <member> (Nokogiri::XML::Element):
-      #  /DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member/Steps/member
+      #   /DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member/Steps/member
       def from_member_element(xml_element)
         job_flow_step = JobFlowStep.new
         job_flow_step.name = xml_element.xpath("./StepConfig/Name").text
@@ -17,7 +17,7 @@ module Elasticity
       end
 
       # Create JobFlowSteps from a collection of AWS <member> nodes (Nokogiri::XML::NodeSet):
-      #  /DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member/Steps/member
+      #   /DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member/Steps/member
       def from_members_nodeset(members_nodeset)
         jobflow_steps = []
         members_nodeset.each do |member|
