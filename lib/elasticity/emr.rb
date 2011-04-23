@@ -74,12 +74,17 @@ module Elasticity
     #      }
     #    ]
     #  })
-    def add_jobflow_step(jobflow_id, steps_config)
+    def add_jobflow_steps(jobflow_id, steps_config)
       params = {
         :operation => "AddJobFlowSteps",
         :job_flow_id => jobflow_id
       }.merge!(steps_config)
-      @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
+      begin
+        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
+        yield aws_result if block_given?
+      rescue RestClient::BadRequest => e
+        raise ArgumentError, EMR.parse_error_response(e.http_body)
+      end
     end
 
     # Set the number of instances in the specified instance groups to the

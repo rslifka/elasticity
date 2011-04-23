@@ -150,15 +150,99 @@ describe Elasticity::EMR do
       end
 
       it "should add a job flow step to the specified job flow" do
-        @emr.add_jobflow_step(@jobflow_id, {
+        @emr.add_jobflow_steps(@jobflow_id, {
           :steps => [
             @setup_pig_step.merge(:name => "Setup Pig 2"),
-            @setup_pig_step.merge(:name => "Setup Pig 3")
+              @setup_pig_step.merge(:name => "Setup Pig 3")
           ]
         })
-        jobflow = @emr.describe_jobflows.select{|jf| jf.jobflow_id = @jobflow_id}.first
+        jobflow = @emr.describe_jobflows.select { |jf| jf.jobflow_id = @jobflow_id }.first
         jobflow.steps.map(&:name).should == ["Setup Pig", "Setup Pig 2", "Setup Pig 3"]
       end
+
+    end
+
+    describe "unit tests" do
+
+      it "should add the specified steps to the job flow" do
+        aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+        aws_request.should_receive(:aws_emr_request).with({
+          "Operation" => "AddJobFlowSteps",
+          "JobFlowId" => "j-1",
+          "Steps.member.1.Name" => "Step 1",
+          "Steps.member.1.ActionOnFailure" => "TERMINATE_JOB_FLOW",
+          "Steps.member.1.HadoopJarStep.Jar" => "jar1",
+          "Steps.member.1.HadoopJarStep.Args.member.1" => "arg1-1",
+          "Steps.member.1.HadoopJarStep.Args.member.2" => "arg1-2",
+          "Steps.member.2.Name" => "Step 2",
+          "Steps.member.2.ActionOnFailure" => "CONTINUE",
+          "Steps.member.2.HadoopJarStep.Jar" => "jar2",
+          "Steps.member.2.HadoopJarStep.Args.member.1" => "arg2-1",
+          "Steps.member.2.HadoopJarStep.Args.member.2" => "arg2-2",
+        })
+        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+        emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+        emr.add_jobflow_steps("j-1", {
+          :steps => [
+            {
+              :action_on_failure => "TERMINATE_JOB_FLOW",
+              :name => "Step 1",
+              :hadoop_jar_step => {
+                :args => ["arg1-1", "arg1-2"],
+                :jar => "jar1",
+              }
+            },
+              {
+                :action_on_failure => "CONTINUE",
+                :name => "Step 2",
+                :hadoop_jar_step => {
+                  :args => ["arg2-1", "arg2-2"],
+                  :jar => "jar2",
+                }
+              }
+          ]
+        })
+      end
+
+      context "when there is an error" do
+        before do
+          @error_message = "2 validation errors detected: Value null at 'steps' failed to satisfy constraint: Member must not be null; Value null at 'jobFlowId' failed to satisfy constraint: Member must not be null"
+          @error_xml = <<-ERROR
+            <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+              <Error>
+                <Message>#{@error_message}</Message>
+              </Error>
+            </ErrorResponse>
+          ERROR
+        end
+
+        it "should raise an ArgumentError with the error message" do
+          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
+          @exception = RestClient::BadRequest.new
+          @exception.should_receive(:http_body).and_return(@error_xml)
+          aws_request.should_receive(:aws_emr_request).and_raise(@exception)
+          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
+          lambda {
+            emr.add_jobflow_steps("", {})
+          }.should raise_error(ArgumentError, @error_message)
+        end
+      end
+
+      context "when a block is given" do
+        it "should yield the XML result" do
+          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
+          aws_request.should_receive(:aws_emr_request).and_return("xml_response")
+          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
+          xml_result = nil
+          emr.add_jobflow_steps("", {}) do |xml|
+            xml_result = xml
+          end
+          xml_result.should == "xml_response"
+        end
+      end
+
 
     end
 
