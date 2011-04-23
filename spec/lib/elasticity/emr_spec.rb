@@ -117,6 +117,53 @@ describe Elasticity::EMR do
 
   end
 
+  describe "#add_jobflow_steps" do
+
+    describe "integration happy path" do
+      use_vcr_cassette "add_jobflow_steps/add_multiple_steps", :record => :none
+
+      before do
+        @setup_pig_step = {
+          :action_on_failure => "TERMINATE_JOB_FLOW",
+          :hadoop_jar_step => {
+            :args => [
+              "s3://elasticmapreduce/libs/pig/pig-script",
+                "--base-path",
+                "s3://elasticmapreduce/libs/pig/",
+                "--install-pig"
+            ],
+            :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
+          },
+          :name => "Setup Pig"
+        }
+        @emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+        @jobflow_id = @emr.run_job_flow({
+          :name => "Elasticity Test Flow (EMR Pig Script)",
+          :instances => {
+            :ec2_key_name => "sharethrough-dev",
+            :instance_count => 2,
+            :master_instance_type => "m1.small",
+            :slave_instance_type => "m1.small",
+          },
+          :steps => [@setup_pig_step]
+        })
+      end
+
+      it "should add a job flow step to the specified job flow" do
+        @emr.add_jobflow_step(@jobflow_id, {
+          :steps => [
+            @setup_pig_step.merge(:name => "Setup Pig 2"),
+            @setup_pig_step.merge(:name => "Setup Pig 3")
+          ]
+        })
+        jobflow = @emr.describe_jobflows.select{|jf| jf.jobflow_id = @jobflow_id}.first
+        jobflow.steps.map(&:name).should == ["Setup Pig", "Setup Pig 2", "Setup Pig 3"]
+      end
+
+    end
+
+  end
+
   describe "#describe_jobflows" do
 
     describe "integration happy path" do

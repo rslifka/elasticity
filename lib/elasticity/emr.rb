@@ -55,6 +55,33 @@ module Elasticity
       end
     end
 
+    # Add a step (or steps) to the specified job flow.
+    #
+    #  emr.add_jobflow_step("j-123", {
+    #    :steps => [
+    #      {
+    #        :action_on_failure => "TERMINATE_JOB_FLOW",
+    #        :hadoop_jar_step => {
+    #          :args => [
+    #            "s3://elasticmapreduce/libs/pig/pig-script",
+    #              "--base-path",
+    #              "s3://elasticmapreduce/libs/pig/",
+    #              "--install-pig"
+    #          ],
+    #          :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
+    #        },
+    #        :name => "Setup Pig"
+    #      }
+    #    ]
+    #  })
+    def add_jobflow_step(jobflow_id, steps_config)
+      params = {
+        :operation => "AddJobFlowSteps",
+        :job_flow_id => jobflow_id
+      }.merge!(steps_config)
+      @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
+    end
+
     # Set the number of instances in the specified instance groups to the
     # specified counts.  Note that this modifies the *request* count, which
     # is not the same as the *running* count.  I.e. you request instances
