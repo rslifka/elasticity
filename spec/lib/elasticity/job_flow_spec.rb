@@ -8,18 +8,18 @@ describe Elasticity::JobFlow do
         <DescribeJobFlowsResult>
           <JobFlows>
             <member>
-              <ExecutionStatusDetail>
-                <State>TERMINATED</State>
-              </ExecutionStatusDetail>
               <JobFlowId>j-p</JobFlowId>
               <Name>Pig Job</Name>
-            </member>
-            <member>
               <ExecutionStatusDetail>
                 <State>TERMINATED</State>
               </ExecutionStatusDetail>
+            </member>
+            <member>
               <JobFlowId>j-h</JobFlowId>
               <Name>Hive Job</Name>
+              <ExecutionStatusDetail>
+                <State>TERMINATED</State>
+              </ExecutionStatusDetail>
             </member>
           </JobFlows>
         </DescribeJobFlowsResult>
