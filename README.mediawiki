@@ -54,7 +54,29 @@ Some combinations of the options will be rejected by Amazon and some once-valid 
 
 == AddJobFlowSteps ==
 
-''(not yet supported)''
+AddJobFlowSteps adds the specified steps to the specified job flow.
+
+<pre>
+  emr = Elasticity::EMR.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+  jobflow_id = emr.run_job_flow(...)
+  emr.add_jobflow_steps(jobflow_id, {
+    :steps => [
+      {
+        :action_on_failure => "TERMINATE_JOB_FLOW",
+        :hadoop_jar_step => {
+          :args => [
+            "s3://elasticmapreduce/libs/pig/pig-script",
+            "--base-path",
+            "s3://elasticmapreduce/libs/pig/",
+            "--install-pig"
+          ],
+          :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
+        },
+        :name => "Setup Pig"
+      }
+    ]
+  })
+</pre>
 
 == DescribeJobFlows ==
 
@@ -119,9 +141,9 @@ RunJobFlow creates and starts a new job flow.  Specifying the arguments to RunJo
         :hadoop_jar_step => {
           :args => [
             "s3://elasticmapreduce/libs/pig/pig-script",
-              "--base-path",
-              "s3://elasticmapreduce/libs/pig/",
-              "--install-pig"
+            "--base-path",
+            "s3://elasticmapreduce/libs/pig/",
+            "--install-pig"
           ],
           :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
         },
@@ -132,13 +154,13 @@ RunJobFlow creates and starts a new job flow.  Specifying the arguments to RunJo
           :hadoop_jar_step => {
             :args => [
               "s3://elasticmapreduce/libs/pig/pig-script",
-                "--run-pig-script",
-                "--args",
-                "-p",
-                "INPUT=s3n://elasticmapreduce/samples/pig-apache/input",
-                "-p",
-                "OUTPUT=s3n://slif-elasticity/pig-apache/output/2011-04-19",
-                "s3n://elasticmapreduce/samples/pig-apache/do-reports.pig"
+              "--run-pig-script",
+              "--args",
+              "-p",
+              "INPUT=s3n://elasticmapreduce/samples/pig-apache/input",
+              "-p",
+              "OUTPUT=s3n://slif-elasticity/pig-apache/output/2011-04-19",
+              "s3n://elasticmapreduce/samples/pig-apache/do-reports.pig"
             ],
             :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
           },
