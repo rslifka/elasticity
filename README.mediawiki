@@ -1,4 +1,4 @@
-Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently wrap the API operations in a manner that makes working with EMR job flows from Ruby more enjoyable.  At the very least, using Elasticity allows you to easily experiment with the EMR API :)
+Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently wrap the API operations in a manner that makes working with EMR job flows from Ruby more productive and more enjoyable, without having to understand the nuts and bolts of the EMR REST API.  At the very least, using Elasticity allows you to easily experiment with the EMR API :)
 
 '''BACKLOG''': Have a look at the [https://www.pivotaltracker.com/projects/272429 backlog] to see where this is headed.
 
@@ -12,7 +12,25 @@ Elasticity provides programmatic access to Amazon's Elastic Map Reduce service. 
 
 All you have to do is <code>require 'elasticity'</code> and you're all set!
 
-= API Reference =
+= Simplified API Reference =
+
+Elasticity currently provides simplified access to launching Hive job flows.  Eventually I'd like to add several simplified wrappers, but I only need Hive at the moment :)
+
+== Hive ==
+
+HiveJob allows you to quickly launch Hive jobs without having to understand the ins and outs of the EMR API.  Specify only the Hive script location and (optionally) variables to make available to the Hive script.
+
+<pre>
+  hive = Elasticity::HiveJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+  hive.run("s3n://slif-hive/test.q", {
+    "LIB"    => "s3n://slif-test/lib",
+    "OUTPUT" => "s3n://slif-test/output"
+  })
+  
+  > "j-129V5AQFMKO1C"
+</pre>
+
+= Amazon API Reference =
 
 Elasticity wraps all of the EMR API calls.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of <code>DescribeJobFlows</code> without parameters).
 
