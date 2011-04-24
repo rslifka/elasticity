@@ -1,0 +1,12 @@
+=== 1.0 ===
+
+* Released!
+
+=== 1.0.1 ===
+
+* Added LICENSE.
+
+=== 1.1 ===
+
+* Added HiveJob, a simplified way to launch basic Hive job flows.
+* Added HISTORY.
