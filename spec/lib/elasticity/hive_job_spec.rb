@@ -14,16 +14,19 @@ describe Elasticity::HiveJob do
       hive.master_instance_type.should == "m1.small"
       hive.name.should == "Elasticity Hive Job"
       hive.slave_instance_type.should == "m1.small"
+      hive.action_on_failure.should == "TERMINATE_JOB_FLOW"
+      hive.log_uri.should == nil
     end
 
   end
 
   describe "#run" do
 
-    it "run the script with the specified variables and return the jobflow_id" do
+    it "should run the script with the specified variables and return the jobflow_id" do
       aws = Elasticity::EMR.new("", "")
       aws.should_receive(:run_job_flow).with({
         :name => "Elasticity Hive Job",
+        :log_uri => "s3n://slif-test/output/logs",
         :instances => {
           :ec2_key_name => "default",
           :hadoop_version => "0.20",
@@ -46,7 +49,7 @@ describe Elasticity::HiveJob do
             :name => "Setup Hive"
           },
             {
-              :action_on_failure => "TERMINATE_JOB_FLOW",
+              :action_on_failure => "CONTINUE",
               :hadoop_jar_step => {
                 :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar",
                 :args => [
@@ -65,6 +68,8 @@ describe Elasticity::HiveJob do
       Elasticity::EMR.should_receive(:new).with("access", "secret").and_return(aws)
 
       hive = Elasticity::HiveJob.new("access", "secret")
+      hive.log_uri = "s3n://slif-test/output/logs"
+      hive.action_on_failure = "CONTINUE"
       jobflow_id = hive.run('s3n://slif-hive/test.q', {
         'OUTPUT' => 's3n://slif-test/output',
         'XREFS' => 's3n://slif-test/xrefs'
@@ -73,5 +78,12 @@ describe Elasticity::HiveJob do
     end
 
   end
+
+#  describe "integration happy path" do
+#    use_cassette "hive_job/hive_ads", :record => all
+#    xit "should kick off the sample Amazion EMR Hive application" do
+#
+#    end
+#  end
 
 end
