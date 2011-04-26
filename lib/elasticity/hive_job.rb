@@ -23,7 +23,7 @@ module Elasticity
       @name = "Elasticity Hive Job"
       @slave_instance_type = "m1.small"
 
-      @aws_request = Elasticity::AwsRequest.new(aws_access_key_id, aws_secret_access_key)
+      @aws_request = Elasticity::EMR.new(aws_access_key_id, aws_secret_access_key)
     end
 
     # Run the specified Hive script with the specified variables.

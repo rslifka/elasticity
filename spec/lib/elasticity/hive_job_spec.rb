@@ -21,7 +21,7 @@ describe Elasticity::HiveJob do
   describe "#run" do
 
     it "run the script with the specified variables and return the jobflow_id" do
-      aws = Elasticity::AwsRequest.new("", "")
+      aws = Elasticity::EMR.new("", "")
       aws.should_receive(:run_job_flow).with({
         :name => "Elasticity Hive Job",
         :instances => {
@@ -62,7 +62,7 @@ describe Elasticity::HiveJob do
             }
         ]
       }).and_return("new_jobflow_id")
-      Elasticity::AwsRequest.should_receive(:new).with("access", "secret").and_return(aws)
+      Elasticity::EMR.should_receive(:new).with("access", "secret").and_return(aws)
 
       hive = Elasticity::HiveJob.new("access", "secret")
       jobflow_id = hive.run('s3n://slif-hive/test.q', {
