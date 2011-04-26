@@ -10,3 +10,9 @@
 
 * Added HiveJob, a simplified way to launch basic Hive job flows.
 * Added HISTORY.
+
+=== 1.1.1 ===
+
+* HiveJob critical bug fixed, now it works :)
+* Added log_uri and action_on_failure as options to HiveJob.
+* Added integration tests to HiveJob.
