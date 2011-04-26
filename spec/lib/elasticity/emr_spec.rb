@@ -2,9 +2,6 @@ require 'spec_helper'
 
 describe Elasticity::EMR do
 
-  AWS_ACCESS_KEY_ID = ENV["AWS_ACCESS_KEY_ID"]
-  AWS_SECRET_KEY = ENV["AWS_SECRET_KEY"]
-
   describe "#add_instance_groups" do
 
     describe "integration happy path" do

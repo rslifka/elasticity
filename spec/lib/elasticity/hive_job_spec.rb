@@ -79,11 +79,18 @@ describe Elasticity::HiveJob do
 
   end
 
-#  describe "integration happy path" do
-#    use_cassette "hive_job/hive_ads", :record => all
-#    xit "should kick off the sample Amazion EMR Hive application" do
-#
-#    end
-#  end
+  describe "integration happy path" do
+    use_vcr_cassette "hive_job/hive_ads", :record => :none
+    it "should kick off the sample Amazion EMR Hive application" do
+      hive = Elasticity::HiveJob.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+      hive.ec2_key_name = "sharethrough_dev"
+      jobflow_id = hive.run("s3n://elasticmapreduce/samples/hive-ads/libs/model-build.q", {
+        "LIBS"   => "s3n://elasticmapreduce/samples/hive-ads/libs",
+        "INPUT"  => "s3n://elasticmapreduce/samples/hive-ads/tables",
+        "OUTPUT" => "s3n://slif-elasticity/hive-ads/output/2011-04-19"
+      })
+      jobflow_id.should == "j-1UUVYMHBLKEGN"
+    end
+  end
 
 end

@@ -19,6 +19,8 @@ if !ENV["AWS_ACCESS_KEY_ID"] || !ENV["AWS_SECRET_KEY"]
   exit
 end
 
+AWS_ACCESS_KEY_ID = ENV["AWS_ACCESS_KEY_ID"]
+AWS_SECRET_KEY = ENV["AWS_SECRET_KEY"]
 
 require 'rubygems'
 require 'bundler/setup'
