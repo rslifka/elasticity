@@ -14,7 +14,19 @@ All you have to do is <code>require 'elasticity'</code> and you're all set!
 
 = Simplified API Reference =
 
-Elasticity currently provides simplified access to launching Hive job flows.  Eventually I'd like to add several simplified wrappers, but I only need Hive at the moment :)
+Elasticity currently provides simplified access to launching Hive and Pig job flows, specifying several default values that you may optionally override:
+
+<pre>
+  @action_on_failure = "TERMINATE_JOB_FLOW"
+  @ec2_key_name = "default"
+  @hadoop_version = "0.20"
+  @instance_count = 2
+  @master_instance_type = "m1.small"
+  @name = "Elasticity Job"
+  @slave_instance_type = "m1.small"
+</pre>
+
+These are all accessible from HiveJob and PigJob instances.  See the PigJob description for an example.
 
 == Hive ==
 
@@ -28,6 +40,22 @@ HiveJob allows you to quickly launch Hive jobs without having to understand the 
   })
   
   > "j-129V5AQFMKO1C"
+</pre>
+
+== Pig ==
+
+Like HiveJob, PigJob allows you to quickly launch Pig jobs :)
+
+<pre>
+  pig = Elasticity::PigJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+  pig.log_uri = "s3n://slif-elasticity/pig-apache/logs"
+  pig.ec2_key_name = "slif_dev"
+  pig.run("s3n://elasticmapreduce/samples/pig-apache/do-reports.pig", {
+    "INPUT"  => "s3n://elasticmapreduce/samples/pig-apache/input",
+    "OUTPUT" => "s3n://slif-elasticity/pig-apache/output/2011-05-04"
+  })
+  
+  > "j-16PZ24OED71C6"
 </pre>
 
 = Amazon API Reference =

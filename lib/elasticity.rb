@@ -10,6 +10,7 @@ require 'elasticity/job_flow_step'
 
 require 'elasticity/simple_job'
 require 'elasticity/hive_job'
+require 'elasticity/pig_job'
 
 module Elasticity
 end
