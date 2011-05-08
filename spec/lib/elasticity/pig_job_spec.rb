@@ -89,9 +89,9 @@ describe Elasticity::PigJob do
         :instances => {
           :ec2_key_name => "default",
           :hadoop_version => "0.20",
-          :instance_count => 2,
+          :instance_count => 8,
           :master_instance_type => "m1.small",
-          :slave_instance_type => "m1.small",
+          :slave_instance_type => "m1.xlarge",
         },
         :steps => [
           {
@@ -117,6 +117,7 @@ describe Elasticity::PigJob do
                     "--args",
                     "-p", "OUTPUT=s3n://slif-pig-test/output",
                     "-p", "XREFS=s3n://slif-pig-test/xrefs",
+                    "-p", "E_PARALLELS=26",
                     "s3n://slif-pig-test/test.pig"
                 ],
               },
@@ -124,11 +125,15 @@ describe Elasticity::PigJob do
             }
         ]
       }).and_return("new_jobflow_id")
-      Elasticity::EMR.should_receive(:new).with("access", "secret").and_return(aws)
 
+      Elasticity::EMR.should_receive(:new).with("access", "secret").and_return(aws)
       pig = Elasticity::PigJob.new("access", "secret")
+
       pig.log_uri = "s3n://slif-test/output/logs"
       pig.action_on_failure = "CONTINUE"
+      pig.instance_count = 8
+      pig.slave_instance_type = "m1.xlarge"
+
       jobflow_id = pig.run('s3n://slif-pig-test/test.pig', {
         'OUTPUT' => 's3n://slif-pig-test/output',
         'XREFS' => 's3n://slif-pig-test/xrefs'
@@ -148,7 +153,7 @@ describe Elasticity::PigJob do
         "INPUT"  => "s3n://elasticmapreduce/samples/pig-apache/input",
         "OUTPUT" => "s3n://slif-elasticity/pig-apache/output/2011-05-04"
       })
-      jobflow_id.should == "j-16PZ24OED71C6"
+      jobflow_id.should == "j-1HB7A3TBRT3VS"
     end
   end
 

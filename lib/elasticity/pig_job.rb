@@ -40,6 +40,7 @@ module Elasticity
       pig_variables.keys.sort.each do |variable_name|
         script_arguments.concat(["-p", "#{variable_name}=#{pig_variables[variable_name]}"])
       end
+      script_arguments.concat(["-p", "E_PARALLELS=#{@parallels}"])
       script_arguments << pig_script
       jobflow_config = {
         :name => @name,
