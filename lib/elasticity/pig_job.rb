@@ -2,9 +2,26 @@ module Elasticity
 
   class PigJob < Elasticity::SimpleJob
 
+    # Automatically passed as Pig argument E_PARALLELS
+    attr_reader :parallels
+
     def initialize(aws_access_key_id, aws_secret_access_key)
       super
       @name = "Elasticity Pig Job"
+      @parallels = calculate_parallels
+    end
+
+    def instance_count=(num_instances)
+      if num_instances < 2
+        raise ArgumentError, "Instance count cannot be set to less than 2 (requested #{num_instances})"
+      end
+      @instance_count = num_instances
+      @parallels = calculate_parallels
+    end
+
+    def slave_instance_type=(instance_type)
+      @slave_instance_type = instance_type
+      @parallels = calculate_parallels
     end
 
     # Run the specified Pig script with the specified variables.
@@ -60,6 +77,32 @@ module Elasticity
       jobflow_config.merge!(:log_uri => @log_uri) if @log_uri
 
       @emr.run_job_flow(jobflow_config)
+    end
+
+    private
+
+    # Calculate a common-sense default value of PARALLELS using the following
+    # formula from the Pig Cookbook:
+    #
+    #   <num machines> * <num reduce slots per machine> * 0.9
+    #
+    # With the following reducer configuration (from an AWS forum post):
+    #
+    #   m1.small   1
+    #   m1.large   2
+    #   m1.xlarge  4
+    #   c1.medium  2
+    #   c1.xlarge  4
+    def calculate_parallels
+      reduce_slots = case @slave_instance_type
+        when "m1.small" then 1
+        when "m1.large" then 2
+        when "m1.xlarge" then 4
+        when "c1.medium" then 2
+        when "c1.xlarge" then 4
+        else 1
+      end
+      ((@instance_count - 1).to_f * reduce_slots.to_f * 0.9).ceil
     end
     
   end

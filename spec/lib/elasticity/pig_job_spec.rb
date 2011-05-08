@@ -3,19 +3,78 @@ require 'spec_helper'
 describe Elasticity::PigJob do
 
   describe ".new" do
-
     it "should have good defaults" do
-      hive = Elasticity::PigJob.new("access", "secret")
-      hive.aws_access_key_id.should == "access"
-      hive.aws_secret_access_key.should == "secret"
-      hive.ec2_key_name.should == "default"
-      hive.hadoop_version.should == "0.20"
-      hive.instance_count.should == 2
-      hive.master_instance_type.should == "m1.small"
-      hive.name.should == "Elasticity Pig Job"
-      hive.slave_instance_type.should == "m1.small"
-      hive.action_on_failure.should == "TERMINATE_JOB_FLOW"
-      hive.log_uri.should == nil
+      pig = Elasticity::PigJob.new("access", "secret")
+      pig.aws_access_key_id.should == "access"
+      pig.aws_secret_access_key.should == "secret"
+      pig.ec2_key_name.should == "default"
+      pig.hadoop_version.should == "0.20"
+      pig.instance_count.should == 2
+      pig.master_instance_type.should == "m1.small"
+      pig.name.should == "Elasticity Pig Job"
+      pig.slave_instance_type.should == "m1.small"
+      pig.action_on_failure.should == "TERMINATE_JOB_FLOW"
+      pig.log_uri.should == nil
+      pig.parallels.should == 1
+    end
+  end
+
+  describe "#instance_count=" do
+    it "should not allow instances to be set less than 2" do
+      pig = Elasticity::PigJob.new("access", "secret")
+      lambda {
+        pig.instance_count = 1
+      }.should raise_error(ArgumentError, "Instance count cannot be set to less than 2 (requested 1)")
+    end
+  end
+
+  describe "calculated value of parallels" do
+
+    before do
+      @pig = Elasticity::PigJob.new("access", "secret")
+      @pig.instance_count = 8
+    end
+
+    context "when slave is m1.small" do
+      it "should be 7" do
+        @pig.slave_instance_type = "m1.small"
+        @pig.parallels.should == 7
+      end
+    end
+
+    context "when slave is m1.large" do
+      it "should be 13" do
+        @pig.slave_instance_type = "m1.large"
+        @pig.parallels.should == 13
+      end
+    end
+
+    context "when slave is c1.medium" do
+      it "should be 13" do
+        @pig.slave_instance_type = "c1.medium"
+        @pig.parallels.should == 13
+      end
+    end
+
+    context "when slave is m1.xlarge" do
+      it "should be 26" do
+        @pig.slave_instance_type = "m1.xlarge"
+        @pig.parallels.should == 26
+      end
+    end
+
+    context "when slave is c1.xlarge" do
+      it "should be 26" do
+        @pig.slave_instance_type = "c1.xlarge"
+        @pig.parallels.should == 26
+      end
+    end
+
+    context "when slave is any other type" do
+      it "should be 1" do
+        @pig.slave_instance_type = "foo"
+        @pig.parallels.should == 7
+      end
     end
 
   end
