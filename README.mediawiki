@@ -58,6 +58,30 @@ Like HiveJob, PigJob allows you to quickly launch Pig jobs :)
   > "j-16PZ24OED71C6"
 </pre>
 
+=== PARALLEL ===
+
+Given the importance of specifying a reasonable value for [http://pig.apache.org/docs/r0.8.1/cookbook.html#Use+the+Parallel+Features PARALLEL] (the number of parallel reducers), Elasticity calculates and passes through a reasonable default up with every invocation in the form of a script variable called E_PARALLELS.  This default value is based off of the formula in the Pig Cookbook and the number of reducers AWS configures per instance.
+
+For example, if you had 8 instances in total and your slaves were m1.xlarge, the value is 26 (as shown below).
+
+<pre>
+  s3://elasticmapreduce/libs/pig/pig-script
+    --run-pig-script
+      --args
+        -p INPUT=s3n://elasticmapreduce/samples/pig-apache/input
+        -p OUTPUT=s3n://slif-elasticity/pig-apache/output/2011-05-04
+        -p E_PARALLELS=26
+    s3n://elasticmapreduce/samples/pig-apache/do-reports.pig
+</pre>
+
+Use this as you would any other Pig variable.
+
+<pre>
+  A = LOAD 'myfile' AS (t, u, v);
+  B = GROUP A BY t PARALLEL $E_PARALLELS;
+  ...
+</pre>
+
 = Amazon API Reference =
 
 Elasticity wraps all of the EMR API calls.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of <code>DescribeJobFlows</code> without parameters).
