@@ -26,7 +26,17 @@ Elasticity currently provides simplified access to launching Hive and Pig job fl
   @slave_instance_type = "m1.small"
 </pre>
 
-These are all accessible from HiveJob and PigJob instances.  See the PigJob description for an example.
+These are all accessible from HiveJob and PigJob.  See the PigJob description for an example.
+
+=== Bootstrap Actions ===
+
+You can also configure Hadoop options with add_hadoop_bootstrap_action().
+
+<pre>
+  pig = Elasticity::PigJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+  pig.add_hadoop_bootstrap_action("-m", "mapred.job.reuse.jvm.num.tasks=120")
+  ...
+</pre>
 
 == Hive ==
 

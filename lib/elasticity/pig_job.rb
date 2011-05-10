@@ -76,6 +76,7 @@ module Elasticity
       }
 
       jobflow_config.merge!(:log_uri => @log_uri) if @log_uri
+      jobflow_config.merge!(get_bootstrap_actions)
 
       @emr.run_job_flow(jobflow_config)
     end

@@ -27,6 +27,24 @@ module Elasticity
       @emr = Elasticity::EMR.new(aws_access_key_id, aws_secret_access_key)
     end
 
+    def add_hadoop_bootstrap_action(option, value)
+      @hadoop_actions ||= []
+      @hadoop_actions << {
+        :name => "Elasticity Bootstrap Action (Configure Hadoop)",
+        :script_bootstrap_action => {
+          :path => "s3n://elasticmapreduce/bootstrap-actions/configure-hadoop",
+          :args => [option, value]
+        }
+      }
+    end
+
+    private
+
+    def get_bootstrap_actions
+      return {} unless @hadoop_actions && !@hadoop_actions.empty?
+      { :bootstrap_actions => @hadoop_actions }
+    end
+
   end
 
 end

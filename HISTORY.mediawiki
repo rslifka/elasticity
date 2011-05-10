@@ -1,3 +1,7 @@
+=== 1.2.2 ===
+
+* HiveJob and PigJob now support configuring Hadoop options via .add_hadoop_bootstrap_action().
+
 === 1.2.1 ===
 
 * Shipping up E_PARALLELS Pig variable with each invocation; reasonable default value for PARALLEL based on the number and type of instances configured.
