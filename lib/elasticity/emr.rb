@@ -7,8 +7,10 @@ module Elasticity
     end
 
     # Lists all jobflows in all states.
-    def describe_jobflows
-      aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(:operation => "DescribeJobFlows"))
+    def describe_jobflows(params = {})
+      aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(
+        params.merge({:operation => "DescribeJobFlows"}))
+      )
       xml_doc = Nokogiri::XML(aws_result)
       xml_doc.remove_namespaces!
       yield aws_result if block_given?

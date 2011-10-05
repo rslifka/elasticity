@@ -293,6 +293,14 @@ describe Elasticity::EMR do
         jobflows.map(&:name).should == ["Pig Job", "Hive Job"]
       end
 
+      it "should accept additional parameters" do
+        aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
+        aws_request.should_receive(:aws_emr_request).with({"Operation" => "DescribeJobFlows","CreatedBefore" => "2011-10-04"}).and_return(@describe_jobflows_xml)
+        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+        emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
+        emr.describe_jobflows(:CreatedBefore => "2011-10-04")
+      end
+
       context "when a block is provided" do
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
