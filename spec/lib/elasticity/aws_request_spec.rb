@@ -24,4 +24,39 @@ describe Elasticity::AwsRequest do
     end
   end
 
+  describe "#aws_emr_request" do
+    before do
+      Time.should_receive(:now).and_return(Time.at(1302461096))
+    end
+    it "should accept region as option" do
+      request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key",
+                                           :region => "eu-west-1")
+      RestClient.should_receive(:get).with(/elasticmapreduce\.eu\-west\-1\.amazonaws\.com/)
+      request.aws_emr_request({})
+    end
+  end
+
+  describe "#aws_emr_request" do
+    before do
+      Time.should_receive(:now).and_return(Time.at(1302461096))
+    end
+    it "should accept secure" do
+      request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key",
+                                           :secure => false)
+      RestClient.should_receive(:get).with(/^http:/)
+      request.aws_emr_request({})
+    end
+  end
+
+  describe "#aws_emr_request" do
+    before do
+      Time.should_receive(:now).and_return(Time.at(1302461096))
+    end
+    it "should default to secure connection" do
+      request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key")
+      RestClient.should_receive(:get).with(/^https:/)
+      request.aws_emr_request({})
+    end
+  end
+
 end

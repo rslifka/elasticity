@@ -2,8 +2,8 @@ module Elasticity
 
   class EMR
 
-    def initialize(aws_access_key_id, aws_secret_access_key)
-      @aws_request = Elasticity::AwsRequest.new(aws_access_key_id, aws_secret_access_key)
+    def initialize(aws_access_key_id, aws_secret_access_key, options = {})
+      @aws_request = Elasticity::AwsRequest.new(aws_access_key_id, aws_secret_access_key, options)
     end
 
     # Lists all jobflows in all states.
@@ -31,7 +31,7 @@ module Elasticity
     #
     # add_instance_groups takes an array of {}.  Returns an array of the instance IDs
     # that were created by the specified configs.
-    # 
+    #
     #   ["ig-2GOVEN6HVJZID", "ig-1DU9M2UQMM051", "ig-3DZRW4Y2X4S", ...]
     def add_instance_groups(jobflow_id, instance_group_configs)
       params = {
