@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name        = "wakoopa-elasticity"
   s.version     = Elasticity::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Robert Slifka", "Wouter Broekhof"]
+  s.authors     = ["Robert Slifka"]
   s.homepage    = "http://www.github.com/rslifka/elasticity"
   s.summary     = %q{Programmatic access to Amazon's Elastic Map Reduce service.}
   s.description = %q{Programmatic access to Amazon's Elastic Map Reduce service.}
