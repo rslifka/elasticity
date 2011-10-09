@@ -11,6 +11,15 @@ describe Elasticity::JobFlow do
               <JobFlowId>j-p</JobFlowId>
               <Name>Pig Job</Name>
               <ExecutionStatusDetail>
+                <CreationDateTime>
+                   2011-10-04T21:49:16Z
+                </CreationDateTime>
+                <StartDateTime>
+                   2011-10-04T21:49:17Z
+                </StartDateTime>
+                <ReadyDateTime>
+                   2011-10-04T21:49:18Z
+                </ReadyDateTime>
                 <State>TERMINATED</State>
               </ExecutionStatusDetail>
               <Steps>
@@ -31,13 +40,60 @@ describe Elasticity::JobFlow do
                   </ExecutionStatusDetail>
                 </member>
               </Steps>
+              <Instances>
+                 <Placement>
+                    <AvailabilityZone>
+                      eu-west-1a
+                    </AvailabilityZone>
+                 </Placement>
+                 <SlaveInstanceType>
+                    m1.small
+                 </SlaveInstanceType>
+                 <MasterInstanceType>
+                    m1.small
+                 </MasterInstanceType>
+                 <Ec2KeyName>
+                    myec2keyname
+                 </Ec2KeyName>
+                 <InstanceCount>
+                    4
+                 </InstanceCount>
+              </Instances>
             </member>
             <member>
               <JobFlowId>j-h</JobFlowId>
               <Name>Hive Job</Name>
               <ExecutionStatusDetail>
+                <CreationDateTime>
+                   2011-10-04T22:49:16Z
+                </CreationDateTime>
+                <StartDateTime>
+                   2011-10-04T22:49:17Z
+                </StartDateTime>
+                <ReadyDateTime>
+                   2011-10-04T22:49:18Z
+                </ReadyDateTime>
                 <State>TERMINATED</State>
               </ExecutionStatusDetail>
+              <Instances>
+                 <Placement>
+                    <AvailabilityZone>
+                      eu-west-1b
+                    </AvailabilityZone>
+                 </Placement>
+                 <SlaveInstanceType>
+                    c1.medium
+                 </SlaveInstanceType>
+                 <MasterInstanceType>
+                    c1.medium
+                 </MasterInstanceType>
+                 <Ec2KeyName>
+                    myec2keyname
+                 </Ec2KeyName>
+                 <InstanceCount>
+                    2
+                 </InstanceCount>
+              </Instances>
             </member>
           </JobFlows>
         </DescribeJobFlowsResult>
@@ -56,6 +112,12 @@ describe Elasticity::JobFlow do
       jobflow.state.should == "TERMINATED"
       jobflow.steps.map(&:name).should == ["Setup Hive", "Run Hive Script"]
       jobflow.steps.map(&:state).should == ["FAILED", "PENDING"]
+      jobflow.created_at.should == "2011-10-04T21:49:16Z"
+      jobflow.started_at.should == "2011-10-04T21:49:17Z"
+      jobflow.ready_at.should == "2011-10-04T21:49:18Z"
+      jobflow.master_instance_type.should == "m1.small"
+      jobflow.slave_instance_type.should == "m1.small"
+      jobflow.instance_count.should == "4"
     end
   end
 
@@ -65,6 +127,12 @@ describe Elasticity::JobFlow do
       jobflow.map(&:name).should == ["Pig Job", "Hive Job"]
       jobflow.map(&:jobflow_id).should == ["j-p", "j-h"]
       jobflow.map(&:state).should == ["TERMINATED", "TERMINATED"]
+      jobflow.map(&:created_at).should == ["2011-10-04T21:49:16Z","2011-10-04T22:49:16Z"]
+      jobflow.map(&:started_at).should == ["2011-10-04T21:49:17Z","2011-10-04T22:49:17Z"]
+      jobflow.map(&:ready_at).should == ["2011-10-04T21:49:18Z","2011-10-04T22:49:18Z"]
+      jobflow.map(&:master_instance_type).should == ["m1.small","c1.medium"]
+      jobflow.map(&:slave_instance_type).should == ["m1.small", "c1.medium"]
+      jobflow.map(&:instance_count).should == ["4","2"]
     end
   end
 

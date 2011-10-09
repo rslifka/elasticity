@@ -3,15 +3,13 @@ $:.push File.expand_path("../lib", __FILE__)
 require "elasticity/version"
 
 Gem::Specification.new do |s|
-  s.name        = "elasticity"
+  s.name        = "wakoopa-elasticity"
   s.version     = Elasticity::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Robert Slifka"]
   s.homepage    = "http://www.github.com/rslifka/elasticity"
   s.summary     = %q{Programmatic access to Amazon's Elastic Map Reduce service.}
   s.description = %q{Programmatic access to Amazon's Elastic Map Reduce service.}
-
-  s.rubyforge_project = "elasticity"
 
   s.add_dependency("rest-client")
   s.add_dependency("nokogiri")

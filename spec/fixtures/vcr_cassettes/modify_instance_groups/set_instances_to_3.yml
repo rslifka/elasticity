@@ -2,7 +2,7 @@
 - !ruby/struct:VCR::HTTPInteraction 
   request: !ruby/struct:VCR::Request 
     method: :get
-    uri: !ruby/regexp /^http:\/\/elasticmapreduce.amazonaws.com:80\/\?AWSAccessKeyId=AKIAI7HEMMNKGT6VFFSA&InstanceGroups.member.1.InstanceCount=2&InstanceGroups.member.1.InstanceGroupId=ig-2T1HNUO61BG3O&Operation=ModifyInstanceGroups/
+    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com:443\/\?AWSAccessKeyId=AKIAI7HEMMNKGT6VFFSA&InstanceGroups.member.1.InstanceCount=2&InstanceGroups.member.1.InstanceGroupId=ig-2T1HNUO61BG3O&Operation=ModifyInstanceGroups/
     body: 
     headers: 
       accept: 
