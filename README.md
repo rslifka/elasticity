@@ -332,3 +332,12 @@ If you're chomping at the bit to initiate some EMR functionality that isn't wrap
   See the License for the specific language governing permissions and
   limitations under the License.
 </pre>
+
+### Development Notes for Slif
+
+<pre>
+  rake build    # Build lorem-0.0.2.gem into the pkg directory
+  rake install  # Build and install lorem-0.0.2.gem into system gems
+  rake release  # Create tag v0.0.2 and build
+                # and push lorem-0.0.2.gem to Rubygems
+</pre>

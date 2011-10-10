@@ -1,4 +1,4 @@
-### 1.2.3 (Contributions from Wouter Broekhof)
+### 1.3 (Contributions from Wouter Broekhof)
 
 + The default mode of communication is now via HTTPS.
 + Elasticity::AwsRequest new option :secure => true|false (whether to use HTTPS).
