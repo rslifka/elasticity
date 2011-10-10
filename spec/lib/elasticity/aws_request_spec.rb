@@ -15,12 +15,58 @@ describe Elasticity::AwsRequest do
 
   describe "#sign_params" do
     before do
-      Time.should_receive(:now).and_return(Time.at(1302461096))
+      Time.stub(:now).and_return(Time.at(1302461096))
     end
     it "should sign according to Amazon's rules" do
       request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key")
       signed_params = request.send(:sign_params, {}, "GET", "example.com", "/")
       signed_params.should == "AWSAccessKeyId=aws_access_key_id&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-04-10T18%3A44%3A56.000Z&Signature=jVLfPS056dNmjpCcikBnPmRHJNZ8YGaI7zdmHWUk658%3D"
+    end
+  end
+
+  describe "#aws_emr_request" do
+    before do
+      Time.stub(:now).and_return(Time.at(1302461096))
+    end
+
+    describe "options" do
+
+      describe "region" do
+        context "when :region is specified" do
+          it "should request against that region" do
+            request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key",
+              :region => "eu-west-1")
+            RestClient.should_receive(:get).with(/elasticmapreduce\.eu\-west\-1\.amazonaws\.com/)
+            request.aws_emr_request({})
+          end
+        end
+        context "when :region is not specified" do
+          it "should use the default request url" do
+            request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key")
+            RestClient.should_receive(:get).with(/elasticmapreduce\.amazonaws\.com/)
+            request.aws_emr_request({})
+          end
+        end
+      end
+
+      describe ":secure" do
+        context "when :secure is specified" do
+          it "should use the value to determine the request type" do
+            request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key",
+              :secure => false)
+            RestClient.should_receive(:get).with(/^http:/)
+            request.aws_emr_request({})
+          end
+        end
+        context "when :secure is not specified" do
+          it "should default to secure connection" do
+            request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key")
+            RestClient.should_receive(:get).with(/^https:/)
+            request.aws_emr_request({})
+          end
+        end
+      end
+
     end
   end
 

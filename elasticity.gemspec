@@ -11,8 +11,6 @@ Gem::Specification.new do |s|
   s.summary     = %q{Programmatic access to Amazon's Elastic Map Reduce service.}
   s.description = %q{Programmatic access to Amazon's Elastic Map Reduce service.}
 
-  s.rubyforge_project = "elasticity"
-
   s.add_dependency("rest-client")
   s.add_dependency("nokogiri")
 

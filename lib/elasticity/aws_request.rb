@@ -2,14 +2,21 @@ module Elasticity
 
   class AwsRequest
 
-    def initialize(aws_access_key_id, aws_secret_access_key)
+    # Supported values for options:
+    #  :region - AWS region (e.g. us-west-1)
+    #  :secure - true or false, default true.
+    def initialize(aws_access_key_id, aws_secret_access_key, options = {})
       @access_key = aws_access_key_id
       @secret_key = aws_secret_access_key
+      @options = {:secure => true}.merge(options)
     end
 
     def aws_emr_request(params)
-      signed_params = sign_params(params, "GET", "elasticmapreduce.amazonaws.com", "/")
-      signed_request = "http://elasticmapreduce.amazonaws.com?#{signed_params}"
+      host = @options[:region] ? "elasticmapreduce.#{@options[:region]}.amazonaws.com" : "elasticmapreduce.amazonaws.com"
+      protocol = @options[:secure] ? "https" : "http"
+
+      signed_params = sign_params(params, "GET", host, "/")
+      signed_request = "#{protocol}://#{host}?#{signed_params}"
       RestClient.get signed_request
     end
 

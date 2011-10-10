@@ -2,7 +2,7 @@
 - !ruby/struct:VCR::HTTPInteraction 
   request: !ruby/struct:VCR::Request 
     method: :get
-    uri: !ruby/regexp /^http:\/\/elasticmapreduce.amazonaws.com\/\?.*Operation=RunJobFlow/
+    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?.*Operation=RunJobFlow/
     body:
     headers: 
       accept: 
@@ -36,7 +36,7 @@
 - !ruby/struct:VCR::HTTPInteraction 
   request: !ruby/struct:VCR::Request 
     method: :get
-    uri: !ruby/regexp /^http:\/\/elasticmapreduce.amazonaws.com:80\/\?.*Operation=AddJobFlowSteps/
+    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?.*Operation=AddJobFlowSteps/
     body:
     headers: 
       accept: 
@@ -67,7 +67,7 @@
 - !ruby/struct:VCR::HTTPInteraction 
   request: !ruby/struct:VCR::Request 
     method: :get
-    uri: !ruby/regexp /^http:\/\/elasticmapreduce.amazonaws.com:80\/\?.*Operation=DescribeJobFlows/
+    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?.*Operation=DescribeJobFlows/
     body:
     headers: 
       accept: 
