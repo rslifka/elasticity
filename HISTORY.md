@@ -1,30 +1,37 @@
-=== 1.2.2 ===
+### 1.2.3 (Contributions from Wouter Broekhof)
 
-* HiveJob and PigJob now support configuring Hadoop options via .add_hadoop_bootstrap_action().
++ The default mode of communication is now via HTTPS.
++ Elasticity::AwsRequest new option :secure => true|false (whether to use HTTPS).
++ Elasticity::AwsRequest new option :region => eu-west-1|... (which region to run the EMR job).
++ Elasticity::EMR#describe_jobflows now accepts additional params for filtering the jobflow query (see docs).
 
-=== 1.2.1 ===
+### 1.2.2
 
-* Shipping up E_PARALLELS Pig variable with each invocation; reasonable default value for PARALLEL based on the number and type of instances configured.
++ HiveJob and PigJob now support configuring Hadoop options via .add_hadoop_bootstrap_action().
 
-=== 1.2 ===
+### 1.2.1
 
-* Added PigJob!
++ Shipping up E_PARALLELS Pig variable with each invocation; reasonable default value for PARALLEL based on the number and type of instances configured.
 
-=== 1.1.1 ===
+### 1.2
 
-* HiveJob critical bug fixed, now it works :)
-* Added log_uri and action_on_failure as options to HiveJob.
-* Added integration tests to HiveJob.
++ Added PigJob!
 
-=== 1.1 ===
+### 1.1.1
 
-* Added HiveJob, a simplified way to launch basic Hive job flows.
-* Added HISTORY.
++ HiveJob critical bug fixed, now it works :)
++ Added log_uri and action_on_failure as options to HiveJob.
++ Added integration tests to HiveJob.
 
-=== 1.0.1 ===
+### 1.1
 
-* Added LICENSE.
++ Added HiveJob, a simplified way to launch basic Hive job flows.
++ Added HISTORY.
 
-=== 1.0 ===
+### 1.0.1
 
-* Released!
++ Added LICENSE.
+
+### 1.0
+
++ Released!
