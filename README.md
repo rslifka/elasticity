@@ -74,7 +74,7 @@ Like HiveJob, PigJob allows you to quickly launch Pig jobs :)
 
 ### PARALLEL
 
-Given the importance of specifying a reasonable value for [http://pig.apache.org/docs/r0.8.1/cookbook.html#Use+the+Parallel+Features PARALLEL] (the number of parallel reducers), Elasticity calculates and passes through a reasonable default up with every invocation in the form of a script variable called E_PARALLELS.  This default value is based off of the formula in the Pig Cookbook and the number of reducers AWS configures per instance.
+Given the importance of specifying a reasonable value for [the number of parallel reducers](http://pig.apache.org/docs/r0.8.1/cookbook.html#Use+the+Parallel+Features PARALLEL), Elasticity calculates and passes through a reasonable default up with every invocation in the form of a script variable called E_PARALLELS.  This default value is based off of the formula in the Pig Cookbook and the number of reducers AWS configures per instance.
 
 For example, if you had 8 instances in total and your slaves were m1.xlarge, the value is 26 (as shown below).
 
@@ -102,13 +102,13 @@ Elasticity wraps all of the EMR API calls.  Please see the Amazon guide for deta
 
 You may opt for "direct" access to the API where you specify the params and Elasticity takes care of the signing for you, responding with the XML from Amazon.  Direct access is described below the API catalog.
 
-In addition to the [http://aws.amazon.com/elasticmapreduce/ AWS EMR subsite], there are three primary resources of reference information for EMR:
+In addition to the [AWS EMR subsite](http://aws.amazon.com/elasticmapreduce/), there are three primary resources of reference information for EMR:
 
-* [http://docs.amazonwebservices.com/ElasticMapReduce/latest/GettingStartedGuide/ Amazon EMR Getting Started Guide]
-* [http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/ Amazon EMR Developer Guide]
-* [http://docs.amazonwebservices.com/ElasticMapReduce/latest/API/ Amazon EMR API Reference]
+* [Amazon EMR Getting Started Guide](http://docs.amazonwebservices.com/ElasticMapReduce/latest/GettingStartedGuide/)
+* [Amazon EMR Developer Guide](http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/)
+* [Amazon EMR API Reference](http://docs.amazonwebservices.com/ElasticMapReduce/latest/API/)
 
-Unfortunately, the documentation is sometimes incorrect and sometimes missing.  E.g. the allowable values for AddInstanceGroups are present in the [http://awsdocs.s3.amazonaws.com/ElasticMapReduce/20090331/emr-api-20090331.pdf PDF] version of the API reference but not in the [http://docs.amazonwebservices.com/ElasticMapReduce/latest/API/ HTML] version.  Elasticity implements the API as specified in the PDF reference as that is the most complete description I could find.
+Unfortunately, the documentation is sometimes incorrect and sometimes missing.  E.g. the allowable values for AddInstanceGroups are present in the [PDF](http://awsdocs.s3.amazonaws.com/ElasticMapReduce/20090331/emr-api-20090331.pdf) version of the API reference but not in the [HTML](http://docs.amazonwebservices.com/ElasticMapReduce/latest/API/) version.  Elasticity implements the API as specified in the PDF reference as that is the most complete description I could find.
 
 ## AddInstanceGroups
 
@@ -256,7 +256,7 @@ RunJobFlow creates and starts a new job flow.  Specifying the arguments to RunJo
   > "j-129V5AQFMKO1C"
 </pre>
 
-Currently Elasticity doesn't do much to ease this pain although this is what I would like to focus on in coming releases.  Feel free to ship ideas my way.  In the meantime, have a look at the EMR API [http://awsdocs.s3.amazonaws.com/ElasticMapReduce/20090331/emr-api-20090331.pdf PDF] under the RunJobFlow action and riff off of the example here.
+Currently Elasticity doesn't do much to ease this pain although this is what I would like to focus on in coming releases.  Feel free to ship ideas my way.  In the meantime, have a look at the EMR API [PDF](http://awsdocs.s3.amazonaws.com/ElasticMapReduce/20090331/emr-api-20090331.pdf) under the RunJobFlow action and riff off of the example here.
 
 ## SetTerminationProtection
 
@@ -299,7 +299,7 @@ If you're fine with Elasticity's invocation wrapping and would prefer to get at 
   emr = Elasticity::EMR.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
   emr.describe_jobflows{|xml| puts xml[0..77]}
   
-  > <DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/200
+  > &lt;DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/200...
 </pre>
 
 # Direct Request/Response Access
@@ -312,7 +312,7 @@ If you're chomping at the bit to initiate some EMR functionality that isn't wrap
   result_xml = emr.direct(params)
   result_xml[0..78]
   
-  > <DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009
+  > &lt;DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009...
 </pre>
 
 # License
