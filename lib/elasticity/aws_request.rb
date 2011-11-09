@@ -12,7 +12,7 @@ module Elasticity
     end
 
     def aws_emr_request(params)
-      host = @options[:region] ? "elasticmapreduce.#{@options[:region]}.amazonaws.com" : "elasticmapreduce.amazonaws.com"
+      host = @options[:region] ? "#{@options[:region]}.elasticmapreduce.amazonaws.com" : "elasticmapreduce.amazonaws.com"
       protocol = @options[:secure] ? "https" : "http"
 
       signed_params = sign_params(params, "GET", host, "/")
