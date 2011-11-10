@@ -4,7 +4,7 @@ module Elasticity
   # having to understand the entirety of the EMR API.
   class HiveJob < Elasticity::SimpleJob
 
-    def initialize(aws_access_key_id, aws_secret_access_key)
+    def initialize(aws_access_key_id, aws_secret_access_key, options = {})
       super
       @name = "Elasticity Hive Job"
     end

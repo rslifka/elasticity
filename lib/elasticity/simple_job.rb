@@ -13,7 +13,7 @@ module Elasticity
     attr_accessor :master_instance_type
     attr_accessor :slave_instance_type
 
-    def initialize(aws_access_key_id, aws_secret_access_key)
+    def initialize(aws_access_key_id, aws_secret_access_key, options = {})
       @action_on_failure = "TERMINATE_JOB_FLOW"
       @aws_access_key_id = aws_access_key_id
       @aws_secret_access_key = aws_secret_access_key
