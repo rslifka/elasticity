@@ -12,6 +12,7 @@ module Elasticity
     attr_accessor :instance_count
     attr_accessor :master_instance_type
     attr_accessor :slave_instance_type
+    attr_accessor :last_state_change_reason
 
     def initialize
       @steps = []
@@ -24,6 +25,7 @@ module Elasticity
       jobflow.name = xml_element.xpath("./Name").text.strip
       jobflow.jobflow_id = xml_element.xpath("./JobFlowId").text.strip
       jobflow.state = xml_element.xpath("./ExecutionStatusDetail/State").text.strip
+      jobflow.last_state_change_reason = xml_element.xpath("./ExecutionStatusDetail/LastStateChangeReason").text.strip
       jobflow.steps = JobFlowStep.from_members_nodeset(xml_element.xpath("./Steps/member"))
       jobflow.created_at = Time.parse(xml_element.xpath("./ExecutionStatusDetail/CreationDateTime").text.strip)
       started_at = xml_element.xpath("./ExecutionStatusDetail/StartDateTime").text.strip

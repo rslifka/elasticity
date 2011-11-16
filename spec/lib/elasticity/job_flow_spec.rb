@@ -14,6 +14,9 @@ describe Elasticity::JobFlow do
                 <CreationDateTime>
                    2011-10-04T21:49:16Z
                 </CreationDateTime>
+                <LastStateChangeReason>
+                   Steps completed with errors
+                </LastStateChangeReason>
                 <StartDateTime>
                    2011-10-04T21:49:17Z
                 </StartDateTime>
@@ -73,7 +76,12 @@ describe Elasticity::JobFlow do
                 <ReadyDateTime>
                    
                 </ReadyDateTime>
-                <State>TERMINATED</State>
+                <State>
+                  TERMINATED
+                </State>
+                <LastStateChangeReason>
+                  Steps completed
+                </LastStateChangeReason>
               </ExecutionStatusDetail>
               <Instances>
                  <Placement>
@@ -118,6 +126,7 @@ describe Elasticity::JobFlow do
       jobflow.master_instance_type.should == "m1.small"
       jobflow.slave_instance_type.should == "m1.small"
       jobflow.instance_count.should == "4"
+      jobflow.last_state_change_reason.should == "Steps completed with errors"
     end
   end
 
@@ -133,6 +142,7 @@ describe Elasticity::JobFlow do
       jobflow.map(&:master_instance_type).should == ["m1.small","c1.medium"]
       jobflow.map(&:slave_instance_type).should == ["m1.small", "c1.medium"]
       jobflow.map(&:instance_count).should == ["4","2"]
+      jobflow.map(&:last_state_change_reason).should == ["Steps completed with errors", "Steps completed"]
     end
   end
 
