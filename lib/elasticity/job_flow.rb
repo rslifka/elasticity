@@ -5,6 +5,7 @@ module Elasticity
     attr_accessor :name
     attr_accessor :jobflow_id
     attr_accessor :state
+    attr_accessor :last_state_change_reason
     attr_accessor :steps
     attr_accessor :created_at
     attr_accessor :started_at
