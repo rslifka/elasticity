@@ -1,3 +1,8 @@
+### 1.3.1
+
++ Explicitly requiring 'time'.
++ Elasticity::JobFlow now exposes last_state_change_reason.
+
 ### 1.3 (Contributions from Wouter Broekhof)
 
 + The default mode of communication is now via HTTPS.
