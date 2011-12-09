@@ -16,7 +16,7 @@ All you have to do is <code>require 'elasticity'</code> and you're all set!
 
 # Simplified API Reference
 
-Elasticity currently provides simplified access to launching Hive and Pig job flows, specifying several default values that you may optionally override:
+Elasticity currently provides simplified access to launching Hive, Pig and Custom Jar job flows, specifying several default values that you may optionally override:
 
 <pre>
   @action_on_failure = "TERMINATE_JOB_FLOW"
@@ -28,7 +28,7 @@ Elasticity currently provides simplified access to launching Hive and Pig job fl
   @slave_instance_type = "m1.small"
 </pre>
 
-These are all accessible from HiveJob and PigJob.  See the PigJob description for an example.
+These are all accessible from the simplified jobs.  See the PigJob description for an example.
 
 ### Bootstrap Actions
 
@@ -92,6 +92,23 @@ Use this as you would any other Pig variable.
   A = LOAD 'myfile' AS (t, u, v);
   B = GROUP A BY t PARALLEL $E_PARALLELS;
   ...
+</pre>
+
+## Custom Jar
+
+Custom jar jobs are also available.  To kick off a custom job, specify the path to the jar and any arguments you'd like passed to the jar.
+
+<pre>
+  custom_jar = Elasticity::PigJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+  custom_jar.log_uri = "s3n://slif-test/output/logs"
+  custom_jar.action_on_failure = "TERMINATE_JOB_FLOW"
+  jobflow_id = custom_jar.run('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar', [
+      "s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br",
+      "s3n://elasticmapreduce/samples/cloudburst/input/100k.br",
+      "s3n://slif_hadoop_test/cloudburst/output/2011-12-09",
+  ])
+  
+  > "j-1IU6NM8OUPS9I"
 </pre>
 
 # Amazon API Reference
