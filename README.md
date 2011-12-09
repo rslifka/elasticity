@@ -1,7 +1,5 @@
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently wrap the API operations in a manner that makes working with EMR job flows from Ruby more productive and more enjoyable, without having to understand the nuts and bolts of the EMR REST API.  At the very least, using Elasticity allows you to easily experiment with the EMR API :)
 
-**BACKLOG**: Have a look at the [backlog](https://www.pivotaltracker.com/projects/272429) to see where this is headed.
-
 **CREDITS**: AWS signing was used from [RightScale's](http://www.rightscale.com/) amazing [right_aws gem](https://github.com/rightscale/right_aws) which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.  Used camelize from ActiveSupport as well, thank you \Rails :)
 
 **CONTRIBUTIONS**:
