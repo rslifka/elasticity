@@ -1,6 +1,10 @@
+### 1.4
+
++ Added Elasticity::CustomJarJob for launching "Custom Jar" jobs.
+
 ### 1.3.1
 
-+ Explicitly requiring 'time'.
++ Explicitly requiring 'time' (only a problem if you aren't running from within a Rails environment).
 + Elasticity::JobFlow now exposes last_state_change_reason.
 
 ### 1.3 (Contributions from Wouter Broekhof)
