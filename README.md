@@ -177,15 +177,28 @@ AddJobFlowSteps adds the specified steps to the specified job flow.
   })
 </pre>
 
+## describe_jobflow (Elasticity Convenience Method)
+
+This is a convenience methods that wraps DescribeJobFlow to return the status of a single job.
+
+<pre>
+  emr = Elasticity::EMR.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+  jobflow = emr.describe_jobflow("j-129V5AQFMKO1C")
+  p jobflow.jobflow_id
+  > "j-129V5AQFMKO1C"
+  p jobflow.name
+  > "Elasticity Test Job"
+</pre>
+
 ## DescribeJobFlows
 
-DescribeJobFlows returns detailed information as to the state of all jobs.  Currently this is wrapped in an <code>Elasticity::JobFlow</code> that contains the <code>name</code>, <code>jobflow_id</code> and <code>state</code>.  
+DescribeJobFlows returns detailed information as to the state of all jobs.  Currently this is wrapped in an <code>Elasticity::JobFlow</code> that contains the <code>name</code>, <code>jobflow_id</code> and <code>state</code>.
 
 <pre>
   emr = Elasticity::EMR.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
   jobflows = emr.describe_jobflows
   p jobflows.map(&:name)
-  
+
   > ["Hive Test", "Pig Test", "Interactive Hadoop", "Interactive Hive"]
 </pre>
 
@@ -333,7 +346,7 @@ If you're chomping at the bit to initiate some EMR functionality that isn't wrap
 # License
 
 <pre>
-  Copyright 2011 Robert Slifka
+  Copyright 2011-2012 Robert Slifka
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.

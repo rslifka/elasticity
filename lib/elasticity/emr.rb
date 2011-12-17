@@ -6,6 +6,26 @@ module Elasticity
       @aws_request = Elasticity::AwsRequest.new(aws_access_key_id, aws_secret_access_key, options)
     end
 
+    # Describe a specific jobflow.
+    #
+    #   describe_jobflow("j-3UN6WX5RRO2AG")
+    #
+    # Raises ArgumentError if the specified jobflow does not exist.
+    def describe_jobflow(jobflow_id)
+      begin
+        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws({
+          :operation => "DescribeJobFlows",
+          :job_flow_ids => [jobflow_id]
+        }))
+        xml_doc = Nokogiri::XML(aws_result)
+        xml_doc.remove_namespaces!
+        yield aws_result if block_given?
+        JobFlow.from_members_nodeset(xml_doc.xpath("/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member")).first
+      rescue RestClient::BadRequest => e
+        raise ArgumentError, EMR.parse_error_response(e.http_body)
+      end
+    end
+
     # Lists all jobflows in all states.
     #
     # To override this behaviour, pass additional filters as specified in the AWS

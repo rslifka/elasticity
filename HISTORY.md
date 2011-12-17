@@ -1,3 +1,7 @@
+### 1.4.1
+
++ Added Elasticity::EMR#describe_jobflow("jobflow_id") for describing a specific job.  If you happen to run hundreds of EMR jobs, this makes retrieving jobflow status much faster than using Elasticity::EMR#describe_jobflowS which pulls down and parses XML status for hundreds of jobs.
+
 ### 1.4
 
 + Added Elasticity::CustomJarJob for launching "Custom Jar" jobs.

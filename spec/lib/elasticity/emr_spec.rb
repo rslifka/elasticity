@@ -318,6 +318,89 @@ describe Elasticity::EMR do
 
   end
 
+  describe "#describe_jobflow" do
+    before do
+      @describe_jobflows_xml = <<-JOBFLOWS
+        <DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+          <DescribeJobFlowsResult>
+            <JobFlows>
+              <member>
+                <ExecutionStatusDetail>
+                  <State>TERMINATED</State>
+                </ExecutionStatusDetail>
+                <JobFlowId>j-3UN6WX5RRO2AG</JobFlowId>
+                <Name>The One Job Flow</Name>
+              </member>
+            </JobFlows>
+          </DescribeJobFlowsResult>
+        </DescribeJobFlowsResponse>
+      JOBFLOWS
+    end
+
+    it "should ask AWS about the specified job flow" do
+      aws_request = Elasticity::AwsRequest.new("","")
+      aws_request.should_receive(:aws_emr_request).with({
+        "Operation" => "DescribeJobFlows",
+        "JobFlowIds.member.1" => "j-3UN6WX5RRO2AG"
+      })
+      Elasticity::AwsRequest.stub(:new).and_return(aws_request)
+      emr = Elasticity::EMR.new("", "")
+      emr.describe_jobflow("j-3UN6WX5RRO2AG")
+    end
+
+    context "when the job flow ID exists" do
+      it "should return a JobFlow" do
+        aws_request = Elasticity::AwsRequest.new("","")
+        aws_request.stub(:aws_emr_request).with({
+          "Operation" => "DescribeJobFlows",
+          "JobFlowIds.member.1" => "j-3UN6WX5RRO2AG"
+        }).and_return(@describe_jobflows_xml)
+        Elasticity::AwsRequest.stub(:new).and_return(aws_request)
+        emr = Elasticity::EMR.new("", "")
+        jobflow = emr.describe_jobflow("j-3UN6WX5RRO2AG")
+        jobflow.jobflow_id.should == "j-3UN6WX5RRO2AG"
+      end
+    end
+
+    context "when there is an error" do
+      before do
+        @error_xml = <<-ERROR
+          <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+            <Error>
+              <Message>Specified job flow ID not valid</Message>
+            </Error>
+          </ErrorResponse>
+        ERROR
+      end
+
+      it "should raise an ArgumentError with the error message" do
+        aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
+        @exception = RestClient::BadRequest.new
+        @exception.should_receive(:http_body).and_return(@error_xml)
+        aws_request.should_receive(:aws_emr_request).and_raise(@exception)
+        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+        emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
+        lambda {
+          emr.describe_jobflow("bad_jobflow_id")
+        }.should raise_error(ArgumentError, "Specified job flow ID not valid")
+      end
+    end
+
+    context "when a block is provided" do
+      it "should yield to the block" do
+        aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
+        aws_request.should_receive(:aws_emr_request).and_return("describe!")
+        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
+        emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
+        xml_result = nil
+        emr.describe_jobflow("_") do |xml|
+          xml_result = xml
+        end
+        xml_result.should == "describe!"
+      end
+    end
+  end
+
   describe "#modify_instance_groups" do
 
     describe "integration happy path" do
