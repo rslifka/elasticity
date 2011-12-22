@@ -99,7 +99,7 @@ Use this as you would any other Pig variable.
 Custom jar jobs are also available.  To kick off a custom job, specify the path to the jar and any arguments you'd like passed to the jar.
 
 <pre>
-  custom_jar = Elasticity::PigJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+  custom_jar = Elasticity::CustomJarJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
   custom_jar.log_uri = "s3n://slif-test/output/logs"
   custom_jar.action_on_failure = "TERMINATE_JOB_FLOW"
   jobflow_id = custom_jar.run('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar', [
