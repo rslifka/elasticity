@@ -363,6 +363,8 @@ If you're chomping at the bit to initiate some EMR functionality that isn't wrap
 
 ### Development Notes for Slif
 
+[Versioning Guide](http://docs.rubygems.org/read/chapter/7#page27), c/o [@brokenladder](https://twitter.com/#!/brokenladder)
+
 <pre>
   rake build    # Build lorem-0.0.2.gem into the pkg directory
   rake install  # Build and install lorem-0.0.2.gem into system gems
