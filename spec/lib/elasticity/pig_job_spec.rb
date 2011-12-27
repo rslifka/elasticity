@@ -26,6 +26,22 @@ describe Elasticity::PigJob do
         pig.instance_count = 1
       }.should raise_error(ArgumentError, "Instance count cannot be set to less than 2 (requested 1)")
     end
+
+    it "should recalculate @parallels" do
+      pig = Elasticity::PigJob.new("access", "secret")
+      lambda {
+        pig.instance_count = 10
+      }.should change(pig, :parallels)
+    end
+  end
+
+  describe "#slave_instance_type=" do
+    it "should recalculate @parallels" do
+      pig = Elasticity::PigJob.new("access", "secret")
+      lambda {
+        pig.slave_instance_type = "c1.xlarge"
+      }.should change(pig, :parallels)
+    end
   end
 
   describe "calculated value of parallels" do
@@ -206,6 +222,5 @@ describe Elasticity::PigJob do
       end
     end
   end
-
 
 end
