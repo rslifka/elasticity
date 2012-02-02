@@ -2,7 +2,7 @@
 - !ruby/struct:VCR::HTTPInteraction 
   request: !ruby/struct:VCR::Request 
     method: :get
-    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?AWSAccessKeyId=1V37GRJQT0BF1NS7NT82&Instances.Ec2KeyName=sharethrough_dev&Instances.HadoopVersion=0.20&Instances.InstanceCount=2&Instances.MasterInstanceType=m1.small&Instances.SlaveInstanceType=m1.small&Name=Elasticity%20Custom%20Jar%20Job&Operation=RunJobFlow&.*Steps.member.1.ActionOnFailure=TERMINATE_JOB_FLOW&Steps.member.1.HadoopJarStep.Args.member.1=s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br&Steps.member.1.HadoopJarStep.Args.member.2=s3n://elasticmapreduce/samples/cloudburst/input/100k.br&Steps.member.1.HadoopJarStep.Args.member.3=s3n://slif_hadoop_test/cloudburst/output/2011-12-09&Steps.member.1.HadoopJarStep.Jar=s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar&Steps.member.1.Name=Execute%20Custom%20Jar/
+    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?AWSAccessKeyId=\S+&Instances.Ec2KeyName=sharethrough_dev&Instances.HadoopVersion=0.20&Instances.InstanceCount=2&Instances.MasterInstanceType=m1.small&Instances.SlaveInstanceType=m1.small&Name=Elasticity%20Custom%20Jar%20Job&Operation=RunJobFlow&.*Steps.member.1.ActionOnFailure=TERMINATE_JOB_FLOW&Steps.member.1.HadoopJarStep.Args.member.1=s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br&Steps.member.1.HadoopJarStep.Args.member.2=s3n://elasticmapreduce/samples/cloudburst/input/100k.br&Steps.member.1.HadoopJarStep.Args.member.3=s3n://slif_hadoop_test/cloudburst/output/2011-12-09&Steps.member.1.HadoopJarStep.Jar=s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar&Steps.member.1.Name=Execute%20Custom%20Jar/
     body:
     headers: 
       accept: 
