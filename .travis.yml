@@ -6,6 +6,3 @@ rvm:
   - ruby-head
   - jruby
   - rbx
-env:
-  - AWS_ACCESS_KEY_ID=abra
-  - AWS_SECRET_KEY=cadabra
