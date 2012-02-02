@@ -1,8 +1,3 @@
-if ENV['TRAVIS']
-  ENV["AWS_ACCESS_KEY_ID"] ||= "abra"
-  ENV["AWS_SECRET_KEY"] ||= "cadabra"
-end
-
 if !ENV["AWS_ACCESS_KEY_ID"] || !ENV["AWS_SECRET_KEY"]
   puts "\n\n\e[32m**********************************************************************************************"
   puts "Please set \e[0;1mAWS_ACCESS_KEY_ID\e[32m and \e[0;1mAWS_SECRET_KEY\e[32m in your environment to run the tests."
