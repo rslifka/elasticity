@@ -57,8 +57,8 @@ describe Elasticity::HiveJob do
                     "--run-hive-script",
                     "--args",
                     "-f", "s3n://slif-hive/test.q",
-                    "-d", "XREFS=s3n://slif-test/xrefs",
-                    "-d", "OUTPUT=s3n://slif-test/output"
+                    "-d", "OUTPUT=s3n://slif-test/output",
+                    "-d", "XREFS=s3n://slif-test/xrefs"
                 ],
               },
               :name => "Run Hive Script"
