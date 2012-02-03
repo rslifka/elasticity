@@ -1,30 +1,30 @@
 --- 
-- !ruby/struct:VCR::HTTPInteraction 
-  request: !ruby/struct:VCR::Request 
-    method: :get
-    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?AWSAccessKeyId=\S+&Operation=DescribeJobFlows/
-    body:
+http_interactions: 
+- request: 
+    method: get
+    uri: https://elasticmapreduce.amazonaws.com/?AWSAccessKeyId=abra&Operation=DescribeJobFlows
+    body: ""
     headers: 
-      accept: 
+      Accept: 
       - "*/*; q=0.5, application/xml"
-      accept-encoding: 
+      Accept-Encoding: 
       - gzip, deflate
-  response: !ruby/struct:VCR::Response 
-    status: !ruby/struct:VCR::ResponseStatus 
+  response: 
+    status: 
       code: 200
       message: OK
     headers: 
-      x-amzn-requestid: 
+      X-Amzn-Requestid: 
       - 994deb7a-63ac-11e0-bc41-ababd98a870b
-      content-type: 
+      Content-Type: 
       - text/xml
-      date: 
+      Date: 
       - Sun, 10 Apr 2011 19:56:17 GMT
-      content-encoding: 
+      Content-Encoding: 
       - gzip
-      vary: 
+      Vary: 
       - Accept-Encoding
-      transfer-encoding: 
+      Transfer-Encoding: 
       - chunked
     body: !binary |
       H4sIAAAAAAAAAO1bW3PaOhB+769gztM5c0bYEld7XGZIgIQQIAXnMnnJyLYC
@@ -67,3 +67,5 @@
       UC1hla0w4YGiliHAClY0oY7rNV4JKCeWDwdctJrrRCjT+PQ/yLkKP9E2AAA=
 
     http_version: "1.1"
+  recorded_at: Fri, 03 Feb 2012 13:53:36 GMT
+recorded_with: VCR 2.0.0.rc1

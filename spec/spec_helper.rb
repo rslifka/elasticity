@@ -33,9 +33,15 @@ ENV["RAILS_ENV"] ||= 'test'
 
 $:.unshift File.dirname(__FILE__)
 
-VCR.config do |c|
+VCR.configure do |c|
+  c.default_cassette_options[:match_requests_on] = [
+      :method,
+      :host,
+      :path,
+      VCR.request_matchers.uri_without_params('Signature', 'SignatureMethod', 'SignatureVersion', 'Timestamp')
+  ]
   c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
-  c.stub_with :webmock
+  c.hook_into :webmock
 end
 
 RSpec.configure do |c|

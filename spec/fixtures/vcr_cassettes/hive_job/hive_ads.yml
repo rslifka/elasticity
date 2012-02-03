@@ -1,26 +1,26 @@
----
-- !ruby/struct:VCR::HTTPInteraction
-  request: !ruby/struct:VCR::Request
-    method: :get
-    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?AWSAccessKeyId=\S+&Instances\.Ec2KeyName=sharethrough_dev&Instances\.HadoopVersion=0\.20&Instances\.InstanceCount=2&Instances\.MasterInstanceType=m1\.small&Instances\.SlaveInstanceType=m1\.small&Name=Elasticity%20Hive%20Job&Operation=RunJobFlow&.*&Steps\.member\.1\.ActionOnFailure=TERMINATE_JOB_FLOW&Steps\.member\.1\.HadoopJarStep\.Args\.member\.1=s3:\/\/elasticmapreduce\/libs\/hive\/hive-script&Steps\.member\.1\.HadoopJarStep\.Args\.member\.2=--base-path&Steps\.member\.1\.HadoopJarStep\.Args\.member\.3=s3:\/\/elasticmapreduce\/libs\/hive\/&Steps\.member\.1\.HadoopJarStep\.Args\.member\.4=--install-hive&Steps\.member\.1\.HadoopJarStep\.Jar=s3:\/\/elasticmapreduce\/libs\/script-runner\/script-runner\.jar&Steps\.member\.1\.Name=Setup%20Hive&Steps\.member\.2\.ActionOnFailure=TERMINATE_JOB_FLOW&Steps\.member\.2\.HadoopJarStep\.Args\.member\.1=s3:\/\/elasticmapreduce\/libs\/hive\/hive-script&Steps\.member\.2\.HadoopJarStep\.Args\.member\.10=-d&Steps\.member\.2\.HadoopJarStep\.Args\.member\.11=LIBS=s3n:\/\/elasticmapreduce\/samples\/hive-ads\/libs&Steps\.member\.2\.HadoopJarStep\.Args\.member\.2=--run-hive-script&Steps\.member\.2\.HadoopJarStep\.Args\.member\.3=--args&Steps\.member\.2\.HadoopJarStep\.Args\.member\.4=-f&Steps\.member\.2\.HadoopJarStep\.Args\.member\.5=s3n:\/\/elasticmapreduce\/samples\/hive-ads\/libs\/model-build\.q&Steps\.member\.2\.HadoopJarStep\.Args\.member\.6=-d&Steps\.member\.2\.HadoopJarStep\.Args\.member\.7=INPUT=s3n:\/\/elasticmapreduce\/samples\/hive-ads\/tables&Steps\.member\.2\.HadoopJarStep\.Args\.member\.8=-d&Steps\.member\.2\.HadoopJarStep\.Args\.member\.9=OUTPUT=s3n:\/\/slif-elasticity\/hive-ads\/output\/2011-04-19&Steps\.member\.2\.HadoopJarStep\.Jar=s3:\/\/elasticmapreduce\/libs\/script-runner\/script-runner\.jar&Steps\.member\.2\.Name=Run%20Hive%20Script/
-    body:
-    headers:
-      accept:
+--- 
+http_interactions: 
+- request: 
+    method: get
+    uri: https://elasticmapreduce.amazonaws.com/?AWSAccessKeyId=abra&Instances.Ec2KeyName=sharethrough_dev&Instances.HadoopVersion=0.20&Instances.InstanceCount=2&Instances.MasterInstanceType=m1.small&Instances.SlaveInstanceType=m1.small&Name=Elasticity%20Hive%20Job&Operation=RunJobFlow&Steps.member.1.ActionOnFailure=TERMINATE_JOB_FLOW&Steps.member.1.HadoopJarStep.Args.member.1=s3://elasticmapreduce/libs/hive/hive-script&Steps.member.1.HadoopJarStep.Args.member.2=--base-path&Steps.member.1.HadoopJarStep.Args.member.3=s3://elasticmapreduce/libs/hive/&Steps.member.1.HadoopJarStep.Args.member.4=--install-hive&Steps.member.1.HadoopJarStep.Jar=s3://elasticmapreduce/libs/script-runner/script-runner.jar&Steps.member.1.Name=Setup%20Hive&Steps.member.2.ActionOnFailure=TERMINATE_JOB_FLOW&Steps.member.2.HadoopJarStep.Args.member.1=s3://elasticmapreduce/libs/hive/hive-script&Steps.member.2.HadoopJarStep.Args.member.10=-d&Steps.member.2.HadoopJarStep.Args.member.11=LIBS=s3n://elasticmapreduce/samples/hive-ads/libs&Steps.member.2.HadoopJarStep.Args.member.2=--run-hive-script&Steps.member.2.HadoopJarStep.Args.member.3=--args&Steps.member.2.HadoopJarStep.Args.member.4=-f&Steps.member.2.HadoopJarStep.Args.member.5=s3n://elasticmapreduce/samples/hive-ads/libs/model-build.q&Steps.member.2.HadoopJarStep.Args.member.6=-d&Steps.member.2.HadoopJarStep.Args.member.7=INPUT=s3n://elasticmapreduce/samples/hive-ads/tables&Steps.member.2.HadoopJarStep.Args.member.8=-d&Steps.member.2.HadoopJarStep.Args.member.9=OUTPUT=s3n://slif-elasticity/hive-ads/output/2011-04-19&Steps.member.2.HadoopJarStep.Jar=s3://elasticmapreduce/libs/script-runner/script-runner.jar&Steps.member.2.Name=Run%20Hive%20Script
+    body: ""
+    headers: 
+      Accept: 
       - "*/*; q=0.5, application/xml"
-      accept-encoding:
+      Accept-Encoding: 
       - gzip, deflate
-  response: !ruby/struct:VCR::Response
-    status: !ruby/struct:VCR::ResponseStatus
+  response: 
+    status: 
       code: 200
       message: OK
-    headers:
-      x-amzn-requestid:
+    headers: 
+      X-Amzn-Requestid: 
       - 87d43cfd-6fb2-11e0-bc88-bf902ad8b20b
-      content-type:
+      Content-Type: 
       - text/xml
-      date:
+      Date: 
       - Tue, 26 Apr 2011 03:08:58 GMT
-      content-length:
+      Content-Length: 
       - "297"
     body: |
       <RunJobFlowResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
@@ -33,3 +33,5 @@
       </RunJobFlowResponse>
 
     http_version: "1.1"
+  recorded_at: Fri, 03 Feb 2012 13:53:36 GMT
+recorded_with: VCR 2.0.0.rc1
