@@ -1,6 +1,13 @@
 language: ruby
 rvm:
   - ree
+  - 1.9.3
+  - jruby-18mode
+  - jruby-19mode
+  - rbx-18mode
+  - rbx-19mode
+  - ruby-head
+  - jruby-head
 before_script:
   - export AWS_ACCESS_KEY_ID=01234
   - export AWS_SECRET_KEY=56789
