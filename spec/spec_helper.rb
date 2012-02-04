@@ -29,16 +29,31 @@ require 'vcr'
 
 require 'elasticity'
 
+require 'cgi'
+
 ENV["RAILS_ENV"] ||= 'test'
 
 $:.unshift File.dirname(__FILE__)
+
+def params_to_hash(request)
+  uri = URI.parse(request.uri)
+  hash = CGI::parse(uri.query)
+  ['AWSAccessKeyId', 'Signature', 'SignatureMethod', 'SignatureVersion', 'Timestamp'].each do |param|
+    hash[param] = ''
+  end
+  hash
+end
+
+params_matcher = lambda do |request_1, request_2|
+  params_to_hash(request_1) == params_to_hash(request_2)
+end
 
 VCR.configure do |c|
   c.default_cassette_options[:match_requests_on] = [
       :method,
       :host,
       :path,
-      VCR.request_matchers.uri_without_params('Signature', 'SignatureMethod', 'SignatureVersion', 'Timestamp')
+      params_matcher
   ]
   c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
   c.hook_into :webmock

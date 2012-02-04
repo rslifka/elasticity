@@ -2,7 +2,7 @@
 http_interactions: 
 - request: 
     method: get
-    uri: https://elasticmapreduce.amazonaws.com/?Operation=RunJobFlow
+    uri: https://elasticmapreduce.amazonaws.com/?Operation=RunJobFlow&Instances.Ec2KeyName=sharethrough-dev&Instances.InstanceCount=2&Instances.MasterInstanceType=m1.small&Instances.SlaveInstanceType=m1.small&Name=Elasticity+Test+Flow+%28EMR+Pig+Script%29&Steps.member.1.ActionOnFailure=TERMINATE_JOB_FLOW&Steps.member.1.HadoopJarStep.Args.member.1=s3%3A%2F%2Felasticmapreduce%2Flibs%2Fpig%2Fpig-script&Steps.member.1.HadoopJarStep.Args.member.2=--base-path&Steps.member.1.HadoopJarStep.Args.member.3=s3%3A%2F%2Felasticmapreduce%2Flibs%2Fpig%2F&Steps.member.1.HadoopJarStep.Args.member.4=--install-pig&Steps.member.1.HadoopJarStep.Jar=s3%3A%2F%2Felasticmapreduce%2Flibs%2Fscript-runner%2Fscript-runner.jar&Steps.member.1.Name=Setup+Pig
     body: ""
     headers: 
       Accept: 
@@ -36,7 +36,7 @@ http_interactions:
   recorded_at: Fri, 03 Feb 2012 13:53:36 GMT
 - request: 
     method: get
-    uri: https://elasticmapreduce.amazonaws.com/?Operation=AddJobFlowSteps
+    uri: https://elasticmapreduce.amazonaws.com/?Operation=AddJobFlowSteps&JobFlowId=j-F0UCD5851OKV&Steps.member.1.ActionOnFailure=TERMINATE_JOB_FLOW&Steps.member.1.HadoopJarStep.Args.member.1=s3%3A%2F%2Felasticmapreduce%2Flibs%2Fpig%2Fpig-script&Steps.member.1.HadoopJarStep.Args.member.2=--base-path&Steps.member.1.HadoopJarStep.Args.member.3=s3%3A%2F%2Felasticmapreduce%2Flibs%2Fpig%2F&Steps.member.1.HadoopJarStep.Args.member.4=--install-pig&Steps.member.1.HadoopJarStep.Jar=s3%3A%2F%2Felasticmapreduce%2Flibs%2Fscript-runner%2Fscript-runner.jar&Steps.member.1.Name=Setup+Pig+2&Steps.member.2.ActionOnFailure=TERMINATE_JOB_FLOW&Steps.member.2.HadoopJarStep.Args.member.1=s3%3A%2F%2Felasticmapreduce%2Flibs%2Fpig%2Fpig-script&Steps.member.2.HadoopJarStep.Args.member.2=--base-path&Steps.member.2.HadoopJarStep.Args.member.3=s3%3A%2F%2Felasticmapreduce%2Flibs%2Fpig%2F&Steps.member.2.HadoopJarStep.Args.member.4=--install-pig&Steps.member.2.HadoopJarStep.Jar=s3%3A%2F%2Felasticmapreduce%2Flibs%2Fscript-runner%2Fscript-runner.jar&Steps.member.2.Name=Setup+Pig+3
     body: ""
     headers: 
       Accept: 
