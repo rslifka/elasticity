@@ -1,26 +1,26 @@
 --- 
-- !ruby/struct:VCR::HTTPInteraction 
-  request: !ruby/struct:VCR::Request 
-    method: :get
-    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?AWSAccessKeyId=\S+&InstanceGroups.member.1.InstanceCount=2&InstanceGroups.member.1.InstanceGroupId=ig-2T1HNUO61BG3O&Operation=ModifyInstanceGroups/
-    body:
+http_interactions: 
+- request: 
+    method: get
+    uri: https://elasticmapreduce.amazonaws.com/?AWSAccessKeyId=abra&InstanceGroups.member.1.InstanceCount=2&InstanceGroups.member.1.InstanceGroupId=ig-2T1HNUO61BG3O&Operation=ModifyInstanceGroups
+    body: ""
     headers: 
-      accept: 
+      Accept: 
       - "*/*; q=0.5, application/xml"
-      accept-encoding: 
+      Accept-Encoding: 
       - gzip, deflate
-  response: !ruby/struct:VCR::Response 
-    status: !ruby/struct:VCR::ResponseStatus 
+  response: 
+    status: 
       code: 200
       message: OK
     headers: 
-      x-amzn-requestid: 
+      X-Amzn-Requestid: 
       - 4ef75373-659c-11e0-bdf6-e3d62a364c28
-      content-type: 
+      Content-Type: 
       - text/xml
-      date: 
+      Date: 
       - Wed, 13 Apr 2011 07:04:43 GMT
-      content-length: 
+      Content-Length: 
       - "231"
     body: |
       <ModifyInstanceGroupsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
@@ -30,3 +30,5 @@
       </ModifyInstanceGroupsResponse>
 
     http_version: "1.1"
+  recorded_at: Fri, 03 Feb 2012 13:53:36 GMT
+recorded_with: VCR 2.0.0.rc1

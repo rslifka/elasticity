@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency("rake")
   s.add_development_dependency("rspec",   ">= 2.5.0")
-  s.add_development_dependency("vcr",     ">= 1.5.1")
+  s.add_development_dependency("vcr",     ">= 2.0.0.rc1")
   s.add_development_dependency("webmock", ">= 1.6.2")
 
   s.files         = `git ls-files`.split("\n")

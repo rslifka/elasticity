@@ -25,7 +25,7 @@ module Elasticity
     def run(hive_script, hive_variables={})
       script_arguments = ["s3://elasticmapreduce/libs/hive/hive-script", "--run-hive-script", "--args"]
       script_arguments.concat(["-f", hive_script])
-      hive_variables.each do |variable_name, value|
+      hive_variables.sort.each do |variable_name, value|
         script_arguments.concat(["-d", "#{variable_name}=#{value}"])
       end
       jobflow_config = {

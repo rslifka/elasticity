@@ -1,26 +1,26 @@
 --- 
-- !ruby/struct:VCR::HTTPInteraction 
-  request: !ruby/struct:VCR::Request 
-    method: :get
-    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?AWSAccessKeyId=\S+&JobFlowIds.member.1=j-1B4D1XP0C0A35&JobFlowIds.member.2=j-2&Operation=SetTerminationProtection.*&TerminationProtected=true/
-    body:
+http_interactions: 
+- request: 
+    method: get
+    uri: https://elasticmapreduce.amazonaws.com/?AWSAccessKeyId=abra&JobFlowIds.member.1=j-1B4D1XP0C0A35&JobFlowIds.member.2=j-2&Operation=SetTerminationProtection&TerminationProtected=true
+    body: ""
     headers: 
-      accept: 
+      Accept: 
       - "*/*; q=0.5, application/xml"
-      accept-encoding: 
+      Accept-Encoding: 
       - gzip, deflate
-  response: !ruby/struct:VCR::Response 
-    status: !ruby/struct:VCR::ResponseStatus 
+  response: 
+    status: 
       code: 400
       message: Bad Request
     headers: 
-      x-amzn-requestid: 
+      X-Amzn-Requestid: 
       - dc0ce847-6923-11e0-9da4-8d278034dea6
-      content-type: 
+      Content-Type: 
       - text/xml
-      date: 
+      Date: 
       - Sun, 17 Apr 2011 18:52:35 GMT
-      content-length: 
+      Content-Length: 
       - "289"
     body: |
       <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
@@ -33,3 +33,5 @@
       </ErrorResponse>
 
     http_version: "1.1"
+  recorded_at: Fri, 03 Feb 2012 13:53:36 GMT
+recorded_with: VCR 2.0.0.rc1

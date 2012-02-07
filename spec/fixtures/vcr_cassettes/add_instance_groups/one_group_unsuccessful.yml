@@ -1,26 +1,26 @@
 --- 
-- !ruby/struct:VCR::HTTPInteraction 
-  request: !ruby/struct:VCR::Request 
-    method: :get
-    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?AWSAccessKeyId=\S+&InstanceGroups.member.1.BidPrice=0&InstanceGroups.member.1.InstanceCount=1&InstanceGroups.member.1.InstanceRole=TASK&InstanceGroups.member.1.InstanceType=m1.small&InstanceGroups.member.1.Market=ON_DEMAND&InstanceGroups.member.1.Name=Go%20Canucks%20Go!&JobFlowId=j-19WDDS68ZUENP&Operation=AddInstanceGroups/
-    body:
+http_interactions: 
+- request: 
+    method: get
+    uri: https://elasticmapreduce.amazonaws.com/?AWSAccessKeyId=abracadabra&InstanceGroups.member.1.BidPrice=0&InstanceGroups.member.1.InstanceCount=1&InstanceGroups.member.1.InstanceRole=TASK&InstanceGroups.member.1.InstanceType=m1.small&InstanceGroups.member.1.Market=ON_DEMAND&InstanceGroups.member.1.Name=Go%20Canucks%20Go!&JobFlowId=j-19WDDS68ZUENP&Operation=AddInstanceGroups
+    body: ""
     headers: 
-      accept: 
+      Accept: 
       - "*/*; q=0.5, application/xml"
-      accept-encoding: 
+      Accept-Encoding: 
       - gzip, deflate
-  response: !ruby/struct:VCR::Response 
-    status: !ruby/struct:VCR::ResponseStatus 
+  response: 
+    status: 
       code: 400
       message: Bad Request
     headers: 
-      x-amzn-requestid: 
+      X-Amzn-Requestid: 
       - 0c8d744d-67ea-11e0-bf8a-ed57a5465c87
-      content-type: 
+      Content-Type: 
       - text/xml
-      date: 
+      Date: 
       - Sat, 16 Apr 2011 05:26:15 GMT
-      content-length: 
+      Content-Length: 
       - "337"
     body: |
       <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
@@ -33,3 +33,5 @@
       </ErrorResponse>
 
     http_version: "1.1"
+  recorded_at: Fri, 03 Feb 2012 13:53:36 GMT
+recorded_with: VCR 2.0.0.rc1

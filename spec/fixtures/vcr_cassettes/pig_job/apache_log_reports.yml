@@ -1,26 +1,26 @@
----
-- !ruby/struct:VCR::HTTPInteraction 
-  request: !ruby/struct:VCR::Request 
-    method: :get
-    uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?AWSAccessKeyId=\S+&Instances.Ec2KeyName=sharethrough_dev&Instances.HadoopVersion=0.20&Instances.InstanceCount=2&Instances.MasterInstanceType=m1.small&Instances.SlaveInstanceType=m1.small&LogUri=s3n:\/\/slif-elasticity\/pig-apache\/logs&Name=Elasticity%20Pig%20Job&Operation=RunJobFlow&.*&Steps.member.1.ActionOnFailure=TERMINATE_JOB_FLOW&Steps.member.1.HadoopJarStep.Args.member.1=s3:\/\/elasticmapreduce\/libs\/pig\/pig-script&Steps.member.1.HadoopJarStep.Args.member.2=--base-path&Steps.member.1.HadoopJarStep.Args.member.3=s3:\/\/elasticmapreduce\/libs\/pig\/&Steps.member.1.HadoopJarStep.Args.member.4=--install-pig&Steps.member.1.HadoopJarStep.Jar=s3:\/\/elasticmapreduce\/libs\/script-runner\/script-runner.jar&Steps.member.1.Name=Setup%20Pig&Steps.member.2.ActionOnFailure=TERMINATE_JOB_FLOW&Steps.member.2.HadoopJarStep.Args.member.1=s3:\/\/elasticmapreduce\/libs\/pig\/pig-script&Steps.member.2.HadoopJarStep.Args.member.10=s3n:\/\/elasticmapreduce\/samples\/pig-apache\/do-reports.pig&Steps.member.2.HadoopJarStep.Args.member.2=--run-pig-script&Steps.member.2.HadoopJarStep.Args.member.3=--args&Steps.member.2.HadoopJarStep.Args.member.4=-p&Steps.member.2.HadoopJarStep.Args.member.5=INPUT=s3n:\/\/elasticmapreduce\/samples\/pig-apache\/input&Steps.member.2.HadoopJarStep.Args.member.6=-p&Steps.member.2.HadoopJarStep.Args.member.7=OUTPUT=s3n:\/\/slif-elasticity\/pig-apache\/output\/2011-05-04&Steps.member.2.HadoopJarStep.Args.member.8=-p&Steps.member.2.HadoopJarStep.Args.member.9=E_PARALLELS=1&Steps.member.2.HadoopJarStep.Jar=s3:\/\/elasticmapreduce\/libs\/script-runner\/script-runner.jar&Steps.member.2.Name=Run%20Pig%20Script/
-    body:
+--- 
+http_interactions: 
+- request: 
+    method: get
+    uri: https://elasticmapreduce.amazonaws.com/?AWSAccessKeyId=abra&Instances.Ec2KeyName=sharethrough_dev&Instances.HadoopVersion=0.20&Instances.InstanceCount=2&Instances.MasterInstanceType=m1.small&Instances.SlaveInstanceType=m1.small&LogUri=s3n://slif-elasticity/pig-apache/logs&Name=Elasticity%20Pig%20Job&Operation=RunJobFlow&Steps.member.1.ActionOnFailure=TERMINATE_JOB_FLOW&Steps.member.1.HadoopJarStep.Args.member.1=s3://elasticmapreduce/libs/pig/pig-script&Steps.member.1.HadoopJarStep.Args.member.2=--base-path&Steps.member.1.HadoopJarStep.Args.member.3=s3://elasticmapreduce/libs/pig/&Steps.member.1.HadoopJarStep.Args.member.4=--install-pig&Steps.member.1.HadoopJarStep.Jar=s3://elasticmapreduce/libs/script-runner/script-runner.jar&Steps.member.1.Name=Setup%20Pig&Steps.member.2.ActionOnFailure=TERMINATE_JOB_FLOW&Steps.member.2.HadoopJarStep.Args.member.1=s3://elasticmapreduce/libs/pig/pig-script&Steps.member.2.HadoopJarStep.Args.member.10=s3n://elasticmapreduce/samples/pig-apache/do-reports.pig&Steps.member.2.HadoopJarStep.Args.member.2=--run-pig-script&Steps.member.2.HadoopJarStep.Args.member.3=--args&Steps.member.2.HadoopJarStep.Args.member.4=-p&Steps.member.2.HadoopJarStep.Args.member.5=INPUT=s3n://elasticmapreduce/samples/pig-apache/input&Steps.member.2.HadoopJarStep.Args.member.6=-p&Steps.member.2.HadoopJarStep.Args.member.7=OUTPUT=s3n://slif-elasticity/pig-apache/output/2011-05-04&Steps.member.2.HadoopJarStep.Args.member.8=-p&Steps.member.2.HadoopJarStep.Args.member.9=E_PARALLELS=1&Steps.member.2.HadoopJarStep.Jar=s3://elasticmapreduce/libs/script-runner/script-runner.jar&Steps.member.2.Name=Run%20Pig%20Script
+    body: ""
     headers: 
-      accept: 
+      Accept: 
       - "*/*; q=0.5, application/xml"
-      accept-encoding: 
+      Accept-Encoding: 
       - gzip, deflate
-  response: !ruby/struct:VCR::Response 
-    status: !ruby/struct:VCR::ResponseStatus 
+  response: 
+    status: 
       code: 200
       message: OK
     headers: 
-      x-amzn-requestid: 
+      X-Amzn-Requestid: 
       - c00d285d-7935-11e0-a51d-7bf947dae271
-      content-type: 
+      Content-Type: 
       - text/xml
-      date: 
+      Date: 
       - Sun, 08 May 2011 05:40:58 GMT
-      content-length: 
+      Content-Length: 
       - "297"
     body: |
       <RunJobFlowResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
@@ -33,3 +33,5 @@
       </RunJobFlowResponse>
 
     http_version: "1.1"
+  recorded_at: Fri, 03 Feb 2012 13:53:36 GMT
+recorded_with: VCR 2.0.0.rc1

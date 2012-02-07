@@ -27,7 +27,8 @@ module Elasticity
           }
         ]
       }
-      jobflow_config.merge!(:log_uri => @log_uri) if @log_uri
+      jobflow_config[:log_uri] = @log_uri if @log_uri
+      jobflow_config.merge!(get_bootstrap_actions)
       jobflow_config[:steps].first[:hadoop_jar_step][:args] = arguments if arguments
       @emr.run_job_flow(jobflow_config)
     end

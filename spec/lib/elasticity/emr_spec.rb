@@ -267,6 +267,7 @@ describe Elasticity::EMR do
                 <member>
                   <ExecutionStatusDetail>
                     <State>TERMINATED</State>
+                    <CreationDateTime>2011-10-04T21:49:16Z</CreationDateTime>
                   </ExecutionStatusDetail>
                   <JobFlowId>j-p</JobFlowId>
                   <Name>Pig Job</Name>
@@ -274,6 +275,7 @@ describe Elasticity::EMR do
                 <member>
                   <ExecutionStatusDetail>
                     <State>TERMINATED</State>
+                    <CreationDateTime>2011-10-04T21:49:16Z</CreationDateTime>
                   </ExecutionStatusDetail>
                   <JobFlowId>j-h</JobFlowId>
                   <Name>Hive Job</Name>
@@ -327,6 +329,7 @@ describe Elasticity::EMR do
               <member>
                 <ExecutionStatusDetail>
                   <State>TERMINATED</State>
+                  <CreationDateTime>2011-10-04T21:49:16Z</CreationDateTime>
                 </ExecutionStatusDetail>
                 <JobFlowId>j-3UN6WX5RRO2AG</JobFlowId>
                 <Name>The One Job Flow</Name>

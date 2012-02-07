@@ -102,16 +102,35 @@ describe Elasticity::CustomJarJob do
   end
 
   describe "integration happy path" do
-    use_vcr_cassette "custom_jar_job/cloudburst", :record => :none
-    it "should kick off the sample Amazion EMR Hive application" do
-      custom_jar = Elasticity::CustomJarJob.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-      custom_jar.ec2_key_name = "sharethrough_dev"
-      jobflow_id = custom_jar.run('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar', [
-          "s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br",
-              "s3n://elasticmapreduce/samples/cloudburst/input/100k.br",
-              "s3n://slif_hadoop_test/cloudburst/output/2011-12-09",
-      ])
-      jobflow_id.should == "j-1IU6NM8OUPS9I"
+    context "without bootstrap actions" do
+      use_vcr_cassette "custom_jar_job/cloudburst", :record => :none
+      it "should kick off the sample Amazon EMR Custom Jar Job application" do
+        custom_jar = Elasticity::CustomJarJob.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+        custom_jar.ec2_key_name = "sharethrough_dev"
+        jobflow_id = custom_jar.run('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar', [
+            "s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br",
+            "s3n://elasticmapreduce/samples/cloudburst/input/100k.br",
+            "s3n://slif_hadoop_test/cloudburst/output/2011-12-09",
+        ])
+        jobflow_id.should == "j-1IU6NM8OUPS9I"
+      end
+    end
+
+    context "with bootstrap actions" do
+      use_vcr_cassette "custom_jar_job/cloudburst_with_bootstrap", :record => :none
+      it "should kick off the sample Amazon EMR Custom Jar Job application" do
+        custom_jar = Elasticity::CustomJarJob.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+        custom_jar.ec2_key_name = "sharethrough_dev"
+        custom_jar.add_hadoop_bootstrap_action('-s', 'mapred.child.java.opts=-Xmx4G')
+
+        jobflow_id = custom_jar.run('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar', [
+            "s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br",
+            "s3n://elasticmapreduce/samples/cloudburst/input/100k.br",
+            "s3n://slif_hadoop_test/cloudburst/output/2011-12-09",
+        ])
+        jobflow_id.should == "j-1IU6NM8OUPS8I"
+      end
+
     end
   end
 
