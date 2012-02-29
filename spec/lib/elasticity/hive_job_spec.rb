@@ -57,7 +57,6 @@ describe Elasticity::HiveJob do
                     "--run-hive-script",
                     "--args",
                     "-f", "s3n://slif-hive/test.q",
-                    "-d", "XREFS=s3n://slif-test/xrefs",
                     "-d", "OUTPUT=s3n://slif-test/output"
                 ],
               },
@@ -71,8 +70,7 @@ describe Elasticity::HiveJob do
       hive.log_uri = "s3n://slif-test/output/logs"
       hive.action_on_failure = "CONTINUE"
       jobflow_id = hive.run('s3n://slif-hive/test.q', {
-        'OUTPUT' => 's3n://slif-test/output',
-        'XREFS' => 's3n://slif-test/xrefs'
+        'OUTPUT' => 's3n://slif-test/output'
       })
       jobflow_id.should == "new_jobflow_id"
     end
@@ -84,12 +82,8 @@ describe Elasticity::HiveJob do
     it "should kick off the sample Amazion EMR Hive application" do
       hive = Elasticity::HiveJob.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
       hive.ec2_key_name = "sharethrough_dev"
-      jobflow_id = hive.run("s3n://elasticmapreduce/samples/hive-ads/libs/model-build.q", {
-        "LIBS"   => "s3n://elasticmapreduce/samples/hive-ads/libs",
-        "INPUT"  => "s3n://elasticmapreduce/samples/hive-ads/tables",
-        "OUTPUT" => "s3n://slif-elasticity/hive-ads/output/2011-04-19"
-      })
-      jobflow_id.should == "j-1UUVYMHBLKEGN"
+      jobflow_id = hive.run("s3n://elasticmapreduce/samples/hive-ads/libs/model-build.q")
+      jobflow_id.should == "j-2I4HV6S3SDGD9"
     end
   end
 
