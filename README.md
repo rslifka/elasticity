@@ -4,6 +4,7 @@ Elasticity provides programmatic access to Amazon's Elastic Map Reduce service. 
 
 **CONTRIBUTIONS**:
 
++ [Aram Price](https://github.com/aramprice/) - Documentation and ideation.
 + [Wouter Broekhof](https://github.com/wouter/) - HTTPS and AWS region support, additional params to describe_jobflows.
 
 # Installation and Usage
@@ -109,6 +110,12 @@ Custom jar jobs are also available.  To kick off a custom job, specify the path 
   ])
   
   > "j-1IU6NM8OUPS9I"
+</pre>
+
+Custom jar jobs support arbitrary entry points.  Specify the class on which to call main() either via the JAR manifest or as the first argument to the job:
+
+<pre>
+  Elasticity::CustomJarJob.new(key, secret).run(s3_jar_path, ['MyCustomClass', 'arg1', 'arg2'])
 </pre>
 
 # Amazon API Reference
