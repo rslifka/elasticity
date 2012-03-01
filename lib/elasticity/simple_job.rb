@@ -40,9 +40,10 @@ module Elasticity
 
     private
 
-    def get_bootstrap_actions
-      return {} unless @hadoop_actions && !@hadoop_actions.empty?
-      { :bootstrap_actions => @hadoop_actions }
+    def run_job(jobflow_config)
+      jobflow_config.merge!(:log_uri => @log_uri) if @log_uri
+      jobflow_config.merge!(:bootstrap_actions => @hadoop_actions) if @hadoop_actions && !@hadoop_actions.empty?
+      @emr.run_job_flow(jobflow_config)
     end
 
   end
