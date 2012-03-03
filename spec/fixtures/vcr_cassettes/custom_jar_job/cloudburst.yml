@@ -2,7 +2,7 @@
 - !ruby/struct:VCR::HTTPInteraction 
   request: !ruby/struct:VCR::Request 
     method: :get
-    uri: !ruby/regexp /^https:/
+    uri: !ruby/regexp /^https/
     body:
     headers: 
       accept: 
