@@ -266,6 +266,7 @@ describe Elasticity::EMR do
               <JobFlows>
                 <member>
                   <ExecutionStatusDetail>
+                    <CreationDateTime>2011-04-04T17:41:51Z</CreationDateTime>
                     <State>TERMINATED</State>
                   </ExecutionStatusDetail>
                   <JobFlowId>j-p</JobFlowId>
@@ -274,6 +275,7 @@ describe Elasticity::EMR do
                 <member>
                   <ExecutionStatusDetail>
                     <State>TERMINATED</State>
+                    <CreationDateTime>2011-04-04T17:41:51Z</CreationDateTime>
                   </ExecutionStatusDetail>
                   <JobFlowId>j-h</JobFlowId>
                   <Name>Hive Job</Name>
@@ -327,6 +329,7 @@ describe Elasticity::EMR do
               <member>
                 <ExecutionStatusDetail>
                   <State>TERMINATED</State>
+                  <CreationDateTime>2011-04-04T17:41:51Z</CreationDateTime>
                 </ExecutionStatusDetail>
                 <JobFlowId>j-3UN6WX5RRO2AG</JobFlowId>
                 <Name>The One Job Flow</Name>
