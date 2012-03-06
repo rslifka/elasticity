@@ -1,6 +1,3 @@
-AWS_ACCESS_KEY_ID = ENV["AWS_ACCESS_KEY_ID"]
-AWS_SECRET_KEY = ENV["AWS_SECRET_KEY"]
-
 require 'rubygems'
 require 'bundler/setup'
 
@@ -31,8 +28,11 @@ RSpec.configure do |c|
   c.extend VCR::RSpec::Macros
 end
 
+AWS_ACCESS_KEY_ID = ENV['AWS_ACCESS_KEY_ID'] ||= 'default'
+AWS_SECRET_KEY = ENV['AWS_SECRET_KEY'] ||= 'default'
+
 def require_aws_credentials
-  if !ENV["AWS_ACCESS_KEY_ID"] || !ENV["AWS_SECRET_KEY"]
+  if AWS_ACCESS_KEY_ID == 'default' && AWS_SECRET_KEY == 'default'
     puts "\n\e[33m**********************************************************************************************"
     puts "\e[32mIf you want to record new cassettes, you'll need to provide a set of AWS credentials so"
     puts "Elasticity can interact with EMR.  These keys can be found on your AWS Account > Security"
