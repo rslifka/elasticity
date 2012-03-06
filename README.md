@@ -1,11 +1,6 @@
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently wrap the API operations in a manner that makes working with EMR job flows from Ruby more productive and more enjoyable, without having to understand the nuts and bolts of the EMR REST API.  At the very least, using Elasticity allows you to easily experiment with the EMR API :)
 
-**CREDITS**: AWS signing was used from [RightScale's](http://www.rightscale.com/) amazing [right_aws gem](https://github.com/rightscale/right_aws) which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.  Used camelize from ActiveSupport as well, thank you \Rails :)
-
-**CONTRIBUTIONS**:
-
-+ [Aram Price](https://github.com/aramprice/) - Documentation and ideation.
-+ [Wouter Broekhof](https://github.com/wouter/) - HTTPS and AWS region support, additional params to describe_jobflows.
+[![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity)
 
 # Installation and Usage
 
@@ -349,6 +344,19 @@ If you're chomping at the bit to initiate some EMR functionality that isn't wrap
   
   > &lt;DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009...
 </pre>
+
+# Something Borrowed...
+
+AWS signing was used from [RightScale's](http://www.rightscale.com/) amazing [right_aws gem](https://github.com/rightscale/right_aws) which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.
+
+Used camelize from ActiveSupport as well, thank you \Rails :)
+
+# Thanks!
+
+Thanks to the following people who have contributed patches or helpful suggestions:
+
++ [Aram Price](https://github.com/aramprice/)
++ [Wouter Broekhof](https://github.com/wouter/)
 
 # License
 
