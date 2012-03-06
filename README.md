@@ -1,5 +1,7 @@
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently wrap the API operations in a manner that makes working with EMR job flows from Ruby more productive and more enjoyable, without having to understand the nuts and bolts of the EMR REST API.  At the very least, using Elasticity allows you to easily experiment with the EMR API :)
 
+[![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity)
+
 # Installation and Usage
 
 <pre>
