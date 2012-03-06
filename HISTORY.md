@@ -1,3 +1,9 @@
+### 1.5
+
++ Added support for Hadoop bootstrap actions to all job types (Pig, Hive and Custom Jar).
++ Added support for REE 1.8.7-2011.12, Ruby 1.9.2 and 1.9.3.
++ Updated to the latest versions of all development dependencies (notably VCR 2).
+
 ### 1.4.1
 
 + Added Elasticity::EMR#describe_jobflow("jobflow_id") for describing a specific job.  If you happen to run hundreds of EMR jobs, this makes retrieving jobflow status much faster than using Elasticity::EMR#describe_jobflowS which pulls down and parses XML status for hundreds of jobs.
