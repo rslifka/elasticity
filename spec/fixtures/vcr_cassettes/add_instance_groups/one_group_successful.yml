@@ -1,38 +1,42 @@
 --- 
-- !ruby/struct:VCR::HTTPInteraction 
-  request: !ruby/struct:VCR::Request 
-    method: :get
+http_interactions: 
+- request: 
+    method: get
     uri: !ruby/regexp /^https/
-    body:
+    body: 
+      string: ""
     headers: 
-      accept: 
+      Accept: 
       - "*/*; q=0.5, application/xml"
-      accept-encoding: 
+      Accept-Encoding: 
       - gzip, deflate
-  response: !ruby/struct:VCR::Response 
-    status: !ruby/struct:VCR::ResponseStatus 
+  response: 
+    status: 
       code: 200
       message: OK
     headers: 
-      x-amzn-requestid: 
-      - ddd0d158-67eb-11e0-ba06-2b5c43005be2
-      content-type: 
-      - text/xml
-      date: 
-      - Sat, 16 Apr 2011 05:39:15 GMT
-      content-length: 
+      Content-Length: 
       - "411"
-    body: |
-      <AddInstanceGroupsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-        <AddInstanceGroupsResult>
-          <JobFlowId>j-OALI7TZTQMHX</JobFlowId>
-          <InstanceGroupIds>
-            <member>ig-2GOVEN6HVJZID</member>
-          </InstanceGroupIds>
-        </AddInstanceGroupsResult>
-        <ResponseMetadata>
-          <RequestId>ddd0d158-67eb-11e0-ba06-2b5c43005be2</RequestId>
-        </ResponseMetadata>
-      </AddInstanceGroupsResponse>
+      Date: 
+      - Sat, 16 Apr 2011 05:39:15 GMT
+      Content-Type: 
+      - text/xml
+      X-Amzn-Requestid: 
+      - ddd0d158-67eb-11e0-ba06-2b5c43005be2
+    body: 
+      string: |
+        <AddInstanceGroupsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+          <AddInstanceGroupsResult>
+            <JobFlowId>j-OALI7TZTQMHX</JobFlowId>
+            <InstanceGroupIds>
+              <member>ig-2GOVEN6HVJZID</member>
+            </InstanceGroupIds>
+          </AddInstanceGroupsResult>
+          <ResponseMetadata>
+            <RequestId>ddd0d158-67eb-11e0-ba06-2b5c43005be2</RequestId>
+          </ResponseMetadata>
+        </AddInstanceGroupsResponse>
 
     http_version: "1.1"
+  recorded_at: Sat, 03 Mar 2012 22:59:32 GMT
+recorded_with: VCR 2.0.0

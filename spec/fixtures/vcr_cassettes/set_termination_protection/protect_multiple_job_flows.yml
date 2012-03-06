@@ -1,32 +1,36 @@
 --- 
-- !ruby/struct:VCR::HTTPInteraction 
-  request: !ruby/struct:VCR::Request 
-    method: :get
+http_interactions: 
+- request: 
+    method: get
     uri: !ruby/regexp /^https/
-    body:
+    body: 
+      string: ""
     headers: 
-      accept: 
+      Accept: 
       - "*/*; q=0.5, application/xml"
-      accept-encoding: 
+      Accept-Encoding: 
       - gzip, deflate
-  response: !ruby/struct:VCR::Response 
-    status: !ruby/struct:VCR::ResponseStatus 
+  response: 
+    status: 
       code: 200
       message: OK
     headers: 
-      x-amzn-requestid: 
-      - 755ebe8a-6923-11e0-a9c2-c126f1bb4493
-      content-type: 
-      - text/xml
-      date: 
-      - Sun, 17 Apr 2011 18:49:43 GMT
-      content-length: 
+      Content-Length: 
       - "239"
-    body: |
-      <SetTerminationProtectionResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-        <ResponseMetadata>
-          <RequestId>755ebe8a-6923-11e0-a9c2-c126f1bb4493</RequestId>
-        </ResponseMetadata>
-      </SetTerminationProtectionResponse>
+      Date: 
+      - Sun, 17 Apr 2011 18:49:43 GMT
+      Content-Type: 
+      - text/xml
+      X-Amzn-Requestid: 
+      - 755ebe8a-6923-11e0-a9c2-c126f1bb4493
+    body: 
+      string: |
+        <SetTerminationProtectionResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+          <ResponseMetadata>
+            <RequestId>755ebe8a-6923-11e0-a9c2-c126f1bb4493</RequestId>
+          </ResponseMetadata>
+        </SetTerminationProtectionResponse>
 
     http_version: "1.1"
+  recorded_at: Sat, 03 Mar 2012 23:00:38 GMT
+recorded_with: VCR 2.0.0

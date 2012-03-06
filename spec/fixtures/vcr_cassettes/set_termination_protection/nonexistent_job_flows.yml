@@ -1,35 +1,39 @@
 --- 
-- !ruby/struct:VCR::HTTPInteraction 
-  request: !ruby/struct:VCR::Request 
-    method: :get
+http_interactions: 
+- request: 
+    method: get
     uri: !ruby/regexp /^https/
-    body:
+    body: 
+      string: ""
     headers: 
-      accept: 
+      Accept: 
       - "*/*; q=0.5, application/xml"
-      accept-encoding: 
+      Accept-Encoding: 
       - gzip, deflate
-  response: !ruby/struct:VCR::Response 
-    status: !ruby/struct:VCR::ResponseStatus 
+  response: 
+    status: 
       code: 400
       message: Bad Request
     headers: 
-      x-amzn-requestid: 
-      - dc0ce847-6923-11e0-9da4-8d278034dea6
-      content-type: 
-      - text/xml
-      date: 
-      - Sun, 17 Apr 2011 18:52:35 GMT
-      content-length: 
+      Content-Length: 
       - "289"
-    body: |
-      <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-        <Error>
-          <Type>Sender</Type>
-          <Code>ValidationError</Code>
-          <Message>Specified job flow ID not valid</Message>
-        </Error>
-        <RequestId>dc0ce847-6923-11e0-9da4-8d278034dea6</RequestId>
-      </ErrorResponse>
+      Date: 
+      - Sun, 17 Apr 2011 18:52:35 GMT
+      Content-Type: 
+      - text/xml
+      X-Amzn-Requestid: 
+      - dc0ce847-6923-11e0-9da4-8d278034dea6
+    body: 
+      string: |
+        <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+          <Error>
+            <Type>Sender</Type>
+            <Code>ValidationError</Code>
+            <Message>Specified job flow ID not valid</Message>
+          </Error>
+          <RequestId>dc0ce847-6923-11e0-9da4-8d278034dea6</RequestId>
+        </ErrorResponse>
 
     http_version: "1.1"
+  recorded_at: Sat, 03 Mar 2012 23:00:34 GMT
+recorded_with: VCR 2.0.0

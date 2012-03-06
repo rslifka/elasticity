@@ -1,35 +1,39 @@
 --- 
-- !ruby/struct:VCR::HTTPInteraction 
-  request: !ruby/struct:VCR::Request 
-    method: :get
+http_interactions: 
+- request: 
+    method: get
     uri: !ruby/regexp /^https/
-    body:
+    body: 
+      string: ""
     headers: 
-      accept: 
+      Accept: 
       - "*/*; q=0.5, application/xml"
-      accept-encoding: 
+      Accept-Encoding: 
       - gzip, deflate
-  response: !ruby/struct:VCR::Response 
-    status: !ruby/struct:VCR::ResponseStatus 
+  response: 
+    status: 
       code: 200
       message: OK
     headers: 
-      x-amzn-requestid: 
-      - ba9e82df-22b9-11e1-beee-7d8a92482267
-      content-type: 
-      - text/xml
-      date: 
-      - Fri, 09 Dec 2011 23:01:29 GMT
-      content-length: 
+      Content-Length: 
       - "297"
-    body: |
-      <RunJobFlowResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-        <RunJobFlowResult>
-          <JobFlowId>j-1IU6NM8OUPS9I</JobFlowId>
-        </RunJobFlowResult>
-        <ResponseMetadata>
-          <RequestId>ba9e82df-22b9-11e1-beee-7d8a92482267</RequestId>
-        </ResponseMetadata>
-      </RunJobFlowResponse>
+      Date: 
+      - Fri, 09 Dec 2011 23:01:29 GMT
+      Content-Type: 
+      - text/xml
+      X-Amzn-Requestid: 
+      - ba9e82df-22b9-11e1-beee-7d8a92482267
+    body: 
+      string: |
+        <RunJobFlowResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+          <RunJobFlowResult>
+            <JobFlowId>j-1IU6NM8OUPS9I</JobFlowId>
+          </RunJobFlowResult>
+          <ResponseMetadata>
+            <RequestId>ba9e82df-22b9-11e1-beee-7d8a92482267</RequestId>
+          </ResponseMetadata>
+        </RunJobFlowResponse>
 
     http_version: "1.1"
+  recorded_at: Sat, 03 Mar 2012 22:59:53 GMT
+recorded_with: VCR 2.0.0
