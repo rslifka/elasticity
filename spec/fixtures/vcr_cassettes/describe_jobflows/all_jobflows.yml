@@ -1,33 +1,35 @@
---- 
-http_interactions: 
-- request: 
+---
+http_interactions:
+- request:
     method: get
     uri: !ruby/regexp /^https/
-    body: 
+    body:
+      encoding: US-ASCII
       string: ""
-    headers: 
-      Accept: 
+    headers:
+      Accept:
       - "*/*; q=0.5, application/xml"
-      Accept-Encoding: 
+      Accept-Encoding:
       - gzip, deflate
-  response: 
-    status: 
+  response:
+    status:
       code: 200
       message: OK
-    headers: 
-      Date: 
+    headers:
+      Date:
       - Sun, 10 Apr 2011 19:56:17 GMT
-      Content-Type: 
+      Content-Type:
       - text/xml
-      Content-Encoding: 
+      Content-Encoding:
       - gzip
-      X-Amzn-Requestid: 
+      X-Amzn-Requestid:
       - 994deb7a-63ac-11e0-bc41-ababd98a870b
-      Vary: 
+      Vary:
       - Accept-Encoding
-      Transfer-Encoding: 
+      Transfer-Encoding:
       - chunked
-    body: 
+    body:
+      encoding: ASCII-8BIT
       string: !binary |
         H4sIAAAAAAAAAO1bW3PaOhB+769gztM5c0bYEld7XGZIgIQQIAXnMnnJyLYC
         7vGttpw2/fVHtmOwjQkQIKUpM0wSS7urlfTp0+6aSC3iqa6ukAtb6Rj2d29E

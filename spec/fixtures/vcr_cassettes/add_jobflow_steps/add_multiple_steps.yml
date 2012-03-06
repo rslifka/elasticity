@@ -1,29 +1,31 @@
---- 
-http_interactions: 
-- request: 
+---
+http_interactions:
+- request:
     method: get
     uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?.*Operation=RunJobFlow/
-    body: 
+    body:
+      encoding: US-ASCII
       string: ""
-    headers: 
-      Accept: 
+    headers:
+      Accept:
       - "*/*; q=0.5, application/xml"
-      Accept-Encoding: 
+      Accept-Encoding:
       - gzip, deflate
-  response: 
-    status: 
+  response:
+    status:
       code: 200
       message: OK
-    headers: 
-      Content-Length: 
+    headers:
+      Content-Length:
       - "296"
-      Date: 
+      Date:
       - Sat, 23 Apr 2011 04:23:30 GMT
-      Content-Type: 
+      Content-Type:
       - text/xml
-      X-Amzn-Requestid: 
+      X-Amzn-Requestid:
       - 71b9eb69-6d61-11e0-9ddc-a168e244afdb
-    body: 
+    body:
+      encoding: US-ASCII
       string: |
         <RunJobFlowResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
           <RunJobFlowResult>
@@ -36,30 +38,32 @@ http_interactions:
 
     http_version: "1.1"
   recorded_at: Sat, 03 Mar 2012 23:04:14 GMT
-- request: 
+- request:
     method: get
     uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?.*Operation=AddJobFlowSteps/
-    body: 
+    body:
+      encoding: US-ASCII
       string: ""
-    headers: 
-      Accept: 
+    headers:
+      Accept:
       - "*/*; q=0.5, application/xml"
-      Accept-Encoding: 
+      Accept-Encoding:
       - gzip, deflate
-  response: 
-    status: 
+  response:
+    status:
       code: 200
       message: OK
-    headers: 
-      Content-Length: 
+    headers:
+      Content-Length:
       - "221"
-      Date: 
+      Date:
       - Sat, 23 Apr 2011 04:23:31 GMT
-      Content-Type: 
+      Content-Type:
       - text/xml
-      X-Amzn-Requestid: 
+      X-Amzn-Requestid:
       - 71e1712c-6d61-11e0-b6c0-e9580d1f7304
-    body: 
+    body:
+      encoding: US-ASCII
       string: |
         <AddJobFlowStepsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
           <ResponseMetadata>
@@ -69,34 +73,36 @@ http_interactions:
 
     http_version: "1.1"
   recorded_at: Sat, 03 Mar 2012 23:04:14 GMT
-- request: 
+- request:
     method: get
     uri: !ruby/regexp /^https:\/\/elasticmapreduce.amazonaws.com\/\?.*Operation=DescribeJobFlows/
-    body: 
+    body:
+      encoding: US-ASCII
       string: ""
-    headers: 
-      Accept: 
+    headers:
+      Accept:
       - "*/*; q=0.5, application/xml"
-      Accept-Encoding: 
+      Accept-Encoding:
       - gzip, deflate
-  response: 
-    status: 
+  response:
+    status:
       code: 200
       message: OK
-    headers: 
-      Date: 
+    headers:
+      Date:
       - Sat, 23 Apr 2011 04:23:31 GMT
-      Content-Type: 
+      Content-Type:
       - text/xml
-      Content-Encoding: 
+      Content-Encoding:
       - gzip
-      X-Amzn-Requestid: 
+      X-Amzn-Requestid:
       - 720bb591-6d61-11e0-8835-2b8f31bf243b
-      Vary: 
+      Vary:
       - Accept-Encoding
-      Transfer-Encoding: 
+      Transfer-Encoding:
       - chunked
-    body: 
+    body:
+      encoding: ASCII-8BIT
       string: !binary |
         H4sIAAAAAAAAAO1dWXPiSrJ+n1/Bnae5D2pq0Up4fINFbGaXWMxLhwC5zRwM
         DEv3eH79LUnGBhlQIRCSoCJ6ek4jVVaqlJmV36eqrIecuRwuxgOzPBvkJ7M/
