@@ -1,29 +1,31 @@
---- 
-http_interactions: 
-- request: 
+---
+http_interactions:
+- request:
     method: get
     uri: !ruby/regexp /^https/
-    body: 
+    body:
+      encoding: US-ASCII
       string: ""
-    headers: 
-      Accept: 
+    headers:
+      Accept:
       - "*/*; q=0.5, application/xml"
-      Accept-Encoding: 
+      Accept-Encoding:
       - gzip, deflate
-  response: 
-    status: 
+  response:
+    status:
       code: 200
       message: OK
-    headers: 
-      Content-Length: 
+    headers:
+      Content-Length:
       - "239"
-      Date: 
+      Date:
       - Sun, 17 Apr 2011 18:49:43 GMT
-      Content-Type: 
+      Content-Type:
       - text/xml
-      X-Amzn-Requestid: 
+      X-Amzn-Requestid:
       - 755ebe8a-6923-11e0-a9c2-c126f1bb4493
-    body: 
+    body:
+      encoding: US-ASCII
       string: |
         <SetTerminationProtectionResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
           <ResponseMetadata>

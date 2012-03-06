@@ -3,7 +3,8 @@ http_interactions:
 - request: 
     method: get
     uri: !ruby/regexp /^https/
-    body: 
+    body:
+      encoding: US-ASCII
       string: ""
     headers: 
       Accept: 
@@ -24,6 +25,7 @@ http_interactions:
       X-Amzn-Requestid: 
       - ddd0d158-67eb-11e0-ba06-2b5c43005be2
     body: 
+      encoding: US-ASCII
       string: |
         <AddInstanceGroupsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
           <AddInstanceGroupsResult>

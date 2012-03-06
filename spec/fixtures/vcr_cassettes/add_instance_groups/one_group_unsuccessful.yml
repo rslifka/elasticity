@@ -1,29 +1,31 @@
---- 
-http_interactions: 
-- request: 
+---
+http_interactions:
+- request:
     method: get
     uri: !ruby/regexp /^https/
-    body: 
+    body:
+      encoding: US-ASCII
       string: ""
-    headers: 
-      Accept: 
+    headers:
+      Accept:
       - "*/*; q=0.5, application/xml"
-      Accept-Encoding: 
+      Accept-Encoding:
       - gzip, deflate
-  response: 
-    status: 
+  response:
+    status:
       code: 400
       message: Bad Request
-    headers: 
-      Content-Length: 
+    headers:
+      Content-Length:
       - "337"
-      Date: 
+      Date:
       - Sat, 16 Apr 2011 05:26:15 GMT
-      Content-Type: 
+      Content-Type:
       - text/xml
-      X-Amzn-Requestid: 
+      X-Amzn-Requestid:
       - 0c8d744d-67ea-11e0-bf8a-ed57a5465c87
-    body: 
+    body:
+      encoding: US-ASCII
       string: |
         <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
           <Error>
