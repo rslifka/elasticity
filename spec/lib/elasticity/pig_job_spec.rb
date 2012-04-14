@@ -2,94 +2,91 @@ require 'spec_helper'
 
 describe Elasticity::PigJob do
 
+  let(:pig_job) { Elasticity::PigJob.new("access", "secret") }
+
   describe ".new" do
     it "should have good defaults" do
-      pig = Elasticity::PigJob.new("access", "secret")
-      pig.aws_access_key_id.should == "access"
-      pig.aws_secret_access_key.should == "secret"
-      pig.ec2_key_name.should == "default"
-      pig.hadoop_version.should == "0.20"
-      pig.instance_count.should == 2
-      pig.master_instance_type.should == "m1.small"
-      pig.name.should == "Elasticity Pig Job"
-      pig.slave_instance_type.should == "m1.small"
-      pig.action_on_failure.should == "TERMINATE_JOB_FLOW"
-      pig.log_uri.should == nil
-      pig.parallels.should == 1
+      pig_job.aws_access_key_id.should == "access"
+      pig_job.aws_secret_access_key.should == "secret"
+      pig_job.ec2_key_name.should == "default"
+      pig_job.hadoop_version.should == "0.20"
+      pig_job.instance_count.should == 2
+      pig_job.master_instance_type.should == "m1.small"
+      pig_job.name.should == "Elasticity Pig Job"
+      pig_job.slave_instance_type.should == "m1.small"
+      pig_job.action_on_failure.should == "TERMINATE_JOB_FLOW"
+      pig_job.log_uri.should == nil
+      pig_job.parallels.should == 1
     end
   end
 
   describe "#instance_count=" do
     it "should not allow instances to be set less than 2" do
-      pig = Elasticity::PigJob.new("access", "secret")
-      lambda {
-        pig.instance_count = 1
-      }.should raise_error(ArgumentError, "Instance count cannot be set to less than 2 (requested 1)")
+      expect {
+        pig_job.instance_count = 1
+      }.to raise_error(ArgumentError, "Instance count cannot be set to less than 2 (requested 1)")
     end
 
     it "should recalculate @parallels" do
-      pig = Elasticity::PigJob.new("access", "secret")
-      lambda {
-        pig.instance_count = 10
-      }.should change(pig, :parallels)
+      expect {
+        pig_job.instance_count = 10
+      }.to change(pig_job, :parallels)
     end
   end
 
   describe "#slave_instance_type=" do
     it "should recalculate @parallels" do
-      pig = Elasticity::PigJob.new("access", "secret")
-      lambda {
-        pig.slave_instance_type = "c1.xlarge"
-      }.should change(pig, :parallels)
+      expect {
+        pig_job.slave_instance_type = "c1.xlarge"
+      }.to change(pig_job, :parallels)
     end
   end
 
   describe "calculated value of parallels" do
 
     before do
-      @pig = Elasticity::PigJob.new("access", "secret")
-      @pig.instance_count = 8
+      pig_job.instance_count = 8
     end
 
     context "when slave is m1.small" do
       it "should be 7" do
-        @pig.slave_instance_type = "m1.small"
-        @pig.parallels.should == 7
+        pig_job.slave_instance_type = "m1.small"
+        pig_job.parallels.should == 7
       end
     end
 
     context "when slave is m1.large" do
       it "should be 13" do
-        @pig.slave_instance_type = "m1.large"
-        @pig.parallels.should == 13
+        pig_job.slave_instance_type = "m1.large"
+        pig_job.parallels.should == 13
       end
     end
 
     context "when slave is c1.medium" do
       it "should be 13" do
-        @pig.slave_instance_type = "c1.medium"
-        @pig.parallels.should == 13
+        pig_job.slave_instance_type = "c1.medium"
+        pig_job.parallels.should == 13
       end
     end
 
     context "when slave is m1.xlarge" do
       it "should be 26" do
-        @pig.slave_instance_type = "m1.xlarge"
-        @pig.parallels.should == 26
+        pig_job.slave_instance_type = "m1.xlarge"
+        pig_job.parallels.should == 26
       end
     end
 
     context "when slave is c1.xlarge" do
       it "should be 26" do
-        @pig.slave_instance_type = "c1.xlarge"
-        @pig.parallels.should == 26
+        pig_job.slave_instance_type = "c1.xlarge"
+        pig_job.parallels.should == 26
       end
     end
 
     context "when slave is any other type" do
       it "should be 1" do
-        @pig.slave_instance_type = "foo"
-        @pig.parallels.should == 7
+        pig_job.slave_instance_type = "foo"
+        pig_job.parallels.should == 7
       end
     end
 
