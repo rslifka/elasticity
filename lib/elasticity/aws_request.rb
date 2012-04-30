@@ -28,7 +28,7 @@ module Elasticity
       service_hash["AWSAccessKeyId"] = @access_key
       service_hash["Timestamp"] = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.000Z")
       service_hash["SignatureVersion"] = "2"
-      service_hash['SignatureMethod'] = 'HmacSHA256'
+      service_hash["SignatureMethod"] = "HmacSHA256"
       canonical_string = service_hash.keys.sort.map do |key|
         "#{AwsRequest.aws_escape(key)}=#{AwsRequest.aws_escape(service_hash[key])}"
       end.join('&')
