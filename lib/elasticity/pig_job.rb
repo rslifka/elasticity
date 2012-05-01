@@ -2,12 +2,16 @@ module Elasticity
 
   class PigJob < Elasticity::SimpleJob
 
-    # Automatically passed as Pig argument E_PARALLELS
+    attr_accessor :script
+    attr_accessor :variables
+
     attr_reader :parallels
 
-    def initialize(aws_access_key_id, aws_secret_access_key)
-      super
+    def initialize(aws_access_key_id, aws_secret_access_key, script)
+      super(aws_access_key_id, aws_secret_access_key)
       @name = "Elasticity Pig Job"
+      @script = script
+      @variables = {}
       @parallels = calculate_parallels
     end
 
@@ -35,13 +39,13 @@ module Elasticity
     #
     # The variables are accessible within your Pig scripts by using the
     # standard ${NAME} syntax.
-    def run(pig_script, pig_variables={})
+    def run
       script_arguments = ["s3://elasticmapreduce/libs/pig/pig-script", "--run-pig-script", "--args"]
-      pig_variables.keys.sort.each do |variable_name|
-        script_arguments.concat(["-p", "#{variable_name}=#{pig_variables[variable_name]}"])
+      @variables.keys.sort.each do |name|
+        script_arguments.concat(["-p", "#{name}=#{@variables[name]}"])
       end
       script_arguments.concat(["-p", "E_PARALLELS=#{@parallels}"])
-      script_arguments << pig_script
+      script_arguments << @script
       jobflow_config = {
         :name => @name,
         :instances => {

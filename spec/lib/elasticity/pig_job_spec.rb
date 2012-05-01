@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Elasticity::PigJob do
 
-  let(:pig_job) { Elasticity::PigJob.new("access", "secret") }
+  let(:pig_job) { Elasticity::PigJob.new("access", "secret", "script") }
 
   describe ".new" do
     it "should have good defaults" do
@@ -16,6 +16,7 @@ describe Elasticity::PigJob do
       pig_job.slave_instance_type.should == "m1.small"
       pig_job.action_on_failure.should == "TERMINATE_JOB_FLOW"
       pig_job.log_uri.should == nil
+      pig_job.script.should == "script"
       pig_job.parallels.should == 1
     end
   end
@@ -142,17 +143,17 @@ describe Elasticity::PigJob do
         }).and_return("new_jobflow_id")
 
         Elasticity::EMR.should_receive(:new).with("access", "secret").and_return(aws)
-        pig = Elasticity::PigJob.new("access", "secret")
+        pig = Elasticity::PigJob.new("access", "secret", "s3n://slif-pig-test/test.pig")
 
         pig.log_uri = "s3n://slif-test/output/logs"
         pig.action_on_failure = "CONTINUE"
         pig.instance_count = 8
         pig.slave_instance_type = "m1.xlarge"
-
-        jobflow_id = pig.run('s3n://slif-pig-test/test.pig', {
+        pig.variables = {
           'OUTPUT' => 's3n://slif-pig-test/output',
           'XREFS' => 's3n://slif-pig-test/xrefs'
-        })
+        }
+        jobflow_id = pig.run
         jobflow_id.should == "new_jobflow_id"
       end
     end
@@ -169,21 +170,21 @@ describe Elasticity::PigJob do
                 :args => ["-m", "foo=111"]
               }
             },
-            {
-              :name => "Elasticity Bootstrap Action (Configure Hadoop)",
-              :script_bootstrap_action => {
-                :path => "s3n://elasticmapreduce/bootstrap-actions/configure-hadoop",
-                :args => ["-m", "bar=222"]
+              {
+                :name => "Elasticity Bootstrap Action (Configure Hadoop)",
+                :script_bootstrap_action => {
+                  :path => "s3n://elasticmapreduce/bootstrap-actions/configure-hadoop",
+                  :args => ["-m", "bar=222"]
+                }
               }
-            }
           ],
         }))
 
         Elasticity::EMR.should_receive(:new).with("access", "secret").and_return(aws)
-        pig = Elasticity::PigJob.new("access", "secret")
+        pig = Elasticity::PigJob.new("access", "secret", "s3n://slif-pig-test/test.pig")
         pig.add_hadoop_bootstrap_action("-m", "foo=111")
         pig.add_hadoop_bootstrap_action("-m", "bar=222")
-        pig.run('s3n://slif-pig-test/test.pig')
+        pig.run
       end
     end
 
@@ -194,13 +195,14 @@ describe Elasticity::PigJob do
     context "with bootstrap actions" do
       use_vcr_cassette "pig_job/apache_log_reports_with_bootstrap", :record => :none
       it "should kick off the sample Amazion EMR Pig application" do
-        pig = Elasticity::PigJob.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+        pig = Elasticity::PigJob.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY, "s3n://elasticmapreduce/samples/pig-apache/do-reports.pig")
         pig.ec2_key_name = "sharethrough_dev"
         pig.add_hadoop_bootstrap_action("-m", "mapred.job.reuse.jvm.num.tasks=120")
-        jobflow_id = pig.run("s3n://elasticmapreduce/samples/pig-apache/do-reports.pig", {
+        pig.variables = {
           "INPUT" => "s3n://elasticmapreduce/samples/pig-apache/input",
           "OUTPUT" => "s3n://slif-elasticity/pig-apache/output/2011-05-10"
-        })
+        }
+        jobflow_id = pig.run
         jobflow_id.should == "j-1UK43AWRT3QHD"
       end
     end
@@ -208,13 +210,14 @@ describe Elasticity::PigJob do
     context "without bootstrap actions" do
       use_vcr_cassette "pig_job/apache_log_reports", :record => :none
       it "should kick off the sample Amazion EMR Pig application" do
-        pig = Elasticity::PigJob.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+        pig = Elasticity::PigJob.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY, "s3n://elasticmapreduce/samples/pig-apache/do-reports.pig")
         pig.log_uri = "s3n://slif-elasticity/pig-apache/logs"
         pig.ec2_key_name = "sharethrough_dev"
-        jobflow_id = pig.run("s3n://elasticmapreduce/samples/pig-apache/do-reports.pig", {
+        pig.variables = {
           "INPUT" => "s3n://elasticmapreduce/samples/pig-apache/input",
           "OUTPUT" => "s3n://slif-elasticity/pig-apache/output/2011-05-04"
-        })
+        }
+        jobflow_id = pig.run
         jobflow_id.should == "j-1HB7A3TBRT3VS"
       end
     end
