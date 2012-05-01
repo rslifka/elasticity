@@ -4,9 +4,14 @@ module Elasticity
   # having to understand the entirety of the EMR API.
   class HiveJob < Elasticity::SimpleJob
 
-    def initialize(aws_access_key_id, aws_secret_access_key)
-      super
+    attr_accessor :script
+    attr_accessor :variables
+
+    def initialize(aws_access_key_id, aws_secret_access_key, script)
+      super(aws_access_key_id, aws_secret_access_key)
       @name = "Elasticity Hive Job"
+      @script = script
+      @variables = {}
     end
 
     # Run the specified Hive script with the specified variables.
@@ -22,12 +27,14 @@ module Elasticity
     # standard ${NAME} syntax.  E.g.
     #
     #   ADD JAR ${SCRIPTS}/jsonserde.jar;
-    def run(hive_script, hive_variables={})
+    def run
       script_arguments = ["s3://elasticmapreduce/libs/hive/hive-script", "--run-hive-script", "--args"]
-      script_arguments.concat(["-f", hive_script])
-      hive_variables.each do |variable_name, value|
-        script_arguments.concat(["-d", "#{variable_name}=#{value}"])
+      script_arguments.concat(["-f", @script])
+
+      @variables.each do |name, value|
+        script_arguments.concat(["-d", "#{name}=#{value}"])
       end
+
       jobflow_config = {
         :name => @name,
         :instances => {
