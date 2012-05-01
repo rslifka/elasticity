@@ -28,61 +28,38 @@ module Elasticity
       @parallels = calculate_parallels
     end
 
-    # Run the specified Pig script with the specified variables.
-    #
-    #   pig = Elasticity::PigJob.new("access", "secret")
-    #   jobflow_id = pig.run('s3n://slif-pig-test/test.pig', {
-    #     'SCRIPTS' => 's3n://slif-pig-test/scripts',
-    #     'OUTPUT'  => 's3n://slif-pig-test/output',
-    #     'XREFS'   => 's3n://slif-pig-test/xrefs'
-    #   })
-    #
-    # The variables are accessible within your Pig scripts by using the
-    # standard ${NAME} syntax.
-    def run
+    private
+
+    def jobflow_steps
       script_arguments = ["s3://elasticmapreduce/libs/pig/pig-script", "--run-pig-script", "--args"]
       @variables.keys.sort.each do |name|
         script_arguments.concat(["-p", "#{name}=#{@variables[name]}"])
       end
       script_arguments.concat(["-p", "E_PARALLELS=#{@parallels}"])
       script_arguments << @script
-      jobflow_config = {
-        :name => @name,
-        :instances => {
-          :ec2_key_name => @ec2_key_name,
-          :hadoop_version => @hadoop_version,
-          :instance_count => @instance_count,
-          :master_instance_type => @master_instance_type,
-          :slave_instance_type => @slave_instance_type,
+      [
+        {
+          :action_on_failure => "TERMINATE_JOB_FLOW",
+          :hadoop_jar_step => {
+            :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar",
+            :args => [
+              "s3://elasticmapreduce/libs/pig/pig-script",
+                "--base-path", "s3://elasticmapreduce/libs/pig/",
+                "--install-pig"
+            ],
+          },
+          :name => "Setup Pig"
         },
-        :steps => [
           {
-            :action_on_failure => "TERMINATE_JOB_FLOW",
+            :action_on_failure => @action_on_failure,
             :hadoop_jar_step => {
               :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar",
-              :args => [
-                "s3://elasticmapreduce/libs/pig/pig-script",
-                  "--base-path", "s3://elasticmapreduce/libs/pig/",
-                  "--install-pig"
-              ],
+              :args => script_arguments,
             },
-            :name => "Setup Pig"
-          },
-            {
-              :action_on_failure => @action_on_failure,
-              :hadoop_jar_step => {
-                :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar",
-                :args => script_arguments,
-              },
-              :name => "Run Pig Script"
-            }
-        ]
-      }
-
-      run_job(jobflow_config)
+            :name => "Run Pig Script"
+          }
+      ]
     end
-
-    private
 
     # Calculate a common-sense default value of PARALLELS using the following
     # formula from the Pig Cookbook:
@@ -98,16 +75,22 @@ module Elasticity
     #   c1.xlarge  4
     def calculate_parallels
       reduce_slots = case @slave_instance_type
-        when "m1.small" then 1
-        when "m1.large" then 2
-        when "m1.xlarge" then 4
-        when "c1.medium" then 2
-        when "c1.xlarge" then 4
-        else 1
+        when "m1.small" then
+          1
+        when "m1.large" then
+          2
+        when "m1.xlarge" then
+          4
+        when "c1.medium" then
+          2
+        when "c1.xlarge" then
+          4
+        else
+          1
       end
       ((@instance_count - 1).to_f * reduce_slots.to_f * 0.9).ceil
     end
-    
+
   end
-  
+
 end
