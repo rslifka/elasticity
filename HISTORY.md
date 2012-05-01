@@ -1,3 +1,8 @@
+### 2.0
+
++ Added support for launching SimpleJobS on persistent clusters via Cluster.
++ Refactored SimpleJob implementation and broke backwards compatibility with all SimpleJobS (Hive, Pig, Custom).  Have a look at the README.
+
 ### 1.5
 
 + Added support for Hadoop bootstrap actions to all job types (Pig, Hive and Custom Jar).

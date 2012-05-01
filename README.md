@@ -31,7 +31,7 @@ These are all accessible from the simplified jobs.  See the PigJob description f
 You can also configure Hadoop options with add_hadoop_bootstrap_action().
 
 <pre>
-  pig = Elasticity::PigJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+  pig = Elasticity::PigJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"], "s3n://elasticmapreduce/samples/pig-apache/do-reports.pig")
   pig.add_hadoop_bootstrap_action("-m", "mapred.job.reuse.jvm.num.tasks=120")
   ...
 </pre>
@@ -41,11 +41,12 @@ You can also configure Hadoop options with add_hadoop_bootstrap_action().
 HiveJob allows you to quickly launch Hive jobs without having to understand the ins and outs of the EMR API.  Specify only the Hive script location and (optionally) variables to make available to the Hive script.
 
 <pre>
-  hive = Elasticity::HiveJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
-  hive.run("s3n://slif-hive/test.q", {
+  hive = Elasticity::HiveJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"], "s3n://slif-hive/test.q")
+  hive.variables = {
     "LIB"    => "s3n://slif-test/lib",
     "OUTPUT" => "s3n://slif-test/output"
-  })
+  }
+  hive.run
   
   > "j-129V5AQFMKO1C"
 </pre>
@@ -55,13 +56,14 @@ HiveJob allows you to quickly launch Hive jobs without having to understand the 
 Like HiveJob, PigJob allows you to quickly launch Pig jobs :)
 
 <pre>
-  pig = Elasticity::PigJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+  pig = Elasticity::PigJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"], "s3n://elasticmapreduce/samples/pig-apache/do-reports.pig")
   pig.log_uri = "s3n://slif-elasticity/pig-apache/logs"
   pig.ec2_key_name = "slif_dev"
-  pig.run("s3n://elasticmapreduce/samples/pig-apache/do-reports.pig", {
+  pig.variables = {
     "INPUT"  => "s3n://elasticmapreduce/samples/pig-apache/input",
     "OUTPUT" => "s3n://slif-elasticity/pig-apache/output/2011-05-04"
-  })
+  }
+  pig.run
   
   > "j-16PZ24OED71C6"
 </pre>
@@ -95,22 +97,25 @@ Use this as you would any other Pig variable.
 Custom jar jobs are also available.  To kick off a custom job, specify the path to the jar and any arguments you'd like passed to the jar.
 
 <pre>
-  custom_jar = Elasticity::CustomJarJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"])
+  custom_jar = Elasticity::CustomJarJob.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_KEY"], "s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar")
   custom_jar.log_uri = "s3n://slif-test/output/logs"
   custom_jar.action_on_failure = "TERMINATE_JOB_FLOW"
-  jobflow_id = custom_jar.run('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar', [
-      "s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br",
-      "s3n://elasticmapreduce/samples/cloudburst/input/100k.br",
-      "s3n://slif_hadoop_test/cloudburst/output/2011-12-09",
-  ])
+  custom_jar.arguments = [
+    "s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br",
+    "s3n://elasticmapreduce/samples/cloudburst/input/100k.br",
+    "s3n://slif_hadoop_test/cloudburst/output/2011-12-09",
+  ]
+  custom_jar.run
   
   > "j-1IU6NM8OUPS9I"
 </pre>
 
-Custom jar jobs support arbitrary entry points.  Specify the class on which to call main() either via the JAR manifest or as the first argument to the job:
+Custom jar jobs support arbitrary entry points.  Specify the class on which to call main() either via the JAR manifest (not shown) or as the first argument to the job:
 
 <pre>
-  Elasticity::CustomJarJob.new(key, secret).run(s3_jar_path, ['MyCustomClass', 'arg1', 'arg2'])
+  job = Elasticity::CustomJarJob.new(key, secret, s3_jar_path)
+  job.arguments = ['MyCustomClass', 'arg1', 'arg2']
+  job.run
 </pre>
 
 # Amazon API Reference
