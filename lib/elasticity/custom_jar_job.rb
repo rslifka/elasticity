@@ -2,12 +2,16 @@ module Elasticity
 
   class CustomJarJob < Elasticity::SimpleJob
 
-    def initialize(aws_access_key_id, aws_secret_access_key)
-      super
+    attr_accessor :jar
+    attr_accessor :arguments
+
+    def initialize(aws_access_key_id, aws_secret_access_key, jar)
+      super(aws_access_key_id, aws_secret_access_key)
       @name = "Elasticity Custom Jar Job"
+      @jar = jar
     end
 
-    def run(jar, arguments=nil)
+    def run
       jobflow_config = {
         :name => @name,
         :instances => {
@@ -21,14 +25,14 @@ module Elasticity
           {
             :action_on_failure => @action_on_failure,
             :hadoop_jar_step => {
-              :jar => jar
+              :jar => @jar
             },
             :name => "Execute Custom Jar"
           }
         ]
       }
 
-      jobflow_config[:steps].first[:hadoop_jar_step][:args] = arguments if arguments
+      jobflow_config[:steps].first[:hadoop_jar_step][:args] = @arguments if @arguments
 
       run_job(jobflow_config)
     end
