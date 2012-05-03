@@ -2,24 +2,14 @@ require 'spec_helper'
 
 describe Elasticity::CustomJarJob do
 
-  describe ".new" do
-
-    it "should have good defaults" do
-      custom_jar = Elasticity::CustomJarJob.new("access", "secret", "jar")
-      custom_jar.aws_access_key_id.should == "access"
-      custom_jar.aws_secret_access_key.should == "secret"
-      custom_jar.ec2_key_name.should == "default"
-      custom_jar.hadoop_version.should == "0.20"
-      custom_jar.instance_count.should == 2
-      custom_jar.master_instance_type.should == "m1.small"
-      custom_jar.name.should == "Elasticity Custom Jar Job"
-      custom_jar.slave_instance_type.should == "m1.small"
-      custom_jar.action_on_failure.should == "TERMINATE_JOB_FLOW"
-      custom_jar.log_uri.should == nil
-      custom_jar.jar.should == "jar"
-    end
-
+  subject do
+    Elasticity::CustomJarJob.new("access", "secret", "jar")
   end
+
+  it { should be_a_kind_of Elasticity::SimpleJob }
+
+  its(:jar)  { should == "jar" }
+  its(:name) { should == "Elasticity Custom Jar Job" }
 
   describe "#run" do
 

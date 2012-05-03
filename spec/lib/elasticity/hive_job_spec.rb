@@ -2,24 +2,14 @@ require 'spec_helper'
 
 describe Elasticity::HiveJob do
 
-  describe ".new" do
-
-    it "should have good defaults" do
-      hive = Elasticity::HiveJob.new("access", "secret", "script")
-      hive.aws_access_key_id.should == "access"
-      hive.aws_secret_access_key.should == "secret"
-      hive.ec2_key_name.should == "default"
-      hive.hadoop_version.should == "0.20"
-      hive.instance_count.should == 2
-      hive.master_instance_type.should == "m1.small"
-      hive.name.should == "Elasticity Hive Job"
-      hive.slave_instance_type.should == "m1.small"
-      hive.action_on_failure.should == "TERMINATE_JOB_FLOW"
-      hive.log_uri.should == nil
-      hive.script.should == "script"
-    end
-
+  subject do
+    Elasticity::HiveJob.new("access", "secret", "script")
   end
+
+  it { should be_a_kind_of Elasticity::SimpleJob }
+
+  its(:script)    { should == "script" }
+  its(:variables) { should == {} }
 
   describe "#run" do
 

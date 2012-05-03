@@ -39,14 +39,18 @@ module Elasticity
     end
 
     def run
-      jobflow_config = jobflow_preamble
-      jobflow_config.merge!(:steps => jobflow_steps)
-      jobflow_config.merge!(:log_uri => @log_uri) if @log_uri
-      jobflow_config.merge!(:bootstrap_actions => @hadoop_actions) if @hadoop_actions
       @emr.run_job_flow(jobflow_config)
     end
 
     private
+
+    def jobflow_config
+      config = jobflow_preamble
+      config.merge!(:steps => jobflow_steps)
+      config.merge!(:log_uri => @log_uri) if @log_uri
+      config.merge!(:bootstrap_actions => @hadoop_actions) if @hadoop_actions
+      config
+    end
 
     def jobflow_preamble
       {
