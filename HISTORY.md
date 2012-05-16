@@ -2,6 +2,7 @@
 
 + Added support for launching SimpleJobS on persistent clusters via Cluster.
 + Refactored SimpleJob implementation and broke backwards compatibility with all SimpleJobS (Hive, Pig, Custom).  Have a look at the README.
++ Dependency updates: ruby-1.9.3-p194, rspec-2.10.
 
 ### 1.5
 
