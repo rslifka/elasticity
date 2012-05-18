@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Robert Slifka"]
   s.homepage    = "http://www.github.com/rslifka/elasticity"
-  s.summary     = %q{Programmatic access to Amazon's Elastic Map Reduce service.}
-  s.description = %q{Programmatic access to Amazon's Elastic Map Reduce service, driven by the Sharethrough team's requirements for belting out EMR jobs.}
+  s.summary     = %q{Streamlined, programmatic access to Amazon's Elastic Map Reduce service.}
+  s.description = %q{Streamlined, Programmatic access to Amazon's Elastic Map Reduce service, driven by the Sharethrough team's requirements for belting out EMR jobs.}
 
   s.add_dependency("rest-client")
   s.add_dependency("nokogiri")
