@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Elasticity::AwsRequest do
 
   describe ".aws_escape" do

@@ -24,18 +24,12 @@ module Elasticity
       @name = "Elasticity Job"
       @slave_instance_type = "m1.small"
 
+      @bootstrap_actions = []
       @emr = Elasticity::EMR.new(aws_access_key_id, aws_secret_access_key)
     end
 
     def add_hadoop_bootstrap_action(option, value)
-      @hadoop_actions ||= []
-      @hadoop_actions << {
-        :name => "Elasticity Bootstrap Action (Configure Hadoop)",
-        :script_bootstrap_action => {
-          :path => "s3n://elasticmapreduce/bootstrap-actions/configure-hadoop",
-          :args => [option, value]
-        }
-      }
+      @bootstrap_actions << [option, value]
     end
 
     def run
@@ -48,7 +42,7 @@ module Elasticity
       config = jobflow_preamble
       config.merge!(:steps => jobflow_steps)
       config.merge!(:log_uri => @log_uri) if @log_uri
-      config.merge!(:bootstrap_actions => @hadoop_actions) if @hadoop_actions
+      config.merge!(:bootstrap_actions => jobflow_bootstrap_actions) unless @bootstrap_actions.empty?
       config
     end
 
@@ -62,6 +56,24 @@ module Elasticity
           :master_instance_type => @master_instance_type,
           :slave_instance_type => @slave_instance_type,
         },
+      }
+    end
+
+    def jobflow_bootstrap_actions
+      actions = []
+      @bootstrap_actions.each do |action|
+        actions << jobflow_bootstrap_action(action[0], action[1])
+      end
+      actions
+    end
+
+    def jobflow_bootstrap_action(option, value)
+      {
+        :name => "Elasticity Bootstrap Action (Configure Hadoop)",
+        :script_bootstrap_action => {
+          :path => "s3n://elasticmapreduce/bootstrap-actions/configure-hadoop",
+          :args => [option, value]
+        }
       }
     end
 

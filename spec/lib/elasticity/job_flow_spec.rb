@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Elasticity::JobFlow do
 
   before do

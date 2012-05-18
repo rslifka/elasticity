@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Elasticity::EMR do
 
   describe "#add_instance_groups" do

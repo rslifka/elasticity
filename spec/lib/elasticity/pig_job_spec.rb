@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Elasticity::PigJob do
 
   subject do
