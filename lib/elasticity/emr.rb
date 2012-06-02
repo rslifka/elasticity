@@ -258,56 +258,50 @@ module Elasticity
       true
     end
 
-    private
+    # AWS error responses all follow the same form.  Extract the message from
+    # the error document.
+    def self.parse_error_response(error_xml)
+      xml_doc = Nokogiri::XML(error_xml)
+      xml_doc.remove_namespaces!
+      xml_doc.xpath("/ErrorResponse/Error/Message").text
+    end
 
-    class << self
-
-      # AWS error responses all follow the same form.  Extract the message from
-      # the error document.
-      def parse_error_response(error_xml)
-        xml_doc = Nokogiri::XML(error_xml)
-        xml_doc.remove_namespaces!
-        xml_doc.xpath("/ErrorResponse/Error/Message").text
-      end
-
-      # Since we use the same structure as AWS, we can generate AWS param names
-      # from the Ruby versions of those names (and the param nesting).
-      def convert_ruby_to_aws(params)
-        result = {}
-        params.each do |key, value|
-          case value
-            when Array
-              prefix = "#{camelize(key.to_s)}.member"
-              value.each_with_index do |item, index|
-                if item.is_a?(String)
-                  result["#{prefix}.#{index+1}"] = item
-                else
-                  convert_ruby_to_aws(item).each do |nested_key, nested_value|
-                    result["#{prefix}.#{index+1}.#{nested_key}"] = nested_value
-                  end
+    # Since we use the same structure as AWS, we can generate AWS param names
+    # from the Ruby versions of those names (and the param nesting).
+    def self.convert_ruby_to_aws(params)
+      result = {}
+      params.each do |key, value|
+        case value
+          when Array
+            prefix = "#{camelize(key.to_s)}.member"
+            value.each_with_index do |item, index|
+              if item.is_a?(String)
+                result["#{prefix}.#{index+1}"] = item
+              else
+                convert_ruby_to_aws(item).each do |nested_key, nested_value|
+                  result["#{prefix}.#{index+1}.#{nested_key}"] = nested_value
                 end
               end
-            when Hash
-              prefix = "#{camelize(key.to_s)}"
-              convert_ruby_to_aws(value).each do |nested_key, nested_value|
-                result["#{prefix}.#{nested_key}"] = nested_value
-              end
-            else
-              result[camelize(key.to_s)] = value
-          end
-        end
-        result
-      end
-
-      # (Used from Rails' ActiveSupport)
-      def camelize(lower_case_and_underscored_word, first_letter_in_uppercase = true)
-        if first_letter_in_uppercase
-          lower_case_and_underscored_word.to_s.gsub(/\/(.?)/) { "::" + $1.upcase }.gsub(/(^|_)(.)/) { $2.upcase }
-        else
-          lower_case_and_underscored_word.first + camelize(lower_case_and_underscored_word)[1..-1]
+            end
+          when Hash
+            prefix = "#{camelize(key.to_s)}"
+            convert_ruby_to_aws(value).each do |nested_key, nested_value|
+              result["#{prefix}.#{nested_key}"] = nested_value
+            end
+          else
+            result[camelize(key.to_s)] = value
         end
       end
+      result
+    end
 
+    # (Used from Rails' ActiveSupport)
+    def self.camelize(lower_case_and_underscored_word, first_letter_in_uppercase = true)
+      if first_letter_in_uppercase
+        lower_case_and_underscored_word.to_s.gsub(/\/(.?)/) { "::" + $1.upcase }.gsub(/(^|_)(.)/) { $2.upcase }
+      else
+        lower_case_and_underscored_word.first + camelize(lower_case_and_underscored_word)[1..-1]
+      end
     end
 
   end
