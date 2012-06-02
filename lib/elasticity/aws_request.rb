@@ -37,17 +37,13 @@ module Elasticity
       "#{canonical_string}&Signature=#{signature}"
     end
 
-    class << self
-
-      # (Used from RightScale's right_aws gem)
-      # Escape a string according to Amazon's rules.
-      # See: http://docs.amazonwebservices.com/AmazonSimpleDB/2007-11-07/DeveloperGuide/index.html?REST_RESTAuth.html
-      def aws_escape(param)
-        param.to_s.gsub(/([^a-zA-Z0-9._~-]+)/n) do
-          '%' + $1.unpack('H2' * $1.size).join('%').upcase
-        end
+    # (Used from RightScale's right_aws gem)
+    # Escape a string according to Amazon's rules.
+    # See: http://docs.amazonwebservices.com/AmazonSimpleDB/2007-11-07/DeveloperGuide/index.html?REST_RESTAuth.html
+    def self.aws_escape(param)
+      param.to_s.gsub(/([^a-zA-Z0-9._~-]+)/n) do
+        '%' + $1.unpack('H2' * $1.size).join('%').upcase
       end
-
     end
 
   end
