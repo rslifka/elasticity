@@ -1,5 +1,11 @@
 describe Elasticity::EMR do
 
+  subject do
+    Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+  end
+
+  its(:aws_request) { should == Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY, {}) }
+
   describe "#add_instance_groups" do
 
     describe "integration happy path" do
@@ -872,6 +878,22 @@ describe Elasticity::EMR do
         "Steps.member.2.HadoopJarStep.Args.member.3" => "arg6"
       }
       Elasticity::EMR.send(:convert_ruby_to_aws, add_jobflow_steps_params).should == expected_result
+    end
+  end
+
+  describe "#==" do
+    let(:same_object) { subject }
+    let(:same_values) { Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY) }
+    let(:diff_type)   { Object.new }
+
+    it { should == same_object }
+    it { should == same_values }
+    it { should_not == diff_type }
+
+    it "should be false on deep comparison" do
+      other = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+      other.instance_variable_set(:@aws_request, Elasticity::AwsRequest.new('_', '_'))
+      subject.should_not == other
     end
   end
 

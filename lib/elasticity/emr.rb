@@ -2,6 +2,8 @@ module Elasticity
 
   class EMR
 
+    attr_accessor :aws_request
+
     def initialize(aws_access_key_id, aws_secret_access_key, options = {})
       @aws_request = Elasticity::AwsRequest.new(aws_access_key_id, aws_secret_access_key, options)
     end
@@ -248,6 +250,12 @@ module Elasticity
     # by Elasticity or you just want to see the response XML for yourself :)
     def direct(params)
       @aws_request.aws_emr_request(params)
+    end
+
+    def ==(other)
+      return false unless other.is_a? EMR
+      return false unless @aws_request == other.aws_request
+      true
     end
 
     private
