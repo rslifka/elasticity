@@ -4,8 +4,6 @@ describe Elasticity::AwsRequest do
     Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key")
   end
 
-  let(:aws_request) { Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key") }
-
   describe "#sign_params" do
     before do
       Time.stub(:now).and_return(Time.at(1302461096))
@@ -24,51 +22,38 @@ describe Elasticity::AwsRequest do
 
     describe "options" do
 
-      describe "region" do
-
-        context "when :region is specified" do
-          let(:request) { Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key", :region => "eu-west-1")}
-
-          it "should request against that region" do
-            RestClient.should_receive(:get).with(/elasticmapreduce\.eu\-west\-1\.amazonaws\.com/)
-            request.aws_emr_request({})
-          end
+      context "when no options are specified" do
+        it "should use the default option values" do
+          RestClient.should_receive(:get).with(/^https:\/\/elasticmapreduce.amazonaws.com/)
+          subject.aws_emr_request({})
         end
-
-        context "when :region is not specified" do
-          it "should use the default request url" do
-            RestClient.should_receive(:get).with(/elasticmapreduce\.amazonaws\.com/)
-            subject.aws_emr_request({})
-          end
-        end
-
       end
 
-      describe ":secure" do
+      context "when :region is specified" do
+        let(:region)  { "eu-west-1" }
+        let(:request) { Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key", :region => region) }
 
-        context "when :secure is false" do
-          let(:request) { Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key", :secure => false) }
-
-          it "should use the value to determine the request type" do
-            RestClient.should_receive(:get).with(/^http:/)
-            request.aws_emr_request({})
-          end
+        it "should request against that region" do
+          RestClient.should_receive(:get).with(/elasticmapreduce\.#{region}\.amazonaws\.com/)
+          request.aws_emr_request({})
         end
+      end
 
-        context "when :secure is true" do
-          let(:request) { Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key", :secure => true) }
+      context "when :secure is false" do
+        let(:request) { Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key", :secure => false) }
 
-          it "should use the value to determine the request type" do
-            RestClient.should_receive(:get).with(/^https:/)
-            request.aws_emr_request({})
-          end
+        it "should use the value to determine the request type" do
+          RestClient.should_receive(:get).with(/^http:/)
+          request.aws_emr_request({})
         end
+      end
 
-        context "when :secure is not specified" do
-          it "should default to secure connection" do
-            RestClient.should_receive(:get).with(/^https:/)
-            subject.aws_emr_request({})
-          end
+      context "when :secure is true" do
+        let(:request) { Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key", :secure => true) }
+
+        it "should use the value to determine the request type" do
+          RestClient.should_receive(:get).with(/^https:/)
+          request.aws_emr_request({})
         end
       end
     end
