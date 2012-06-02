@@ -12,6 +12,8 @@ module Elasticity
     attr_accessor :log_uri
     attr_accessor :master_instance_type
     attr_accessor :slave_instance_type
+    attr_accessor :emr
+    attr_accessor :bootstrap_actions
 
     def initialize(aws_access_key_id, aws_secret_access_key)
       @action_on_failure = "TERMINATE_JOB_FLOW"
@@ -34,6 +36,23 @@ module Elasticity
 
     def run
       @emr.run_job_flow(jobflow_config)
+    end
+
+    def ==(other)
+      return false unless other.is_a? SimpleJob
+      return false unless @action_on_failure == other.action_on_failure
+      return false unless @aws_access_key_id == other.aws_access_key_id
+      return false unless @aws_secret_access_key == other.aws_secret_access_key
+      return false unless @ec2_key_name == other.ec2_key_name
+      return false unless @hadoop_version == other.hadoop_version
+      return false unless @instance_count == other.instance_count
+      return false unless @log_uri == other.log_uri
+      return false unless @master_instance_type == other.master_instance_type
+      return false unless @name == other.name
+      return false unless @slave_instance_type == other.slave_instance_type
+      return false unless @emr == other.emr
+      return false unless @bootstrap_actions == other.bootstrap_actions
+      true
     end
 
     private

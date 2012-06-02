@@ -4,16 +4,18 @@ describe Elasticity::SimpleJob do
     Elasticity::SimpleJob.new("access", "secret")
   end
 
-  its(:action_on_failure)     { should == "TERMINATE_JOB_FLOW" }
-  its(:aws_access_key_id)     { should == "access" }
+  its(:action_on_failure) { should == "TERMINATE_JOB_FLOW" }
+  its(:aws_access_key_id) { should == "access" }
   its(:aws_secret_access_key) { should == "secret" }
-  its(:ec2_key_name)          { should == "default" }
-  its(:hadoop_version)        { should == "0.20" }
-  its(:instance_count)        { should == 2 }
-  its(:log_uri)               { should == nil }
-  its(:master_instance_type)  { should == "m1.small" }
-  its(:name)                  { should == "Elasticity Job" }
-  its(:slave_instance_type)   { should == "m1.small" }
+  its(:ec2_key_name) { should == "default" }
+  its(:hadoop_version) { should == "0.20" }
+  its(:instance_count) { should == 2 }
+  its(:log_uri) { should == nil }
+  its(:master_instance_type) { should == "m1.small" }
+  its(:name) { should == "Elasticity Job" }
+  its(:slave_instance_type) { should == "m1.small" }
+  its(:emr) { should == Elasticity::EMR.new("access", "secret") }
+  its(:bootstrap_actions) { should == [] }
 
   describe "#jobflow_bootstrap_action" do
     it "should be a proper bootstrap action" do
@@ -37,7 +39,7 @@ describe Elasticity::SimpleJob do
       it "should be an array of bootstrap actions" do
         subject.send(:jobflow_bootstrap_actions).should == [
           subject.send(:jobflow_bootstrap_action, "OPTION1", "VALUE1"),
-          subject.send(:jobflow_bootstrap_action, "OPTION1", "VALUE2"),
+            subject.send(:jobflow_bootstrap_action, "OPTION1", "VALUE2"),
         ]
       end
     end
@@ -50,7 +52,7 @@ describe Elasticity::SimpleJob do
       it "should be an array of bootstrap actions" do
         subject.send(:jobflow_bootstrap_actions).should == [
           subject.send(:jobflow_bootstrap_action, "OPTION1", "VALUE1"),
-          subject.send(:jobflow_bootstrap_action, "OPTION2", "VALUE2"),
+            subject.send(:jobflow_bootstrap_action, "OPTION2", "VALUE2"),
         ]
       end
     end
@@ -108,6 +110,37 @@ describe Elasticity::SimpleJob do
       end
     end
 
+  end
+
+  describe "#==" do
+    let(:same_object) { subject }
+    let(:same_values) { Elasticity::SimpleJob.new("access", "secret") }
+    let(:diff_type)   { Object.new }
+
+    it { should == same_object }
+    it { should == same_values }
+    it { should_not == diff_type }
+
+    it "should be false on deep comparison" do
+      {
+        :@action_on_failure     => '_',
+        :@aws_access_key_id     => '_',
+        :@aws_secret_access_key => '_',
+        :@ec2_key_name          => '_',
+        :@hadoop_version        => '_',
+        :@instance_count        => '_',
+        :@log_uri               => '_',
+        :@master_instance_type  => '_',
+        :@name                  => '_',
+        :@slave_instance_type   => '_',
+        :@emr                   => Elasticity::EMR.new('_', '_'),
+        :@bootstrap_actions     => [['o1','v1']]
+      }.each do |variable, value|
+        other = Elasticity::SimpleJob.new("access", "secret")
+        other.instance_variable_set(variable, value)
+        subject.should_not == other
+      end
+    end
   end
 
 end
