@@ -4,6 +4,10 @@ describe Elasticity::AwsRequest do
     Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key")
   end
 
+  its(:access_key) { should == "aws_access_key_id" }
+  its(:secret_key) { should == "aws_secret_access_key" }
+  its(:options)    { should == {:secure => true} }
+
   describe "#sign_params" do
     before do
       Time.stub(:now).and_return(Time.at(1302461096))
@@ -30,7 +34,7 @@ describe Elasticity::AwsRequest do
       end
 
       context "when :region is specified" do
-        let(:region)  { "eu-west-1" }
+        let(:region) { "eu-west-1" }
         let(:request) { Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key", :region => region) }
 
         it "should request against that region" do
@@ -57,6 +61,29 @@ describe Elasticity::AwsRequest do
         end
       end
     end
+  end
+
+  describe "#==" do
+    let(:same_object) { subject }
+    let(:same_values) { Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key", {}) }
+    let(:diff_type)   { Object.new }
+
+    it { should == same_object }
+    it { should == same_values }
+    it { should_not == diff_type }
+
+    it "should be false on deep comparison" do
+      {
+        :@access_key => "_",
+        :@secret_key => "_",
+        :@options => {:foo => :bar}
+      }.each do |variable, value|
+        other = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key", {})
+        other.instance_variable_set(variable, value)
+        subject.should_not == other
+      end
+    end
+
   end
 
   describe ".aws_escape" do

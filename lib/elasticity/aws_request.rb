@@ -2,6 +2,10 @@ module Elasticity
 
   class AwsRequest
 
+    attr_accessor :access_key
+    attr_accessor :secret_key
+    attr_accessor :options
+
     # Supported values for options:
     #  :region - AWS region (e.g. us-west-1)
     #  :secure - true or false, default true.
@@ -35,6 +39,14 @@ module Elasticity
       string_to_sign = "#{http_verb.to_s.upcase}\n#{host.downcase}\n#{uri}\n#{canonical_string}"
       signature = AwsRequest.aws_escape(Base64.encode64(OpenSSL::HMAC.digest("sha256", @secret_key, string_to_sign)).strip)
       "#{canonical_string}&Signature=#{signature}"
+    end
+
+    def ==(other)
+      return false unless other.is_a? AwsRequest
+      return false unless @access_key == other.access_key
+      return false unless @secret_key == other.secret_key
+      return false unless @options    == other.options
+      true
     end
 
     # (Used from RightScale's right_aws gem)
