@@ -1,5 +1,9 @@
 describe Elasticity::AwsRequest do
 
+  subject do
+    Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key")
+  end
+
   let(:aws_request) { Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key") }
 
   describe "#sign_params" do
@@ -8,7 +12,7 @@ describe Elasticity::AwsRequest do
     end
 
     it "should sign according to Amazon's rules" do
-      signed_params = aws_request.send(:sign_params, {}, "GET", "example.com", "/")
+      signed_params = subject.send(:sign_params, {}, "GET", "example.com", "/")
       signed_params.should == "AWSAccessKeyId=aws_access_key_id&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-04-10T18%3A44%3A56.000Z&Signature=jVLfPS056dNmjpCcikBnPmRHJNZ8YGaI7zdmHWUk658%3D"
     end
   end
@@ -34,7 +38,7 @@ describe Elasticity::AwsRequest do
         context "when :region is not specified" do
           it "should use the default request url" do
             RestClient.should_receive(:get).with(/elasticmapreduce\.amazonaws\.com/)
-            aws_request.aws_emr_request({})
+            subject.aws_emr_request({})
           end
         end
 
@@ -63,7 +67,7 @@ describe Elasticity::AwsRequest do
         context "when :secure is not specified" do
           it "should default to secure connection" do
             RestClient.should_receive(:get).with(/^https:/)
-            aws_request.aws_emr_request({})
+            subject.aws_emr_request({})
           end
         end
       end
