@@ -12,6 +12,13 @@ module Elasticity
       @variables = {}
     end
 
+    def ==(other)
+      return false unless super
+      return false unless @script == other.script
+      return false unless @variables == other.variables
+      true
+    end
+
     private
 
     def jobflow_steps

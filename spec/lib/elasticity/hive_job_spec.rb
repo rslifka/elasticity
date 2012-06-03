@@ -9,6 +9,33 @@ describe Elasticity::HiveJob do
   its(:script)    { should == "script" }
   its(:variables) { should == {} }
 
+  describe "#==" do
+    let(:same_object) { subject }
+    let(:same_values) { Elasticity::HiveJob.new("access", "secret", "script") }
+    let(:diff_type) { Object.new }
+
+    it { should == same_object }
+    it { should == same_values }
+    it { should_not == diff_type }
+
+    it "should be false on deep comparison" do
+      {
+        :@script => '_',
+        :@variables => {:_ => :_},
+      }.each do |variable, value|
+        other = Elasticity::HiveJob.new("access", "secret", "script")
+        other.instance_variable_set(variable, value)
+        subject.should_not == other
+      end
+    end
+
+    it "should be false on superclass fields" do
+      other = Elasticity::HiveJob.new("access", "secret", "script")
+      other.instance_variable_set(:@name, '_')
+      subject.should_not == other
+    end
+  end
+
   describe "#run" do
 
     it "should run the script with the specified variables and return the jobflow_id" do
