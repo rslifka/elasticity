@@ -9,6 +9,7 @@ module Elasticity
       super(aws_access_key_id, aws_secret_access_key)
       @name = "Elasticity Custom Jar Job"
       @jar = jar
+      @arguments = []
     end
 
     private
@@ -23,7 +24,7 @@ module Elasticity
           :name => "Execute Custom Jar"
         }
       ]
-      steps.first[:hadoop_jar_step][:args] = @arguments if @arguments
+      steps.first[:hadoop_jar_step][:args] = @arguments unless @arguments.empty?
       steps
     end
 

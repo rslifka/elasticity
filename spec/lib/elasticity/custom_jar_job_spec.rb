@@ -8,6 +8,7 @@ describe Elasticity::CustomJarJob do
 
   its(:jar)  { should == "jar" }
   its(:name) { should == "Elasticity Custom Jar Job" }
+  its(:arguments) { should == [] }
 
   describe "#run" do
 
