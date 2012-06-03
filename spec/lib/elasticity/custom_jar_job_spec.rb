@@ -6,9 +6,36 @@ describe Elasticity::CustomJarJob do
 
   it { should be_a_kind_of Elasticity::SimpleJob }
 
-  its(:jar)  { should == "jar" }
+  its(:jar) { should == "jar" }
   its(:name) { should == "Elasticity Custom Jar Job" }
   its(:arguments) { should == [] }
+
+  describe "#==" do
+    let(:same_object) { subject }
+    let(:same_values) { Elasticity::CustomJarJob.new("access", "secret", "jar") }
+    let(:diff_type) { Object.new }
+
+    it { should == same_object }
+    it { should == same_values }
+    it { should_not == diff_type }
+
+    it "should be false on deep comparison" do
+      {
+        :@jar => '_',
+        :@arguments => ['_'],
+      }.each do |variable, value|
+        other = Elasticity::CustomJarJob.new("access", "secret", "jar")
+        other.instance_variable_set(variable, value)
+        subject.should_not == other
+      end
+    end
+
+    it "should be false on superclass fields" do
+      other = Elasticity::CustomJarJob.new("access", "secret", "jar")
+      other.instance_variable_set(:@name, '_')
+      subject.should_not == other
+    end
+  end
 
   describe "#run" do
 

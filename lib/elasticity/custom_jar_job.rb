@@ -12,6 +12,13 @@ module Elasticity
       @arguments = []
     end
 
+    def ==(other)
+      return false unless super
+      return false unless @jar == other.jar
+      return false unless @arguments == other.arguments
+      true
+    end
+
     private
 
     def jobflow_steps
