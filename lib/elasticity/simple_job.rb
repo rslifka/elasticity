@@ -12,8 +12,8 @@ module Elasticity
     attr_accessor :log_uri
     attr_accessor :master_instance_type
     attr_accessor :slave_instance_type
-    attr_accessor :emr
-    attr_accessor :bootstrap_actions
+    attr_reader :emr
+    attr_reader :bootstrap_actions
 
     def initialize(aws_access_key_id, aws_secret_access_key)
       @action_on_failure = "TERMINATE_JOB_FLOW"

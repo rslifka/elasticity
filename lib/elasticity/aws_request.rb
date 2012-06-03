@@ -2,9 +2,9 @@ module Elasticity
 
   class AwsRequest
 
-    attr_accessor :access_key
-    attr_accessor :secret_key
-    attr_accessor :options
+    attr_reader :access_key
+    attr_reader :secret_key
+    attr_reader :options
 
     # Supported values for options:
     #  :region - AWS region (e.g. us-west-1)

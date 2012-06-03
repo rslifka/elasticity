@@ -2,7 +2,7 @@ module Elasticity
 
   class EMR
 
-    attr_accessor :aws_request
+    attr_reader :aws_request
 
     def initialize(aws_access_key_id, aws_secret_access_key, options = {})
       @aws_request = Elasticity::AwsRequest.new(aws_access_key_id, aws_secret_access_key, options)
