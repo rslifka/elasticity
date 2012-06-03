@@ -10,6 +10,34 @@ describe Elasticity::PigJob do
   its(:script)    { should == "script" }
   its(:variables) { should == {} }
 
+  describe "#==" do
+    let(:same_object) { subject }
+    let(:same_values) { Elasticity::PigJob.new("access", "secret", "script") }
+    let(:diff_type) { Object.new }
+
+    it { should == same_object }
+    it { should == same_values }
+    it { should_not == diff_type }
+
+    it "should be false on deep comparison" do
+      {
+        :@parallels => 999,
+        :@script => '_',
+        :@variables => {:_ => :_},
+      }.each do |variable, value|
+        other = Elasticity::PigJob.new("access", "secret", "script")
+        other.instance_variable_set(variable, value)
+        subject.should_not == other
+      end
+    end
+
+    it "should be false on superclass fields" do
+      other = Elasticity::PigJob.new("access", "secret", "script")
+      other.instance_variable_set(:@name, '_')
+      subject.should_not == other
+    end
+  end
+
   describe "#instance_count=" do
     it "should not allow instances to be set less than 2" do
       expect {

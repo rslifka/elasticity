@@ -4,7 +4,6 @@ module Elasticity
 
     attr_accessor :script
     attr_accessor :variables
-
     attr_reader :parallels
 
     def initialize(aws_access_key_id, aws_secret_access_key, script)
@@ -26,6 +25,14 @@ module Elasticity
     def slave_instance_type=(instance_type)
       @slave_instance_type = instance_type
       @parallels = calculate_parallels
+    end
+
+    def ==(other)
+      return false unless super
+      return false unless @script == other.script
+      return false unless @variables == other.variables
+      return false unless @parallels == other.parallels
+      true
     end
 
     private
