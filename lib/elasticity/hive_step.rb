@@ -33,8 +33,8 @@ module Elasticity
     def to_aws_step(job_flow)
       args = %w(s3://elasticmapreduce/libs/hive/hive-script --run-hive-script --args)
       args.concat(['-f', @script])
-      @variables.each do |name, value|
-        args.concat(['-d', "#{name}=#{value}"])
+      @variables.keys.sort.each do |name|
+        args.concat(['-d', "#{name}=#{@variables[name]}"])
       end
       {
         :name => @name,
