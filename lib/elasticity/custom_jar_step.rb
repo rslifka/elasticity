@@ -14,7 +14,7 @@ module Elasticity
       @action_on_failure = 'TERMINATE_JOB_FLOW'
     end
 
-    def to_aws_step
+    def to_aws_step(job_flow)
       step = {
         :action_on_failure => @action_on_failure,
         :hadoop_jar_step => {
