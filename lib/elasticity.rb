@@ -14,6 +14,7 @@ require 'elasticity/job_flow_status_step'
 require 'elasticity/simple_job'
 
 require 'elasticity/custom_jar_job'
+require 'elasticity/custom_jar_step'
 require 'elasticity/hive_job'
 require 'elasticity/pig_job'
 
