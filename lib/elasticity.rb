@@ -17,6 +17,7 @@ require 'elasticity/custom_jar_job'
 require 'elasticity/custom_jar_step'
 require 'elasticity/hive_job'
 require 'elasticity/pig_job'
+require 'elasticity/pig_step'
 
 module Elasticity
 end
