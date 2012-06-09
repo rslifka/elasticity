@@ -1,6 +1,6 @@
 module Elasticity
 
-  class JobFlowStep
+  class JobFlowStatusStep
 
     attr_accessor :name
     attr_accessor :state
@@ -10,7 +10,7 @@ module Elasticity
     # Create a job flow from an AWS <member> (Nokogiri::XML::Element):
     #   /DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member/Steps/member
     def self.from_member_element(xml_element)
-      job_flow_step = JobFlowStep.new
+      job_flow_step = JobFlowStatusStep.new
       job_flow_step.name = xml_element.xpath("./StepConfig/Name").text.strip
       job_flow_step.state = xml_element.xpath("./ExecutionStatusDetail/State").text.strip
       started_at = xml_element.xpath("./ExecutionStatusDetail/StartDateTime").text.strip

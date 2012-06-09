@@ -22,7 +22,7 @@ module Elasticity
         xml_doc = Nokogiri::XML(aws_result)
         xml_doc.remove_namespaces!
         yield aws_result if block_given?
-        JobFlow.from_members_nodeset(xml_doc.xpath("/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member")).first
+        JobFlowStatus.from_members_nodeset(xml_doc.xpath("/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member")).first
       rescue RestClient::BadRequest => e
         raise ArgumentError, EMR.parse_error_response(e.http_body)
       end
@@ -41,7 +41,7 @@ module Elasticity
       xml_doc = Nokogiri::XML(aws_result)
       xml_doc.remove_namespaces!
       yield aws_result if block_given?
-      JobFlow.from_members_nodeset(xml_doc.xpath("/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member"))
+      JobFlowStatus.from_members_nodeset(xml_doc.xpath("/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member"))
     end
 
     # Adds a new group of instances to the specified jobflow.  Elasticity maps a

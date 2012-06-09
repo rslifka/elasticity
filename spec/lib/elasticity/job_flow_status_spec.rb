@@ -1,4 +1,4 @@
-describe Elasticity::JobFlow do
+describe Elasticity::JobFlowStatus do
 
   before do
     describe_jobflows_xml = <<-JOBFLOWS
@@ -72,7 +72,7 @@ describe Elasticity::JobFlow do
 
                 </StartDateTime>
                 <ReadyDateTime>
-                   
+
                 </ReadyDateTime>
                 <State>
                   TERMINATED
@@ -112,7 +112,7 @@ describe Elasticity::JobFlow do
 
   describe ".from_xml" do
     it "should return a JobFlow with the appropriate fields initialized" do
-      jobflow = Elasticity::JobFlow.from_member_element(@members_nodeset[0])
+      jobflow = Elasticity::JobFlowStatus.from_member_element(@members_nodeset[0])
       jobflow.name.should == "Pig Job"
       jobflow.jobflow_id.should == "j-p"
       jobflow.state.should == "TERMINATED"
@@ -130,7 +130,7 @@ describe Elasticity::JobFlow do
 
   describe ".from_jobflows_nodeset" do
     it "should return JobFlows with the appropriate fields initialized" do
-      jobflow = Elasticity::JobFlow.from_members_nodeset(@members_nodeset)
+      jobflow = Elasticity::JobFlowStatus.from_members_nodeset(@members_nodeset)
       jobflow.map(&:name).should == ["Pig Job", "Hive Job"]
       jobflow.map(&:jobflow_id).should == ["j-p", "j-h"]
       jobflow.map(&:state).should == ["TERMINATED", "TERMINATED"]

@@ -1,6 +1,6 @@
 module Elasticity
 
-  class JobFlow
+  class JobFlowStatus
 
     attr_accessor :name
     attr_accessor :jobflow_id
@@ -21,12 +21,12 @@ module Elasticity
     # Create a jobflow from an AWS <member> (Nokogiri::XML::Element):
     #   /DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member
     def self.from_member_element(xml_element)
-      jobflow = JobFlow.new
+      jobflow = JobFlowStatus.new
       jobflow.name = xml_element.xpath("./Name").text.strip
       jobflow.jobflow_id = xml_element.xpath("./JobFlowId").text.strip
       jobflow.state = xml_element.xpath("./ExecutionStatusDetail/State").text.strip
       jobflow.last_state_change_reason = xml_element.xpath("./ExecutionStatusDetail/LastStateChangeReason").text.strip
-      jobflow.steps = JobFlowStep.from_members_nodeset(xml_element.xpath("./Steps/member"))
+      jobflow.steps = JobFlowStatusStep.from_members_nodeset(xml_element.xpath("./Steps/member"))
       jobflow.created_at = Time.parse(xml_element.xpath("./ExecutionStatusDetail/CreationDateTime").text.strip)
       started_at = xml_element.xpath("./ExecutionStatusDetail/StartDateTime").text.strip
       jobflow.started_at = (started_at == "") ? (nil) : (Time.parse(started_at))
