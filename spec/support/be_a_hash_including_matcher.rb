@@ -10,24 +10,24 @@ end
 
 describe :be_a_hash_including do
 
-  context "when actual is not a Hash" do
-    subject {"I AM NOT A HASH"}
+  context 'when actual is not a Hash' do
+    subject { 'I AM NOT A HASH' }
     it { should_not be_a_hash_including }
   end
 
-  context "when expected is not a Hash" do
-    subject {{}}
-    it { should_not be_a_hash_including("") }
+  context 'when expected is not a Hash' do
+    subject { {} }
+    it { should_not be_a_hash_including('') }
   end
 
-  context "when expected is included in actual" do
-    subject {{:actual_key1 => "value1"}}
-    it { should be_a_hash_including({:actual_key1 => "value1"})}
+  context 'when expected is included in actual' do
+    subject {{:actual_key1 => 'value1'}}
+    it { should be_a_hash_including({:actual_key1 => 'value1'})}
   end
 
-  context "when expected is not included in actual" do
-    subject {{:actual_key1 => "value1"}}
-    it { should_not be_a_hash_including({:actual_key3 => "value3"})}
+  context 'when expected is not included in actual' do
+    subject {{:actual_key1 => 'value1'}}
+    it { should_not be_a_hash_including({:actual_key3 => 'value3'})}
   end
 
 end
