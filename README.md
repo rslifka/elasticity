@@ -352,14 +352,14 @@ If you're chomping at the bit to initiate some EMR functionality that isn't wrap
 
 # Something Borrowed...
 
-AWS signing was used from [RightScale's](http://www.rightscale.com/) amazing [right_aws gem](https://github.com/rightscale/right_aws) which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.
-
-Used camelize from ActiveSupport as well, thank you \Rails :)
++ AWS signing was used from [RightScale's](http://www.rightscale.com/) amazing [right_aws gem](https://github.com/rightscale/right_aws) which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.
++ Used camelize from ActiveSupport to convert parmeters into AWS request format, thank you \Rails!
 
 # Thanks!
 
 Thanks to the following people who have contributed patches or helpful suggestions:
 
++ [Ryan Weald](https://github.com/rweald)
 + [Aram Price](https://github.com/aramprice/)
 + [Wouter Broekhof](https://github.com/wouter/)
 
@@ -383,7 +383,8 @@ Thanks to the following people who have contributed patches or helpful suggestio
 
 ### Development Notes for Slif
 
-[Versioning Guide](http://docs.rubygems.org/read/chapter/7#page27), c/o [@brokenladder](https://twitter.com/#!/brokenladder)
++ [Versioning Guide](http://docs.rubygems.org/read/chapter/7#page27), c/o [@brokenladder](https://twitter.com/#!/brokenladder)
++ Bundler-provided rake tasks for gem maintenance:
 
 <pre>
   rake build    # Build lorem-0.0.2.gem into the pkg directory
