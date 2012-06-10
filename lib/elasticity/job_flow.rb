@@ -25,6 +25,11 @@ module Elasticity
       @slave_instance_type = "m1.small"
     end
 
+    def instance_count=(count)
+      raise ArgumentError, 'Instance count cannot be set to less than 2 (requested 1)' unless count > 1
+      @instance_count = count
+    end
+
   end
 
 end
