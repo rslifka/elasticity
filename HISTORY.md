@@ -1,7 +1,7 @@
-### 2.0
+### 2.0 - In Progress
 
++ The entire SimpleJob-based API has been removed in favour of a more modular 'step'-based approach.
 + JobFlow and JobFlowStep are now JobFlowStatus and JobFlowStatusStep respectively.
-+ Refactored SimpleJob implementation and broke backwards compatibility with all SimpleJobS (Hive, Pig, Custom).  Have a look at the README.
 + Development dependency updates: ruby-1.9.3-p194, rspec-2.10.
 
 ### 1.5

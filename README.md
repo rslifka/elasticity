@@ -12,7 +12,7 @@ All you have to do is <code>require 'elasticity'</code> and you're all set!
 
 # Simplified API Reference
 
-Elasticity currently provides simplified access to launching Hive, Pig and Custom Jar job flows, specifying several default values that you may optionally override:
+Elasticity provides simplified access to launching Hive, Pig and Custom Jar job flows, specifying several default values that you may optionally override:
 
 <pre>
   @action_on_failure = "TERMINATE_JOB_FLOW"
@@ -350,18 +350,23 @@ If you're chomping at the bit to initiate some EMR functionality that isn't wrap
   > &lt;DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009...
 </pre>
 
-# Something Borrowed...
-
-+ AWS signing was used from [RightScale's](http://www.rightscale.com/) amazing [right_aws gem](https://github.com/rightscale/right_aws) which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.
-+ Used camelize from ActiveSupport to convert parmeters into AWS request format, thank you \Rails!
-
 # Thanks!
 
-Thanks to the following people who have contributed patches or helpful suggestions:
++ AWS signing was used from [RightScale's](http://www.rightscale.com/) amazing [right_aws gem](https://github.com/rightscale/right_aws) which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.
++ <code>camelize</code> was used from ActiveSupport to assist in converting parmeters to AWS request format.
++ Thanks to the following people who have contributed patches or helpful suggestions: [Ryan Weald](https://github.com/rweald), [Aram Price](https://github.com/aramprice/), [Wouter Broekhof](https://github.com/wouter/)
 
-+ [Ryan Weald](https://github.com/rweald)
-+ [Aram Price](https://github.com/aramprice/)
-+ [Wouter Broekhof](https://github.com/wouter/)
+# Development Notes for Slif
+
++ [Versioning Guide](http://docs.rubygems.org/read/chapter/7#page27), c/o [@brokenladder](https://twitter.com/#!/brokenladder)
++ Bundler-provided rake tasks for gem maintenance:
+
+<pre>
+  rake build    # Build lorem-0.0.2.gem into the pkg directory
+  rake install  # Build and install lorem-0.0.2.gem into system gems
+  rake release  # Create tag v0.0.2 and build
+                # and push lorem-0.0.2.gem to Rubygems
+</pre>
 
 # License
 
@@ -379,16 +384,4 @@ Thanks to the following people who have contributed patches or helpful suggestio
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-</pre>
-
-### Development Notes for Slif
-
-+ [Versioning Guide](http://docs.rubygems.org/read/chapter/7#page27), c/o [@brokenladder](https://twitter.com/#!/brokenladder)
-+ Bundler-provided rake tasks for gem maintenance:
-
-<pre>
-  rake build    # Build lorem-0.0.2.gem into the pkg directory
-  rake install  # Build and install lorem-0.0.2.gem into system gems
-  rake release  # Create tag v0.0.2 and build
-                # and push lorem-0.0.2.gem to Rubygems
 </pre>
