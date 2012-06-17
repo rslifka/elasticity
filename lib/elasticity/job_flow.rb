@@ -30,6 +30,27 @@ module Elasticity
       @instance_count = count
     end
 
+    def jobflow_config
+      config = jobflow_preamble
+      config.merge!(:log_uri => @log_uri) if @log_uri
+      config
+    end
+
+    private
+
+    def jobflow_preamble
+      {
+        :name => @name,
+        :instances => {
+          :ec2_key_name => @ec2_key_name,
+          :hadoop_version => @hadoop_version,
+          :instance_count => @instance_count,
+          :master_instance_type => @master_instance_type,
+          :slave_instance_type => @slave_instance_type,
+        }
+      }
+    end
+
   end
 
 end

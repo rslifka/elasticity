@@ -34,4 +34,49 @@ describe Elasticity::JobFlow do
 
   end
 
+  describe '#jobflow_config' do
+
+    before do
+      subject.should_receive(:jobflow_preamble).and_return({:preamble => 'PREAMBLE'})
+    end
+
+    it 'should incorporate the jobflow preamble' do
+      subject.send(:jobflow_config).should be_a_hash_including({:preamble => 'PREAMBLE'})
+    end
+
+    describe 'log URI' do
+
+      context 'when a log URI is specified' do
+        it 'should incorporate it into the jobflow config' do
+          subject.log_uri = 'LOG_URI'
+          subject.send(:jobflow_config).should be_a_hash_including({:log_uri => 'LOG_URI'})
+        end
+      end
+
+      context 'when a log URI is not specified' do
+        it 'should not make space for it in the jobflow config' do
+          subject.log_uri = nil
+          subject.send(:jobflow_config).should_not have_key(:log_uri)
+        end
+      end
+
+    end
+
+  end
+
+  describe '#jobflow_preamble' do
+    it 'should create a jobflow configuration section' do
+      subject.send(:jobflow_preamble).should == {
+        :name => 'Elasticity Job Flow',
+        :instances => {
+          :ec2_key_name => 'default',
+          :hadoop_version => '0.20',
+          :instance_count => 2,
+          :master_instance_type => 'm1.small',
+          :slave_instance_type => 'm1.small',
+        }
+      }
+    end
+  end
+
 end
