@@ -1,5 +1,6 @@
 RSpec::Matchers.define :be_a_hash_including do |expected|
   match do |actual|
+    next false unless actual.is_a? Hash
     next false unless expected.is_a? Hash
     expected.keys.each do |key|
       break false if actual[key] != expected[key]
@@ -12,7 +13,7 @@ describe :be_a_hash_including do
 
   context 'when actual is not a Hash' do
     subject { 'I AM NOT A HASH' }
-    it { should_not be_a_hash_including }
+    it { should_not be_a_hash_including({}) }
   end
 
   context 'when expected is not a Hash' do
