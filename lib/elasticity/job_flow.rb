@@ -30,13 +30,13 @@ module Elasticity
       @instance_count = count
     end
 
+    private
+
     def jobflow_config
       config = jobflow_preamble
       config.merge!(:log_uri => @log_uri) if @log_uri
       config
     end
-
-    private
 
     def jobflow_preamble
       {
