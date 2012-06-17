@@ -14,15 +14,15 @@ module Elasticity
     attr_accessor :slave_instance_type
 
     def initialize(access, secret)
-      @action_on_failure = "TERMINATE_JOB_FLOW"
+      @action_on_failure = 'TERMINATE_JOB_FLOW'
       @aws_access_key_id = access
       @aws_secret_access_key = secret
-      @ec2_key_name = "default"
-      @hadoop_version = "0.20"
+      @ec2_key_name = 'default'
+      @hadoop_version = '0.20'
       @instance_count = 2
-      @master_instance_type = "m1.small"
-      @name = "Elasticity Job Flow"
-      @slave_instance_type = "m1.small"
+      @master_instance_type = 'm1.small'
+      @name = 'Elasticity Job Flow'
+      @slave_instance_type = 'm1.small'
     end
 
     def instance_count=(count)
