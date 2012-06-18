@@ -34,29 +34,83 @@ describe Elasticity::JobFlow do
 
   end
 
-  describe '#jobflow_config' do
+  describe '#add_bootstrap_action' do
 
-    before do
-      subject.should_receive(:jobflow_preamble).and_return({:preamble => 'PREAMBLE'})
+    context 'when the jobflow is not yet started' do
+      it 'should not raise an error' do
+        expect {
+          subject.add_bootstrap_action(nil)
+        }.to_not raise_error
+      end
     end
 
-    it 'should incorporate the jobflow preamble' do
+    context 'when the jobflow is already started' do
+      xit 'should raise an error'
+    end
+
+  end
+
+  describe '#jobflow_config' do
+
+    it 'should incorporate the job flow preamble' do
+      subject.stub(:jobflow_preamble).and_return({:preamble => 'PREAMBLE'})
       subject.send(:jobflow_config).should be_a_hash_including({:preamble => 'PREAMBLE'})
     end
 
     describe 'log URI' do
 
       context 'when a log URI is specified' do
+        let(:jobflow_with_log_uri) do
+          Elasticity::JobFlow.new('_', '_').tap do |jf|
+            jf.log_uri = 'LOG_URI'
+          end
+        end
         it 'should incorporate it into the jobflow config' do
-          subject.log_uri = 'LOG_URI'
-          subject.send(:jobflow_config).should be_a_hash_including({:log_uri => 'LOG_URI'})
+          jobflow_with_log_uri.send(:jobflow_config).should be_a_hash_including({:log_uri => 'LOG_URI'})
         end
       end
 
       context 'when a log URI is not specified' do
+        let(:jobflow_with_no_log_uri) do
+          Elasticity::JobFlow.new('_', '_').tap do |jf|
+            jf.log_uri = nil
+          end
+        end
         it 'should not make space for it in the jobflow config' do
-          subject.log_uri = nil
-          subject.send(:jobflow_config).should_not have_key(:log_uri)
+          jobflow_with_no_log_uri.send(:jobflow_config).should_not have_key(:log_uri)
+        end
+      end
+
+    end
+
+    describe 'bootstrap actions' do
+
+      context 'when bootstrap actions are specified' do
+        let(:hadoop_bootstrap_actions) do
+          [
+            Elasticity::HadoopBootstrapAction.new('OPTION1', 'VALUE1'),
+            Elasticity::HadoopBootstrapAction.new('OPTION1', 'VALUE2'),
+            Elasticity::HadoopBootstrapAction.new('OPTION2', 'VALUE3')
+          ]
+        end
+        let(:jobflow_with_bootstrap_actions) do
+          Elasticity::JobFlow.new('_', '_').tap do |jf|
+            hadoop_bootstrap_actions.each do |action|
+              jf.add_bootstrap_action(action)
+            end
+          end
+        end
+        it 'should include them in the jobflow config' do
+          bootstrap_actions = hadoop_bootstrap_actions.map {|a| a.to_aws_bootstrap_action}
+          jobflow_with_bootstrap_actions.send(:jobflow_config).should be_a_hash_including({
+            :bootstrap_actions => bootstrap_actions
+          })
+        end
+      end
+
+      context 'when bootstrap actions are not specified' do
+        it 'should not make space for them in the jobflow config' do
+          subject.send(:jobflow_config).should_not have_key(:bootstrap_actions)
         end
       end
 

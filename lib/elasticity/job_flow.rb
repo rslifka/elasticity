@@ -23,6 +23,8 @@ module Elasticity
       @master_instance_type = 'm1.small'
       @name = 'Elasticity Job Flow'
       @slave_instance_type = 'm1.small'
+
+      @bootstrap_actions = []
     end
 
     def instance_count=(count)
@@ -30,11 +32,16 @@ module Elasticity
       @instance_count = count
     end
 
+    def add_bootstrap_action(bootstrap_action)
+      @bootstrap_actions << bootstrap_action
+    end
+
     private
 
     def jobflow_config
       config = jobflow_preamble
-      config.merge!(:log_uri => @log_uri) if @log_uri
+      config[:log_uri] = @log_uri if @log_uri
+      config[:bootstrap_actions] = @bootstrap_actions.map{|a| a.to_aws_bootstrap_action} unless @bootstrap_actions.empty?
       config
     end
 
