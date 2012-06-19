@@ -5,19 +5,41 @@ module Elasticity
     # Supported values for options:
     #  :region - AWS region (e.g. us-west-1)
     #  :secure - true or false, default true.
+    #  :method - HTTP verb to use, defaults to GET
     def initialize(aws_access_key_id, aws_secret_access_key, options = {})
       @access_key = aws_access_key_id
       @secret_key = aws_secret_access_key
-      @options = {:secure => true}.merge(options)
+      @options = {:secure => true, :method => :get}.merge(options)
     end
 
     def aws_emr_request(params)
-      host = @options[:region] ? "elasticmapreduce.#{@options[:region]}.amazonaws.com" : "elasticmapreduce.amazonaws.com"
+      host = @options[:region] ?
+              "elasticmapreduce.#{@options[:region]}.amazonaws.com" :
+              "elasticmapreduce.amazonaws.com"
       protocol = @options[:secure] ? "https" : "http"
+      method = @options[:method]
 
-      signed_params = sign_params(params, "GET", host, "/")
-      signed_request = "#{protocol}://#{host}?#{signed_params}"
-      RestClient.get signed_request
+      signed_params = sign_params(params, method, host, "/")
+
+      # Change method to POST if our requestsize will be too big
+      if method != :post && signed_params.size > 2000
+        method = :post
+        signed_params = sign_params(params, method, host, "/")
+      end
+
+      case method
+      when :get
+        signed_request = "#{protocol}://#{host}?#{signed_params}"
+        RestClient.get(signed_request)
+      when :post
+        RestClient.post(
+          "#{protocol}://#{host}",
+          signed_params,
+          :content_type => 'application/x-www-form-urlencoded; charset=utf-8'
+        )
+      else
+        raise ArgumentError, "Unsupported HTTP verb"
+      end
     end
 
     # (Used from RightScale's right_aws gem.)

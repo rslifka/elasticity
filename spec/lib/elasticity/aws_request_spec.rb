@@ -19,7 +19,7 @@ describe Elasticity::AwsRequest do
     end
     it "should sign according to Amazon's rules" do
       request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key")
-      signed_params = request.send(:sign_params, {}, "GET", "example.com", "/")
+      signed_params = request.send(:sign_params, {}, :get, "example.com", "/")
       signed_params.should == "AWSAccessKeyId=aws_access_key_id&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-04-10T18%3A44%3A56.000Z&Signature=jVLfPS056dNmjpCcikBnPmRHJNZ8YGaI7zdmHWUk658%3D"
     end
   end
@@ -62,6 +62,31 @@ describe Elasticity::AwsRequest do
           it "should default to secure connection" do
             request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key")
             RestClient.should_receive(:get).with(/^https:/)
+            request.aws_emr_request({})
+          end
+        end
+      end
+
+      describe ":method" do
+        context "when :method is specified" do
+          it "should use the value to determine the http verb of the request" do
+            request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key",
+              :method => :post)
+            RestClient.should_receive(:post)
+            request.aws_emr_request({})
+          end
+          it "should raise an error if an invalid method is given" do
+            lambda {
+              request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key",
+                :method => :bogus)
+              request.aws_emr_request({})
+            }.should raise_error(ArgumentError, "Unsupported HTTP verb")
+          end
+        end
+        context "when :method is not specified" do
+          it "should default to GET request" do
+            request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key")
+            RestClient.should_receive(:get)
             request.aws_emr_request({})
           end
         end

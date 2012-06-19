@@ -1,7 +1,7 @@
 ---
 http_interactions:
 - request:
-    method: get
+    method: post
     uri: !ruby/regexp /^https/
     body:
       encoding: US-ASCII
