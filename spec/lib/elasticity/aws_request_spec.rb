@@ -89,6 +89,13 @@ describe Elasticity::AwsRequest do
             RestClient.should_receive(:get)
             request.aws_emr_request({})
           end
+          it "should switch to POST if the request is too large" do
+            request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_access_key")
+            RestClient.should_receive(:post)
+            request.aws_emr_request({
+              'large_param' => ('x' * 2000)
+            })
+          end
         end
       end
 
