@@ -4,6 +4,8 @@ describe Elasticity::CustomJarStep do
     Elasticity::CustomJarStep.new('jar')
   end
 
+  it { should be_a Elasticity::JobFlowStep }
+
   its(:name) { should == 'Elasticity Custom Jar Step' }
   its(:jar) { should == 'jar' }
   its(:arguments) { should == [] }
@@ -46,6 +48,12 @@ describe Elasticity::CustomJarStep do
       end
     end
 
+  end
+
+  describe '.requires_installation?' do
+    it 'should not require installation' do
+      Elasticity::CustomJarStep.requires_installation?.should be_false
+    end
   end
 
 end
