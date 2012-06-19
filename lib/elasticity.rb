@@ -8,6 +8,7 @@ require 'elasticity/aws_request'
 require 'elasticity/emr'
 
 require 'elasticity/hadoop_bootstrap_action'
+require 'elasticity/job_flow_step'
 
 require 'elasticity/job_flow'
 require 'elasticity/job_flow_status'

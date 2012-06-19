@@ -1,0 +1,23 @@
+describe Elasticity::JobFlowStep do
+
+  class FakeStep
+    include Elasticity::JobFlowStep
+  end
+
+  subject { FakeStep.new }
+
+  describe '#requires_installation?' do
+    it 'should be false by default' do
+      subject.requires_installation?.should be_false
+    end
+  end
+
+  describe '.to_aws_installation_step' do
+    it 'should raise an error by default' do
+      expect {
+        FakeStep.to_aws_installation_step
+      }.to raise_error(RuntimeError, '.to_aws_installation_step is required to be defined when a step requires installation (e.g. Pig, Hive).')
+    end
+  end
+
+end
