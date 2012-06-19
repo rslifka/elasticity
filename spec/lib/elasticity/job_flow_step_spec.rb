@@ -4,11 +4,9 @@ describe Elasticity::JobFlowStep do
     include Elasticity::JobFlowStep
   end
 
-  subject { FakeStep.new }
-
-  describe '#requires_installation?' do
+  describe '.requires_installation?' do
     it 'should be false by default' do
-      subject.requires_installation?.should be_false
+      FakeStep.requires_installation?.should be_false
     end
   end
 
