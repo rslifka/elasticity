@@ -8,8 +8,8 @@ module Elasticity
 
     module ClassMethods
 
-      def to_aws_installation_step
-        raise RuntimeError, '.to_aws_installation_step is required to be defined when a step requires installation (e.g. Pig, Hive).'
+      def aws_installation_step
+        raise RuntimeError, '.aws_installation_step is required to be defined when a step requires installation (e.g. Pig, Hive).'
       end
 
     end
