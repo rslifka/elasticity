@@ -4,6 +4,8 @@ describe Elasticity::PigStep do
     Elasticity::PigStep.new('script.pig')
   end
 
+  it { should be_a Elasticity::JobFlowStep }
+
   its(:name) { should == 'Elasticity Pig Step (script.pig)' }
   its(:script) { should == 'script.pig' }
   its(:variables) { should == { } }
@@ -75,9 +77,15 @@ describe Elasticity::PigStep do
 
   end
 
-  describe '#aws_installation_step' do
+  describe '.requires_installation?' do
+    it 'should require installation' do
+      Elasticity::PigStep.requires_installation?.should be_true
+    end
+  end
+
+  describe '.aws_installation_step' do
     it 'should provide a means to install Pig' do
-      subject.aws_installation_step.should == {
+      Elasticity::PigStep.aws_installation_step.should == {
         :action_on_failure => 'TERMINATE_JOB_FLOW',
         :hadoop_jar_step => {
           :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
