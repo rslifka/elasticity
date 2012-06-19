@@ -2,6 +2,10 @@ module Elasticity
 
   module JobFlowStep
 
+    def to_aws_step(jobflow_step)
+      raise RuntimeError, '#to_aws_step is required to be defined on all job flow steps.'
+    end
+
     module ClassMethods
 
       def requires_installation?
