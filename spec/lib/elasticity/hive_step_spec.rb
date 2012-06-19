@@ -4,30 +4,12 @@ describe Elasticity::HiveStep do
     Elasticity::HiveStep.new('script.hql')
   end
 
+  it { should be_a Elasticity::JobFlowStep }
+
   its(:name) { should == 'Elasticity Hive Step (script.hql)' }
   its(:script) { should == 'script.hql' }
   its(:variables) { should == { } }
   its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
-
-  describe '#aws_installation_step' do
-
-    it 'should provide a means to install Hive' do
-      subject.aws_installation_step.should == {
-        :action_on_failure => 'TERMINATE_JOB_FLOW',
-        :hadoop_jar_step => {
-          :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
-          :args => [
-            's3://elasticmapreduce/libs/hive/hive-script',
-              '--base-path',
-              's3://elasticmapreduce/libs/hive/',
-              '--install-hive'
-          ],
-        },
-        :name => 'Elasticity - Install Hive'
-      }
-    end
-
-  end
 
   describe '#to_aws_step' do
 
@@ -63,5 +45,30 @@ describe Elasticity::HiveStep do
 
   end
 
+  describe '.requires_installation?' do
+    it 'should require installation' do
+      Elasticity::HiveStep.requires_installation?.should be_true
+    end
+  end
+
+  describe '.aws_installation_step' do
+
+    it 'should provide a means to install Hive' do
+      Elasticity::HiveStep.aws_installation_step.should == {
+        :action_on_failure => 'TERMINATE_JOB_FLOW',
+        :hadoop_jar_step => {
+          :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+          :args => [
+            's3://elasticmapreduce/libs/hive/hive-script',
+              '--base-path',
+              's3://elasticmapreduce/libs/hive/',
+              '--install-hive'
+          ],
+        },
+        :name => 'Elasticity - Install Hive'
+      }
+    end
+
+  end
 
 end
