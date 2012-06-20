@@ -25,6 +25,8 @@ module Elasticity
       @slave_instance_type = 'm1.small'
 
       @bootstrap_actions = []
+      @jobflow_steps = []
+      @installed_steps = []
     end
 
     def instance_count=(count)
@@ -36,10 +38,15 @@ module Elasticity
       @bootstrap_actions << bootstrap_action
     end
 
+    def add_step(jobflow_step)
+      @jobflow_steps << jobflow_step
+    end
+
     private
 
     def jobflow_config
       config = jobflow_preamble
+      config[:steps] = jobflow_steps
       config[:log_uri] = @log_uri if @log_uri
       config[:bootstrap_actions] = @bootstrap_actions.map{|a| a.to_aws_bootstrap_action} unless @bootstrap_actions.empty?
       config
@@ -56,6 +63,18 @@ module Elasticity
           :slave_instance_type => @slave_instance_type,
         }
       }
+    end
+
+    def jobflow_steps
+      steps = []
+      @jobflow_steps.each do |step|
+        if step.class.send(:requires_installation?) && !@installed_steps.include?(step.class)
+          steps << step.class.send(:aws_installation_step)
+          @installed_steps << step.class
+        end
+        steps << step.to_aws_step(self)
+      end
+      steps
     end
 
   end

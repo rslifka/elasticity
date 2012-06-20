@@ -57,6 +57,40 @@ describe Elasticity::JobFlow do
       subject.send(:jobflow_config).should be_a_hash_including({:preamble => 'PREAMBLE'})
     end
 
+    describe 'steps' do
+
+      let(:jobflow_steps) { [Elasticity::HiveStep.new('script.hql'), Elasticity::PigStep.new('script.pig'), Elasticity::CustomJarStep.new('script.jar')] }
+      let(:jobflow_with_steps) do
+        Elasticity::JobFlow.new('_', '_').tap do |jobflow|
+          jobflow_steps.each { |s| jobflow.add_step(s) }
+        end
+      end
+      let(:aws_steps) do
+        [
+          Elasticity::HiveStep.aws_installation_step,
+            jobflow_steps[0].to_aws_step(jobflow_with_steps),
+            Elasticity::PigStep.aws_installation_step,
+            jobflow_steps[1].to_aws_step(jobflow_with_steps),
+            jobflow_steps[2].to_aws_step(jobflow_with_steps),
+        ]
+      end
+
+      it 'should incorporate the installation and run steps into the jobflow config' do
+        jobflow_with_steps.send(:jobflow_config).should be_a_hash_including({:steps => aws_steps})
+      end
+
+      context 'when there are more than one installable step of the same type' do
+        before do
+          jobflow_steps << Elasticity::HiveStep.new('script.hql')
+          aws_steps << jobflow_steps.last.to_aws_step(jobflow_with_steps)
+        end
+        it 'should not include the installation step more than once' do
+          jobflow_with_steps.send(:jobflow_config).should be_a_hash_including({:steps => aws_steps})
+        end
+      end
+
+    end
+
     describe 'log URI' do
 
       context 'when a log URI is specified' do
@@ -130,6 +164,12 @@ describe Elasticity::JobFlow do
           :slave_instance_type => 'm1.small',
         }
       }
+    end
+  end
+
+  describe '#run' do
+    context 'when there are no steps added' do
+      xit 'should raise an error'
     end
   end
 
