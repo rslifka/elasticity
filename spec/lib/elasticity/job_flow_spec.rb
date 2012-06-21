@@ -62,8 +62,68 @@ describe Elasticity::JobFlow do
   end
 
   describe '#add_step' do
+
     context 'when the jobflow is already running' do
-      xit 'should do something interesting'
+
+      let(:emr) { double('Elasticity::EMR', :run_job_flow => 'RUNNING_JOBFLOW_ID') }
+
+      let(:running_jobflow) do
+        Elasticity::JobFlow.new('access', 'secret').tap do |jf|
+          jf.add_step(Elasticity::PigStep.new('_'))
+        end
+      end
+
+      before do
+        Elasticity::EMR.should_receive(:new).with('access', 'secret').and_return(emr)
+        running_jobflow.run
+      end
+
+      context 'when the step requires installation' do
+
+        context 'when the installation has already happened' do
+          let(:additional_step) { Elasticity::PigStep.new('_') }
+
+          it 'should submit the step' do
+            emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', {
+              :steps => [additional_step.to_aws_step(running_jobflow)]
+            })
+            running_jobflow.add_step(additional_step)
+          end
+        end
+
+        context 'when the installation has not yet happened' do
+          let(:additional_step) { Elasticity::HiveStep.new('_') }
+
+          it 'should submit the installation step and the step' do
+            emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', {
+              :steps => [
+                Elasticity::HiveStep.aws_installation_step,
+                  additional_step.to_aws_step(running_jobflow)
+              ]
+            })
+            running_jobflow.add_step(additional_step)
+          end
+        end
+
+      end
+
+      context 'when the step does not require installation' do
+
+        let(:additional_step) { Elasticity::CustomJarStep.new('jar') }
+
+        it 'should submit the step' do
+          emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', {
+            :steps => [additional_step.to_aws_step(running_jobflow)]
+          })
+          running_jobflow.add_step(additional_step)
+        end
+
+      end
+
+    end
+
+    context 'when the jobflow is not yet running' do
+      # This behaviour is tested in #jobflow_config
     end
   end
 

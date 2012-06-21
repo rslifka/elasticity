@@ -44,7 +44,16 @@ module Elasticity
     end
 
     def add_step(jobflow_step)
-      @jobflow_steps << jobflow_step
+      if @jobflow_id
+        jobflow_steps = []
+        if jobflow_step.class.send(:requires_installation?) && !@installed_steps.include?(jobflow_step.class)
+          jobflow_steps << jobflow_step.class.send(:aws_installation_step)
+        end
+        jobflow_steps << jobflow_step.to_aws_step(self)
+        @emr.add_jobflow_steps(@jobflow_id, {:steps => jobflow_steps})
+      else
+        @jobflow_steps << jobflow_step
+      end
     end
 
     def run
