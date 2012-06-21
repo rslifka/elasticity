@@ -1,21 +1,11 @@
 ### 2.0 - In Progress
 
-2.0 is practically a rewrite after nearly a year's worth of daily use at [Sharethrough](http://www.sharethrough.com/) and a recent doubling-down on our EMR infrastructure.  In order to more quickly support some really interesting features like a command-line interface and persistent clusters, a remodeling of the simplified API was done.
+2.0 is a rewrite of the "simplified" API after nearly a year's worth of daily use at [Sharethrough](http://www.sharethrough.com/) and a recent doubling-down on our EMR infrastructure.  In order to more quickly support some really interesting features like a command-line interface, persistent clusters, Hbase, etc. - a remodeling of the simplified API was done.  Unfortunately, this is going to result in breaking changes to the API, hence the bump to 2.0.  I hope that most of you are using ```gem 'elasticity', '~> 1.5'``` :) 
 
-Unfortunately, this is going to result in breaking changes to the API, hence the bump to 2.0.  I hope that most of you are using ```gem 'elasticity', '~> 1.5'``` :) 
-
-#### Features
-
-+ Bumped default Hadoop version to 0.20.205.
++ The ```SimpleJob``` API has been removed in favour of a more modular 'step'-based approach using the "JobFlow" and "Step" vernacular, in line with Amazon's own communication.  If you understand the AWS Web UI, using Elasticity should be a bit more straightforward.
++ ```JobFlow``` and ```JobFlowStep``` are now ```JobFlowStatus``` and ```JobFlowStatusStep``` respectively, allowing the creation of ```JobFlow``` and ```JobFlowStep``` to be used in job submission.
++ Bumped the default Hadoop version to 0.20.205.
 + Hadoop bootstrap actions can now be named.
-
-##### API Changes
-
-+ The SimpleJob-based API has been removed in favour of a more modular 'step'-based approach.  See the README for details.
-+ JobFlow and JobFlowStep are now JobFlowStatus and JobFlowStatusStep respectively, allowing the creation of JobFlow and JobFlowStep to be used in job submission.
-
-##### Infrastructure
-
 + Development dependency updates: ruby-1.9.3-p194, rspec-2.10.
 
 ### 1.5
