@@ -136,4 +136,56 @@ describe 'Elasticity::JobFlow Integration Examples' do
 
   end
 
+  describe 'Custom Jar' do
+
+    let(:custom_jar_step) do
+      Elasticity::CustomJarStep.new('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar').tap do |cj|
+        cj.arguments = [
+          's3n://elasticmapreduce/samples/cloudburst/input/s_suis.br',
+            's3n://elasticmapreduce/samples/cloudburst/input/100k.br',
+            's3n://slif_hadoop_test/cloudburst/output/2011-12-09',
+        ]
+        cj.action_on_failure = 'TERMINATE_JOB_FLOW'
+      end
+    end
+
+    let(:custom_jar_jobflow) do
+      Elasticity::JobFlow.new('access', 'secret').tap do |jf|
+        jf.log_uri = 's3n://slif-test/output/logs'
+        jf.add_step(custom_jar_step)
+      end
+    end
+
+    it 'should launch the Custom Jar job with the specified EMR credentials' do
+      emr.should_receive(:run_job_flow).with({
+        :name => 'Elasticity Job Flow',
+        :log_uri => 's3n://slif-test/output/logs',
+        :instances => {
+          :ec2_key_name => 'default',
+          :hadoop_version => '0.20',
+          :instance_count => 2,
+          :master_instance_type => 'm1.small',
+          :slave_instance_type => 'm1.small',
+        },
+        :steps => [
+          {
+            :action_on_failure => 'TERMINATE_JOB_FLOW',
+            :hadoop_jar_step => {
+              :jar => 's3n://elasticmapreduce/samples/cloudburst/cloudburst.jar',
+              :args => [
+                's3n://elasticmapreduce/samples/cloudburst/input/s_suis.br',
+                  's3n://elasticmapreduce/samples/cloudburst/input/100k.br',
+                  's3n://slif_hadoop_test/cloudburst/output/2011-12-09',
+              ],
+            },
+            :name => 'Elasticity Custom Jar Step (s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar)'
+          }
+        ]
+      }).and_return('CUSTOM_JAR_JOBFLOW_ID')
+
+      custom_jar_jobflow.run.should == 'CUSTOM_JAR_JOBFLOW_ID'
+    end
+
+  end
+
 end
