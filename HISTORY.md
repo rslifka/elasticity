@@ -6,6 +6,7 @@ Unfortunately, this is going to result in breaking changes to the API, hence the
 
 #### Features
 
++ Bumped default Hadoop version to 0.20.205.
 + Hadoop bootstrap actions can now be named.
 
 ##### API Changes

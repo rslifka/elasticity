@@ -28,7 +28,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :log_uri => 's3n://slif-test/output/logs',
         :instances => {
           :ec2_key_name => 'default',
-          :hadoop_version => '0.20',
+          :hadoop_version => '0.20.205',
           :instance_count => 2,
           :master_instance_type => 'm1.small',
           :slave_instance_type => 'm1.small',
@@ -93,7 +93,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :log_uri => 's3n://slif-test/output/logs',
         :instances => {
           :ec2_key_name => 'default',
-          :hadoop_version => '0.20',
+          :hadoop_version => '0.20.205',
           :instance_count => 8,
           :master_instance_type => 'm1.small',
           :slave_instance_type => 'm1.xlarge',
@@ -162,7 +162,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :log_uri => 's3n://slif-test/output/logs',
         :instances => {
           :ec2_key_name => 'default',
-          :hadoop_version => '0.20',
+          :hadoop_version => '0.20.205',
           :instance_count => 2,
           :master_instance_type => 'm1.small',
           :slave_instance_type => 'm1.small',

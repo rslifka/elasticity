@@ -11,7 +11,7 @@ describe Elasticity::JobFlow do
 
   its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
   its(:ec2_key_name) { should == 'default' }
-  its(:hadoop_version) { should == '0.20' }
+  its(:hadoop_version) { should == '0.20.205' }
   its(:instance_count) { should == 2 }
   its(:log_uri) { should == nil }
   its(:master_instance_type) { should == 'm1.small' }
@@ -175,7 +175,7 @@ describe Elasticity::JobFlow do
         :name => 'Elasticity Job Flow',
         :instances => {
           :ec2_key_name => 'default',
-          :hadoop_version => '0.20',
+          :hadoop_version => '0.20.205',
           :instance_count => 2,
           :master_instance_type => 'm1.small',
           :slave_instance_type => 'm1.small',
