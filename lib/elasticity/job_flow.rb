@@ -37,14 +37,14 @@ module Elasticity
     end
 
     def add_bootstrap_action(bootstrap_action)
-      if @jobflow_id
+      if is_jobflow_running?
         raise JobFlowRunningError, 'To modify bootstrap actions, please create a new job flow.'
       end
       @bootstrap_actions << bootstrap_action
     end
 
     def add_step(jobflow_step)
-      if @jobflow_id
+      if is_jobflow_running?
         jobflow_steps = []
         if jobflow_step.class.send(:requires_installation?) && !@installed_steps.include?(jobflow_step.class)
           jobflow_steps << jobflow_step.class.send(:aws_installation_step)
@@ -67,7 +67,7 @@ module Elasticity
     end
 
     def status
-      if @jobflow_id
+      if is_jobflow_running?
         @emr.describe_jobflow(@jobflow_id).state
       else
         raise JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.'
@@ -75,6 +75,10 @@ module Elasticity
     end
 
     private
+
+    def is_jobflow_running?
+      @jobflow_id
+    end
 
     def jobflow_config
       config = jobflow_preamble
