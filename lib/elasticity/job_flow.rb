@@ -1,6 +1,7 @@
 module Elasticity
 
   class JobFlowRunningError < StandardError; end
+  class JobFlowNotStartedError < StandardError; end
   class JobFlowMissingStepsError < StandardError; end
 
   class JobFlow
@@ -54,6 +55,14 @@ module Elasticity
         raise JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.'
       end
       @jobflow_id ||= @emr.run_job_flow(jobflow_config)
+    end
+
+    def status
+      if @jobflow_id
+        @emr.describe_jobflow(@jobflow_id).state
+      else
+        raise JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.'
+      end
     end
 
     private
