@@ -1,5 +1,8 @@
 module Elasticity
 
+  class JobFlowRunningError < StandardError; end
+  class JobFlowMissingStepsError < StandardError; end
+
   class JobFlow
 
     attr_accessor :action_on_failure
@@ -20,6 +23,8 @@ module Elasticity
       @name = 'Elasticity Job Flow'
       @slave_instance_type = 'm1.small'
 
+      @emr = Elasticity::EMR.new(access, secret)
+
       @bootstrap_actions = []
       @jobflow_steps = []
       @installed_steps = []
@@ -31,11 +36,24 @@ module Elasticity
     end
 
     def add_bootstrap_action(bootstrap_action)
+      if @jobflow_id
+        raise JobFlowRunningError, 'To modify bootstrap actions, please create a new job flow.'
+      end
       @bootstrap_actions << bootstrap_action
     end
 
     def add_step(jobflow_step)
       @jobflow_steps << jobflow_step
+    end
+
+    def run
+      if @jobflow_steps.empty?
+        raise JobFlowMissingStepsError, 'Cannot run a job flow without adding steps.  Please use #add_step.'
+      end
+      if @jobflow_id
+        raise JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.'
+      end
+      @jobflow_id ||= @emr.run_job_flow(jobflow_config)
     end
 
     private

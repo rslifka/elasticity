@@ -1,5 +1,10 @@
 describe Elasticity::JobFlow do
 
+  before do
+    # Ensure we don't accidentally submit to EMR for all of these examples
+    Elasticity::EMR.stub(:new).and_return(double('Elasticity::EMR', :run_job_flow => '_'))
+  end
+
   subject do
     Elasticity::JobFlow.new('access', 'secret')
   end
@@ -43,9 +48,23 @@ describe Elasticity::JobFlow do
     end
 
     context 'when the jobflow is already started' do
-      xit 'should raise an error'
+      before do
+        subject.add_step(Elasticity::CustomJarStep.new('_'))
+        subject.run
+      end
+      it 'should raise an error' do
+        expect {
+          subject.add_bootstrap_action(nil)
+        }.to raise_error(Elasticity::JobFlowRunningError, 'To modify bootstrap actions, please create a new job flow.')
+      end
     end
 
+  end
+
+  describe '#add_step' do
+    context 'when the jobflow is already running' do
+      xit 'should do something interesting'
+    end
   end
 
   describe '#jobflow_config' do
@@ -166,9 +185,71 @@ describe Elasticity::JobFlow do
   end
 
   describe '#run' do
-    context 'when there are no steps added' do
-      xit 'should raise an error'
+
+    context 'when there are steps added' do
+      let(:jobflow_with_steps) do
+        Elasticity::JobFlow.new('STEP_TEST_ACCESS', 'STEP_TEST_SECRET').tap do |jf|
+          jf.add_step(Elasticity::CustomJarStep.new('_'))
+        end
+      end
+
+      context 'when the jobflow has not yet been run' do
+        let(:emr) { double('Elasticity::EMR', :run_job_flow => 'JOBFLOW_ID') }
+
+        it 'should run the job with the supplied EMR credentials' do
+          Elasticity::EMR.should_receive(:new).with('STEP_TEST_ACCESS', 'STEP_TEST_SECRET').and_return(emr)
+          emr.should_receive(:run_job_flow)
+          jobflow_with_steps.run
+        end
+
+        it 'should run the job with the jobflow config' do
+          Elasticity::EMR.stub(:new).with('STEP_TEST_ACCESS', 'STEP_TEST_SECRET').and_return(emr)
+          jobflow_with_steps.stub(:jobflow_config).and_return('JOBFLOW_CONFIG')
+          emr.should_receive(:run_job_flow).with('JOBFLOW_CONFIG')
+          jobflow_with_steps.run
+        end
+
+        it 'should return the jobflow ID' do
+          Elasticity::EMR.stub(:new).with('STEP_TEST_ACCESS', 'STEP_TEST_SECRET').and_return(emr)
+          jobflow_with_steps.run.should == 'JOBFLOW_ID'
+        end
+
+      end
+
+      context 'when the jobflow has already been run' do
+        before do
+          jobflow_with_steps.run
+        end
+        it 'should raise an error' do
+          expect {
+            jobflow_with_steps.run
+          }.to raise_error(Elasticity::JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.')
+        end
+      end
+
     end
+
+    context 'when there are no steps added' do
+      let(:jobflow_with_no_steps) { Elasticity::JobFlow.new('_', '_') }
+      it 'should raise an error' do
+        expect {
+          jobflow_with_no_steps.run
+        }.to raise_error(Elasticity::JobFlowMissingStepsError, 'Cannot run a job flow without adding steps.  Please use #add_step.')
+      end
+    end
+
+  end
+
+  describe '#status' do
+
+    context 'when the jobflow is not yet running' do
+      xit 'should return UNSTARTED'
+    end
+
+    context 'when the jobflow is running' do
+      xit 'should return the AWS status'
+    end
+
   end
 
 end
