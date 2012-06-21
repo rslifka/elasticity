@@ -6,7 +6,7 @@ describe Elasticity::CustomJarStep do
 
   it { should be_a Elasticity::JobFlowStep }
 
-  its(:name) { should == 'Elasticity Custom Jar Step' }
+  its(:name) { should == 'Elasticity Custom Jar Step (jar)' }
   its(:jar) { should == 'jar' }
   its(:arguments) { should == [] }
   its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
@@ -24,7 +24,7 @@ describe Elasticity::CustomJarStep do
           :hadoop_jar_step => {
             :jar => 'jar'
           },
-          :name => 'Elasticity Custom Jar Step'
+          :name => 'Elasticity Custom Jar Step (jar)'
         }
       end
     end
@@ -43,7 +43,7 @@ describe Elasticity::CustomJarStep do
             :jar => 'jar',
             :args => ['arg1', 'arg2',],
           },
-          :name => 'Elasticity Custom Jar Step'
+          :name => 'Elasticity Custom Jar Step (jar)'
         }
       end
     end

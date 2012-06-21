@@ -10,7 +10,7 @@ module Elasticity
     attr_accessor :action_on_failure
 
     def initialize(jar)
-      @name = 'Elasticity Custom Jar Step'
+      @name = "Elasticity Custom Jar Step (#{jar})"
       @jar = jar
       @arguments = []
       @action_on_failure = 'TERMINATE_JOB_FLOW'
