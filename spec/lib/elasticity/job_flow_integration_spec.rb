@@ -69,4 +69,71 @@ describe 'Elasticity::JobFlow Integration Examples' do
 
   end
 
+  describe 'Pig' do
+
+    let(:pig_step) do
+      Elasticity::PigStep.new('s3n://slif-pig-test/test.pig').tap do |ps|
+        ps.variables = {'OUTPUT' => 's3n://slif-pig-test/output', 'XREFS' => 's3n://slif-pig-test/xrefs'}
+        ps.action_on_failure = 'CONTINUE'
+      end
+    end
+
+    let(:pig_jobflow) do
+      Elasticity::JobFlow.new('access', 'secret').tap do |jf|
+        jf.instance_count = 8
+        jf.slave_instance_type = 'm1.xlarge'
+        jf.log_uri = 's3n://slif-test/output/logs'
+        jf.add_step(pig_step)
+      end
+    end
+
+    it 'should launch the Pig job with the specified EMR credentials' do
+      emr.should_receive(:run_job_flow).with({
+        :name => 'Elasticity Job Flow',
+        :log_uri => 's3n://slif-test/output/logs',
+        :instances => {
+          :ec2_key_name => 'default',
+          :hadoop_version => '0.20',
+          :instance_count => 8,
+          :master_instance_type => 'm1.small',
+          :slave_instance_type => 'm1.xlarge',
+        },
+        :steps => [
+          {
+            :action_on_failure => 'TERMINATE_JOB_FLOW',
+            :hadoop_jar_step => {
+              :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+              :args => [
+                's3://elasticmapreduce/libs/pig/pig-script',
+                  '--base-path',
+                  's3://elasticmapreduce/libs/pig/',
+                  '--install-pig'
+              ],
+            },
+            :name => 'Elasticity - Install Pig'
+          },
+            {
+              :action_on_failure => 'CONTINUE',
+              :hadoop_jar_step => {
+                :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+                :args => [
+                  's3://elasticmapreduce/libs/pig/pig-script',
+                    '--run-pig-script',
+                    '--args',
+                    '-p', 'OUTPUT=s3n://slif-pig-test/output',
+                    '-p', 'XREFS=s3n://slif-pig-test/xrefs',
+                    '-p', 'E_PARALLELS=26',
+                    's3n://slif-pig-test/test.pig'
+                ],
+              },
+              :name => 'Elasticity Pig Step (s3n://slif-pig-test/test.pig)'
+            }
+        ]
+      }).and_return('PIG_JOBFLOW_ID')
+
+      pig_jobflow.run.should == 'PIG_JOBFLOW_ID'
+    end
+
+  end
+
 end
