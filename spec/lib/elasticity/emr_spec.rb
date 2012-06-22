@@ -66,25 +66,25 @@ describe Elasticity::EMR do
 
         it "should iterate over them and send the correct params to AWS" do
           instance_group_configs = [
-            {:instance_type=>"m1.small", :instance_role=>"CORE", :market=>"ON_DEMAND", :instance_count=>1, :name=>"Go Canucks Go!", :bid_price=>0},
-              {:instance_type=>"m1.small", :instance_role=>"CORE", :market=>"ON_DEMAND", :instance_count=>1, :name=>"Go Canucks Go!", :bid_price=>0},
+            {:instance_type => "m1.small", :instance_role => "CORE", :market => "ON_DEMAND", :instance_count => 1, :name => "Go Canucks Go!", :bid_price => 0},
+              {:instance_type => "m1.small", :instance_role => "CORE", :market => "ON_DEMAND", :instance_count => 1, :name => "Go Canucks Go!", :bid_price => 0},
           ]
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
           aws_request.should_receive(:aws_emr_request).with({
             "Operation" => "AddInstanceGroups",
-            "InstanceGroups.member.1.Name"=>"Go Canucks Go!",
-            "InstanceGroups.member.1.InstanceRole"=>"CORE",
-            "InstanceGroups.member.1.InstanceCount"=>1,
-            "InstanceGroups.member.1.BidPrice"=>0,
-            "InstanceGroups.member.1.InstanceType"=>"m1.small",
-            "InstanceGroups.member.1.Market"=>"ON_DEMAND",
-            "InstanceGroups.member.2.Name"=>"Go Canucks Go!",
-            "InstanceGroups.member.2.InstanceRole"=>"CORE",
-            "InstanceGroups.member.2.InstanceCount"=>1,
-            "InstanceGroups.member.2.BidPrice"=>0,
-            "InstanceGroups.member.2.InstanceType"=>"m1.small",
-            "InstanceGroups.member.2.Market"=>"ON_DEMAND",
-            "JobFlowId"=>"j-19WDDS68ZUENP"
+            "InstanceGroups.member.1.Name" => "Go Canucks Go!",
+            "InstanceGroups.member.1.InstanceRole" => "CORE",
+            "InstanceGroups.member.1.InstanceCount" => 1,
+            "InstanceGroups.member.1.BidPrice" => 0,
+            "InstanceGroups.member.1.InstanceType" => "m1.small",
+            "InstanceGroups.member.1.Market" => "ON_DEMAND",
+            "InstanceGroups.member.2.Name" => "Go Canucks Go!",
+            "InstanceGroups.member.2.InstanceRole" => "CORE",
+            "InstanceGroups.member.2.InstanceCount" => 1,
+            "InstanceGroups.member.2.BidPrice" => 0,
+            "InstanceGroups.member.2.InstanceType" => "m1.small",
+            "InstanceGroups.member.2.Market" => "ON_DEMAND",
+            "JobFlowId" => "j-19WDDS68ZUENP"
           })
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
@@ -301,7 +301,7 @@ describe Elasticity::EMR do
 
       it "should accept additional parameters" do
         aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        aws_request.should_receive(:aws_emr_request).with({"Operation" => "DescribeJobFlows","CreatedBefore" => "2011-10-04"}).and_return(@describe_jobflows_xml)
+        aws_request.should_receive(:aws_emr_request).with({"Operation" => "DescribeJobFlows", "CreatedBefore" => "2011-10-04"}).and_return(@describe_jobflows_xml)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
         emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
         emr.describe_jobflows(:CreatedBefore => "2011-10-04")
@@ -345,7 +345,7 @@ describe Elasticity::EMR do
     end
 
     it "should ask AWS about the specified job flow" do
-      aws_request = Elasticity::AwsRequest.new("","")
+      aws_request = Elasticity::AwsRequest.new("", "")
       aws_request.should_receive(:aws_emr_request).with({
         "Operation" => "DescribeJobFlows",
         "JobFlowIds.member.1" => "j-3UN6WX5RRO2AG"
@@ -357,7 +357,7 @@ describe Elasticity::EMR do
 
     context "when the job flow ID exists" do
       it "should return a JobFlow" do
-        aws_request = Elasticity::AwsRequest.new("","")
+        aws_request = Elasticity::AwsRequest.new("", "")
         aws_request.stub(:aws_emr_request).with({
           "Operation" => "DescribeJobFlows",
           "JobFlowIds.member.1" => "j-3UN6WX5RRO2AG"
@@ -884,7 +884,7 @@ describe Elasticity::EMR do
   describe "#==" do
     let(:same_object) { subject }
     let(:same_values) { Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY) }
-    let(:diff_type)   { Object.new }
+    let(:diff_type) { Object.new }
 
     it { should == same_object }
     it { should == same_values }
