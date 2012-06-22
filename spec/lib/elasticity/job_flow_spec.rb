@@ -202,8 +202,8 @@ describe Elasticity::JobFlow do
         let(:hadoop_bootstrap_actions) do
           [
             Elasticity::HadoopBootstrapAction.new('OPTION1', 'VALUE1'),
-            Elasticity::HadoopBootstrapAction.new('OPTION1', 'VALUE2'),
-            Elasticity::HadoopBootstrapAction.new('OPTION2', 'VALUE3')
+              Elasticity::HadoopBootstrapAction.new('OPTION1', 'VALUE2'),
+              Elasticity::HadoopBootstrapAction.new('OPTION2', 'VALUE3')
           ]
         end
         let(:jobflow_with_bootstrap_actions) do
@@ -214,7 +214,7 @@ describe Elasticity::JobFlow do
           end
         end
         it 'should include them in the jobflow config' do
-          bootstrap_actions = hadoop_bootstrap_actions.map {|a| a.to_aws_bootstrap_action}
+          bootstrap_actions = hadoop_bootstrap_actions.map { |a| a.to_aws_bootstrap_action }
           jobflow_with_bootstrap_actions.send(:jobflow_config).should be_a_hash_including({
             :bootstrap_actions => bootstrap_actions
           })
@@ -232,8 +232,9 @@ describe Elasticity::JobFlow do
   end
 
   describe '#jobflow_preamble' do
-    it 'should create a jobflow configuration section' do
-      subject.send(:jobflow_preamble).should == {
+
+    let(:basic_preamble) do
+      {
         :name => 'Elasticity Job Flow',
         :ami_version => 'latest',
         :instances => {
@@ -246,6 +247,18 @@ describe Elasticity::JobFlow do
         }
       }
     end
+
+    it 'should create a jobflow configuration section' do
+      subject.send(:jobflow_preamble).should == basic_preamble
+    end
+
+    context 'when a VPC subnet ID is specified' do
+      it 'should include it in the preamble' do
+        subject.ec2_subnet_id = 'subnet-118b9d79'
+        subject.send(:jobflow_preamble).should be_a_hash_including({:ec2_subnet_id => 'subnet-118b9d79'})
+      end
+    end
+
   end
 
   describe '#run' do

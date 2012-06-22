@@ -7,6 +7,7 @@
 + Bumped the default Hadoop version to 0.20.205.
 + Now possible to specify the AMI version.
 + Now possible to specify keep alive clusters.
++ Now possible to specify an EC2 subnet ID (VPC).
 + Hadoop bootstrap actions can now be named.
 + Development dependency updates: ruby-1.9.3-p194, rspec-2.10.
 

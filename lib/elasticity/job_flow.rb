@@ -16,6 +16,7 @@ module Elasticity
     attr_accessor :slave_instance_type
     attr_accessor :ami_version
     attr_accessor :keep_job_flow_alive_when_no_steps
+    attr_accessor :ec2_subnet_id
 
     def initialize(access, secret)
       @action_on_failure = 'TERMINATE_JOB_FLOW'
@@ -95,7 +96,9 @@ module Elasticity
           :master_instance_type => @master_instance_type,
           :slave_instance_type => @slave_instance_type,
         }
-      }
+      }.tap do |preamble|
+        preamble.merge!(:ec2_subnet_id => @ec2_subnet_id) if @ec2_subnet_id
+      end
     end
 
     def jobflow_steps
