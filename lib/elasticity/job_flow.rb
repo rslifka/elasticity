@@ -37,9 +37,7 @@ module Elasticity
     end
 
     def add_bootstrap_action(bootstrap_action)
-      if is_jobflow_running?
-        raise JobFlowRunningError, 'To modify bootstrap actions, please create a new job flow.'
-      end
+      raise_if is_jobflow_running?, JobFlowRunningError, 'To modify bootstrap actions, please create a new job flow.'
       @bootstrap_actions << bootstrap_action
     end
 
@@ -57,21 +55,14 @@ module Elasticity
     end
 
     def run
-      if @jobflow_steps.empty?
-        raise JobFlowMissingStepsError, 'Cannot run a job flow without adding steps.  Please use #add_step.'
-      end
-      if @jobflow_id
-        raise JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.'
-      end
+      raise_if @jobflow_steps.empty?, JobFlowMissingStepsError, 'Cannot run a job flow without adding steps.  Please use #add_step.'
+      raise_if @jobflow_id, JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.'
       @jobflow_id ||= @emr.run_job_flow(jobflow_config)
     end
 
     def status
-      if is_jobflow_running?
-        @emr.describe_jobflow(@jobflow_id).state
-      else
-        raise JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.'
-      end
+      raise_unless is_jobflow_running?, JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.'
+      @emr.describe_jobflow(@jobflow_id).state
     end
 
     private
