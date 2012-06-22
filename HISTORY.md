@@ -5,6 +5,7 @@
 + The ```SimpleJob``` API has been removed in favour of a more modular 'step'-based approach using the "JobFlow" and "Step" vernacular, in line with Amazon's own communication.  If you understand the AWS Web UI, using Elasticity should be a bit more straightforward.
 + ```JobFlow``` and ```JobFlowStep``` are now ```JobFlowStatus``` and ```JobFlowStatusStep``` respectively, allowing the creation of ```JobFlow``` and ```JobFlowStep``` to be used in job submission.
 + Bumped the default Hadoop version to 0.20.205.
++ Now possible to specify the AMI version.
 + Hadoop bootstrap actions can now be named.
 + Development dependency updates: ruby-1.9.3-p194, rspec-2.10.
 

@@ -26,6 +26,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
       emr.should_receive(:run_job_flow).with({
         :name => 'Elasticity Job Flow',
         :log_uri => 's3n://slif-test/output/logs',
+        :ami_version => 'latest',
         :instances => {
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
@@ -91,6 +92,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
       emr.should_receive(:run_job_flow).with({
         :name => 'Elasticity Job Flow',
         :log_uri => 's3n://slif-test/output/logs',
+        :ami_version => 'latest',
         :instances => {
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
@@ -160,6 +162,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
       emr.should_receive(:run_job_flow).with({
         :name => 'Elasticity Job Flow',
         :log_uri => 's3n://slif-test/output/logs',
+        :ami_version => 'latest',
         :instances => {
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',

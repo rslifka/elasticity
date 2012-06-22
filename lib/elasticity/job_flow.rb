@@ -14,6 +14,7 @@ module Elasticity
     attr_accessor :log_uri
     attr_accessor :master_instance_type
     attr_accessor :slave_instance_type
+    attr_accessor :ami_version
 
     def initialize(access, secret)
       @action_on_failure = 'TERMINATE_JOB_FLOW'
@@ -23,6 +24,7 @@ module Elasticity
       @master_instance_type = 'm1.small'
       @name = 'Elasticity Job Flow'
       @slave_instance_type = 'm1.small'
+      @ami_version = 'latest'
 
       @emr = Elasticity::EMR.new(access, secret)
 
@@ -82,6 +84,7 @@ module Elasticity
     def jobflow_preamble
       {
         :name => @name,
+        :ami_version => @ami_version,
         :instances => {
           :ec2_key_name => @ec2_key_name,
           :hadoop_version => @hadoop_version,

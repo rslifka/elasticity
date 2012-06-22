@@ -17,6 +17,7 @@ describe Elasticity::JobFlow do
   its(:master_instance_type) { should == 'm1.small' }
   its(:name) { should == 'Elasticity Job Flow' }
   its(:slave_instance_type) { should == 'm1.small' }
+  its(:ami_version) { should == 'latest' }
 
   describe '#instance_count=' do
 
@@ -233,6 +234,7 @@ describe Elasticity::JobFlow do
     it 'should create a jobflow configuration section' do
       subject.send(:jobflow_preamble).should == {
         :name => 'Elasticity Job Flow',
+        :ami_version => 'latest',
         :instances => {
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
