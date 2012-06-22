@@ -28,7 +28,7 @@ module Elasticity
       return false unless other.is_a? AwsRequest
       return false unless @access_key == other.access_key
       return false unless @secret_key == other.secret_key
-      return false unless @options    == other.options
+      return false unless @options == other.options
       true
     end
 
@@ -57,6 +57,44 @@ module Elasticity
     def self.aws_escape(param)
       param.to_s.gsub(/([^a-zA-Z0-9._~-]+)/n) do
         '%' + $1.unpack('H2' * $1.size).join('%').upcase
+      end
+    end
+
+    # Since we use the same structure as AWS, we can generate AWS param names
+    # from the Ruby versions of those names (and the param nesting).
+    def self.convert_ruby_to_aws(params)
+      result = {}
+      params.each do |key, value|
+        case value
+          when Array
+            prefix = "#{camelize(key.to_s)}.member"
+            value.each_with_index do |item, index|
+              if item.is_a?(String)
+                result["#{prefix}.#{index+1}"] = item
+              else
+                convert_ruby_to_aws(item).each do |nested_key, nested_value|
+                  result["#{prefix}.#{index+1}.#{nested_key}"] = nested_value
+                end
+              end
+            end
+          when Hash
+            prefix = "#{camelize(key.to_s)}"
+            convert_ruby_to_aws(value).each do |nested_key, nested_value|
+              result["#{prefix}.#{nested_key}"] = nested_value
+            end
+          else
+            result[camelize(key.to_s)] = value
+        end
+      end
+      result
+    end
+
+    # (Used from Rails' ActiveSupport)
+    def self.camelize(lower_case_and_underscored_word, first_letter_in_uppercase = true)
+      if first_letter_in_uppercase
+        lower_case_and_underscored_word.to_s.gsub(/\/(.?)/) { "::" + $1.upcase }.gsub(/(^|_)(.)/) { $2.upcase }
+      else
+        lower_case_and_underscored_word.first + camelize(lower_case_and_underscored_word)[1..-1]
       end
     end
 

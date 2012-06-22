@@ -128,7 +128,7 @@ describe Elasticity::AwsRequest do
         'Steps.member.2.HadoopJarStep.Args.member.2' => 'arg5',
         'Steps.member.2.HadoopJarStep.Args.member.3' => 'arg6'
       }
-      Elasticity::EMR.send(:convert_ruby_to_aws, add_jobflow_steps_params).should == expected_result
+      Elasticity::AwsRequest.send(:convert_ruby_to_aws, add_jobflow_steps_params).should == expected_result
     end
   end
     
