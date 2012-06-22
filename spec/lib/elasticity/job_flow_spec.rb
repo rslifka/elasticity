@@ -18,6 +18,7 @@ describe Elasticity::JobFlow do
   its(:name) { should == 'Elasticity Job Flow' }
   its(:slave_instance_type) { should == 'm1.small' }
   its(:ami_version) { should == 'latest' }
+  its(:keep_job_flow_alive_when_no_steps) { should == true }
 
   describe '#instance_count=' do
 
@@ -236,6 +237,7 @@ describe Elasticity::JobFlow do
         :name => 'Elasticity Job Flow',
         :ami_version => 'latest',
         :instances => {
+          :keep_job_flow_alive_when_no_steps => true,
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
           :instance_count => 2,

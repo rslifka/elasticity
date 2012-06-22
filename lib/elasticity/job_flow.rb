@@ -15,6 +15,7 @@ module Elasticity
     attr_accessor :master_instance_type
     attr_accessor :slave_instance_type
     attr_accessor :ami_version
+    attr_accessor :keep_job_flow_alive_when_no_steps
 
     def initialize(access, secret)
       @action_on_failure = 'TERMINATE_JOB_FLOW'
@@ -25,6 +26,7 @@ module Elasticity
       @name = 'Elasticity Job Flow'
       @slave_instance_type = 'm1.small'
       @ami_version = 'latest'
+      @keep_job_flow_alive_when_no_steps = true
 
       @emr = Elasticity::EMR.new(access, secret)
 
@@ -86,6 +88,7 @@ module Elasticity
         :name => @name,
         :ami_version => @ami_version,
         :instances => {
+          :keep_job_flow_alive_when_no_steps => @keep_job_flow_alive_when_no_steps,
           :ec2_key_name => @ec2_key_name,
           :hadoop_version => @hadoop_version,
           :instance_count => @instance_count,

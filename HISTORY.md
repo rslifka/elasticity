@@ -6,6 +6,7 @@
 + ```JobFlow``` and ```JobFlowStep``` are now ```JobFlowStatus``` and ```JobFlowStatusStep``` respectively, allowing the creation of ```JobFlow``` and ```JobFlowStep``` to be used in job submission.
 + Bumped the default Hadoop version to 0.20.205.
 + Now possible to specify the AMI version.
++ Now possible to specify keep alive clusters.
 + Hadoop bootstrap actions can now be named.
 + Development dependency updates: ruby-1.9.3-p194, rspec-2.10.
 
