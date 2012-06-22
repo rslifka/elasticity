@@ -24,6 +24,16 @@ module Elasticity
       RestClient.get signed_request
     end
 
+    def ==(other)
+      return false unless other.is_a? AwsRequest
+      return false unless @access_key == other.access_key
+      return false unless @secret_key == other.secret_key
+      return false unless @options    == other.options
+      true
+    end
+
+    private
+
     # (Used from RightScale's right_aws gem.)
     # EC2, SQS, SDB and EMR requests must be signed by this guy.
     # See: http://docs.amazonwebservices.com/AmazonSimpleDB/2007-11-07/DeveloperGuide/index.html?REST_RESTAuth.html
@@ -39,14 +49,6 @@ module Elasticity
       string_to_sign = "#{http_verb.to_s.upcase}\n#{host.downcase}\n#{uri}\n#{canonical_string}"
       signature = AwsRequest.aws_escape(Base64.encode64(OpenSSL::HMAC.digest("sha256", @secret_key, string_to_sign)).strip)
       "#{canonical_string}&Signature=#{signature}"
-    end
-
-    def ==(other)
-      return false unless other.is_a? AwsRequest
-      return false unless @access_key == other.access_key
-      return false unless @secret_key == other.secret_key
-      return false unless @options    == other.options
-      true
     end
 
     # (Used from RightScale's right_aws gem)
