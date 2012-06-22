@@ -4,15 +4,15 @@ describe Elasticity::AwsRequest do
     Elasticity::AwsRequest.new('aws_access_key_id', 'aws_secret_access_key')
   end
 
+  before do
+    Time.stub(:now).and_return(Time.at(1302461096))
+  end
+
   its(:access_key) { should == 'aws_access_key_id' }
   its(:secret_key) { should == 'aws_secret_access_key' }
   its(:options)    { should == {:secure => true} }
 
   describe '#sign_params' do
-    before do
-      Time.stub(:now).and_return(Time.at(1302461096))
-    end
-
     it 'should sign according to AWS rules' do
       signed_params = subject.send(:sign_params, {}, 'GET', 'example.com', '/')
       signed_params.should == 'AWSAccessKeyId=aws_access_key_id&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-04-10T18%3A44%3A56.000Z&Signature=jVLfPS056dNmjpCcikBnPmRHJNZ8YGaI7zdmHWUk658%3D'
@@ -20,10 +20,6 @@ describe Elasticity::AwsRequest do
   end
 
   describe '#aws_emr_request' do
-    before do
-      Time.stub(:now).and_return(Time.at(1302461096))
-    end
-
     describe 'options' do
 
       context 'when no options are specified' do
