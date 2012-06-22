@@ -66,7 +66,7 @@ describe Elasticity::AwsRequest do
   describe '#==' do
     let(:same_object) { subject }
     let(:same_values) { Elasticity::AwsRequest.new('aws_access_key_id', 'aws_secret_access_key', {}) }
-    let(:diff_type)   { Object.new }
+    let(:diff_type) { Object.new }
 
     it { should == same_object }
     it { should == same_values }
@@ -86,15 +86,50 @@ describe Elasticity::AwsRequest do
 
   end
 
-  describe '.aws_escape' do
-    it 'should escape according to AWS rules' do
-      # Don't encode reserved characters
-      Elasticity::AwsRequest.aws_escape('foo-_.~bar').should == 'foo-_.~bar'
-      # Encode as %20, not as +
-      Elasticity::AwsRequest.aws_escape('foo bar').should == 'foo%20bar'
-      # Percent encode all other characters with %XY, where X and Y are hex characters 0-9 and uppercase A-F.
-      Elasticity::AwsRequest.aws_escape('foo$&+,/:;=?@bar').should == 'foo%24%26%2B%2C%2F%3A%3B%3D%3F%40bar'
+  describe '.convert_ruby_to_aws' do
+    it 'should convert the params' do
+      add_jobflow_steps_params = {
+        :job_flow_id => 'j-1',
+        :steps => [
+          {
+            :action_on_failure => 'CONTINUE',
+            :name => 'First New Job Step',
+            :hadoop_jar_step => {
+              :args => ['arg1', 'arg2', 'arg3',],
+              :jar => 'first_step.jar',
+              :main_class => 'first_class.jar'
+            }
+          },
+            {
+              :action_on_failure => 'CANCEL_AND_WAIT',
+              :name => 'Second New Job Step',
+              :hadoop_jar_step => {
+                :args => ['arg4', 'arg5', 'arg6',],
+                :jar => 'second_step.jar',
+                :main_class => 'second_class.jar'
+              }
+            }
+        ]
+      }
+      expected_result = {
+        'JobFlowId' => 'j-1',
+        'Steps.member.1.Name' => 'First New Job Step',
+        'Steps.member.1.ActionOnFailure' => 'CONTINUE',
+        'Steps.member.1.HadoopJarStep.Jar' => 'first_step.jar',
+        'Steps.member.1.HadoopJarStep.MainClass' => 'first_class.jar',
+        'Steps.member.1.HadoopJarStep.Args.member.1' => 'arg1',
+        'Steps.member.1.HadoopJarStep.Args.member.2' => 'arg2',
+        'Steps.member.1.HadoopJarStep.Args.member.3' => 'arg3',
+        'Steps.member.2.Name' => 'Second New Job Step',
+        'Steps.member.2.ActionOnFailure' => 'CANCEL_AND_WAIT',
+        'Steps.member.2.HadoopJarStep.Jar' => 'second_step.jar',
+        'Steps.member.2.HadoopJarStep.MainClass' => 'second_class.jar',
+        'Steps.member.2.HadoopJarStep.Args.member.1' => 'arg4',
+        'Steps.member.2.HadoopJarStep.Args.member.2' => 'arg5',
+        'Steps.member.2.HadoopJarStep.Args.member.3' => 'arg6'
+      }
+      Elasticity::EMR.send(:convert_ruby_to_aws, add_jobflow_steps_params).should == expected_result
     end
   end
-
+    
 end
