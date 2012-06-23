@@ -66,17 +66,25 @@ describe Elasticity::AwsRequest do
 
   describe '#submit' do
 
-    let(:request) do
-      Elasticity::AwsRequest.new('_', '_').tap do |r|
-        r.stub(:sign_params => 'SIGNED_PARAMS')
-        r.instance_variable_set(:@host, 'HOSTNAME')
-        r.instance_variable_set(:@protocol, 'PROTOCOL')
-      end
+    describe
+
+    it 'should convert the ruby-style parameters to AWS-style parameters' do
+
     end
 
-    it 'should GET a properly assembled request' do
-      RestClient.should_receive(:get).with('PROTOCOL://HOSTNAME?SIGNED_PARAMS')
-      request.submit({})
+    describe 'request assembly' do
+      let(:request) do
+        Elasticity::AwsRequest.new('_', '_').tap do |r|
+          r.stub(:sign_params => 'SIGNED_PARAMS')
+          r.instance_variable_set(:@host, 'HOSTNAME')
+          r.instance_variable_set(:@protocol, 'PROTOCOL')
+        end
+      end
+
+      it 'should GET a properly assembled request' do
+        RestClient.should_receive(:get).with('PROTOCOL://HOSTNAME?SIGNED_PARAMS')
+        request.submit({})
+      end
     end
 
   end

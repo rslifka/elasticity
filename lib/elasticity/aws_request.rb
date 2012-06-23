@@ -11,9 +11,9 @@ module Elasticity
     # Supported values for options:
     #  :region - AWS region (e.g. us-west-1)
     #  :secure - true or false, default true.
-    def initialize(aws_access_key_id, aws_secret_access_key, options = {})
-      @access_key = aws_access_key_id
-      @secret_key = aws_secret_access_key
+    def initialize(access, secret, options = {})
+      @access_key = access
+      @secret_key = secret
       @host = options[:region] ? "elasticmapreduce.#{options[:region]}.amazonaws.com" : 'elasticmapreduce.amazonaws.com'
       @protocol = {:secure => true}.merge(options)[:secure] ? 'https' : 'http'
     end
