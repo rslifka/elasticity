@@ -15,7 +15,7 @@ module Elasticity
     # Raises ArgumentError if the specified jobflow does not exist.
     def describe_jobflow(jobflow_id)
       begin
-        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws({
+        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws({
           :operation => "DescribeJobFlows",
           :job_flow_ids => [jobflow_id]
         }))
@@ -35,7 +35,7 @@ module Elasticity
     #
     #   describe_jobflows(:CreatedBefore => "2011-10-04")
     def describe_jobflows(params = {})
-      aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(
+      aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(
         params.merge({:operation => "DescribeJobFlows"}))
       )
       xml_doc = Nokogiri::XML(aws_result)
@@ -69,7 +69,7 @@ module Elasticity
         :instance_groups => instance_group_configs
       }
       begin
-        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
         xml_doc = Nokogiri::XML(aws_result)
         xml_doc.remove_namespaces!
         instance_group_ids = []
@@ -108,7 +108,7 @@ module Elasticity
         :job_flow_id => jobflow_id
       }.merge!(steps_config)
       begin
-        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
         yield aws_result if block_given?
       rescue RestClient::BadRequest => e
         raise ArgumentError, EMR.parse_error_response(e.http_body)
@@ -129,7 +129,7 @@ module Elasticity
         :instance_groups => instance_group_config.map { |k, v| {:instance_group_id => k, :instance_count => v} }
       }
       begin
-        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
         yield aws_result if block_given?
       rescue RestClient::BadRequest => e
         raise ArgumentError, EMR.parse_error_response(e.http_body)
@@ -196,7 +196,7 @@ module Elasticity
         :operation => "RunJobFlow",
       }.merge!(job_flow_config)
       begin
-        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
         yield aws_result if block_given?
         xml_doc = Nokogiri::XML(aws_result)
         xml_doc.remove_namespaces!
@@ -221,7 +221,7 @@ module Elasticity
         :job_flow_ids => jobflow_ids
       }
       begin
-        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
         yield aws_result if block_given?
       rescue RestClient::BadRequest => e
         raise ArgumentError, EMR.parse_error_response(e.http_body)
@@ -238,7 +238,7 @@ module Elasticity
         :job_flow_ids => [jobflow_id]
       }
       begin
-        aws_result = @aws_request.aws_emr_request(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
         yield aws_result if block_given?
       rescue RestClient::BadRequest
         raise ArgumentError, "Job flow '#{jobflow_id}' does not exist."
@@ -249,7 +249,7 @@ module Elasticity
     # Use this if you want to perform an operation that hasn't yet been wrapped
     # by Elasticity or you just want to see the response XML for yourself :)
     def direct(params)
-      @aws_request.aws_emr_request(params)
+      @aws_request.submit(params)
     end
 
     def ==(other)

@@ -70,7 +70,7 @@ describe Elasticity::EMR do
               {:instance_type => "m1.small", :instance_role => "CORE", :market => "ON_DEMAND", :instance_count => 1, :name => "Go Canucks Go!", :bid_price => 0},
           ]
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).with({
+          aws_request.should_receive(:submit).with({
             "Operation" => "AddInstanceGroups",
             "InstanceGroups.member.1.Name" => "Go Canucks Go!",
             "InstanceGroups.member.1.InstanceRole" => "CORE",
@@ -93,7 +93,7 @@ describe Elasticity::EMR do
 
         it "should return an array of the instance groups created" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).and_return(@add_instance_groups_xml)
+          aws_request.should_receive(:submit).and_return(@add_instance_groups_xml)
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           emr.add_instance_groups("", []).should == ["ig-1", "ig-2", "ig-3"]
@@ -103,7 +103,7 @@ describe Elasticity::EMR do
       context "when a block is provided" do
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).and_return("AWS XML")
+          aws_request.should_receive(:submit).and_return("AWS XML")
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           xml_result = nil
@@ -167,7 +167,7 @@ describe Elasticity::EMR do
 
       it "should add the specified steps to the job flow" do
         aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        aws_request.should_receive(:aws_emr_request).with({
+        aws_request.should_receive(:submit).with({
           "Operation" => "AddJobFlowSteps",
           "JobFlowId" => "j-1",
           "Steps.member.1.Name" => "Step 1",
@@ -221,7 +221,7 @@ describe Elasticity::EMR do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
           @exception = RestClient::BadRequest.new
           @exception.should_receive(:http_body).and_return(@error_xml)
-          aws_request.should_receive(:aws_emr_request).and_raise(@exception)
+          aws_request.should_receive(:submit).and_raise(@exception)
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           lambda {
@@ -233,7 +233,7 @@ describe Elasticity::EMR do
       context "when a block is given" do
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).and_return("xml_response")
+          aws_request.should_receive(:submit).and_return("xml_response")
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           xml_result = nil
@@ -292,7 +292,7 @@ describe Elasticity::EMR do
 
       it "should return the names of all running job flows" do
         aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        aws_request.should_receive(:aws_emr_request).with({"Operation" => "DescribeJobFlows"}).and_return(@describe_jobflows_xml)
+        aws_request.should_receive(:submit).with({"Operation" => "DescribeJobFlows"}).and_return(@describe_jobflows_xml)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
         emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
         jobflows = emr.describe_jobflows
@@ -301,7 +301,7 @@ describe Elasticity::EMR do
 
       it "should accept additional parameters" do
         aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        aws_request.should_receive(:aws_emr_request).with({"Operation" => "DescribeJobFlows", "CreatedBefore" => "2011-10-04"}).and_return(@describe_jobflows_xml)
+        aws_request.should_receive(:submit).with({"Operation" => "DescribeJobFlows", "CreatedBefore" => "2011-10-04"}).and_return(@describe_jobflows_xml)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
         emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
         emr.describe_jobflows(:CreatedBefore => "2011-10-04")
@@ -310,7 +310,7 @@ describe Elasticity::EMR do
       context "when a block is provided" do
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).and_return("describe!")
+          aws_request.should_receive(:submit).and_return("describe!")
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           xml_result = nil
@@ -346,7 +346,7 @@ describe Elasticity::EMR do
 
     it "should ask AWS about the specified job flow" do
       aws_request = Elasticity::AwsRequest.new("", "")
-      aws_request.should_receive(:aws_emr_request).with({
+      aws_request.should_receive(:submit).with({
         "Operation" => "DescribeJobFlows",
         "JobFlowIds.member.1" => "j-3UN6WX5RRO2AG"
       })
@@ -358,7 +358,7 @@ describe Elasticity::EMR do
     context "when the job flow ID exists" do
       it "should return a JobFlow" do
         aws_request = Elasticity::AwsRequest.new("", "")
-        aws_request.stub(:aws_emr_request).with({
+        aws_request.stub(:submit).with({
           "Operation" => "DescribeJobFlows",
           "JobFlowIds.member.1" => "j-3UN6WX5RRO2AG"
         }).and_return(@describe_jobflows_xml)
@@ -384,7 +384,7 @@ describe Elasticity::EMR do
         aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
         @exception = RestClient::BadRequest.new
         @exception.should_receive(:http_body).and_return(@error_xml)
-        aws_request.should_receive(:aws_emr_request).and_raise(@exception)
+        aws_request.should_receive(:submit).and_raise(@exception)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
         emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
         lambda {
@@ -396,7 +396,7 @@ describe Elasticity::EMR do
     context "when a block is provided" do
       it "should yield to the block" do
         aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        aws_request.should_receive(:aws_emr_request).and_return("describe!")
+        aws_request.should_receive(:submit).and_return("describe!")
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
         emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
         xml_result = nil
@@ -426,7 +426,7 @@ describe Elasticity::EMR do
       context "when the instance group exists" do
         it "should modify the specified instance group" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).with({
+          aws_request.should_receive(:submit).with({
             "Operation" => "ModifyInstanceGroups",
             "InstanceGroups.member.1.InstanceGroupId" => "ig-1",
             "InstanceGroups.member.1.InstanceCount" => 2
@@ -440,7 +440,7 @@ describe Elasticity::EMR do
       context "when a block is given" do
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).and_return("xml result!")
+          aws_request.should_receive(:submit).and_return("xml result!")
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           xml_result = nil
@@ -469,7 +469,7 @@ describe Elasticity::EMR do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
           @exception = RestClient::BadRequest.new
           @exception.should_receive(:http_body).and_return(@error_xml)
-          aws_request.should_receive(:aws_emr_request).and_raise(@exception)
+          aws_request.should_receive(:submit).and_raise(@exception)
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           lambda {
@@ -554,7 +554,7 @@ describe Elasticity::EMR do
           </RunJobFlowResponse>
         RESPONSE
         aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        aws_request.should_receive(:aws_emr_request).and_return(run_jobflow_response)
+        aws_request.should_receive(:submit).and_return(run_jobflow_response)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
         emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         jobflow_id = emr.run_job_flow({})
@@ -563,7 +563,7 @@ describe Elasticity::EMR do
 
       it "should run the specified job flow" do
         aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        aws_request.should_receive(:aws_emr_request).with({
+        aws_request.should_receive(:submit).with({
           "Operation" => "RunJobFlow",
           "Name" => "Job flow name",
           "Instances.MasterInstanceType" => "m1.small",
@@ -613,7 +613,7 @@ describe Elasticity::EMR do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
           @exception = RestClient::BadRequest.new
           @exception.should_receive(:http_body).and_return(@error_xml)
-          aws_request.should_receive(:aws_emr_request).and_raise(@exception)
+          aws_request.should_receive(:submit).and_raise(@exception)
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           lambda {
@@ -625,7 +625,7 @@ describe Elasticity::EMR do
       context "when a block is given" do
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).and_return("jobflow_id!")
+          aws_request.should_receive(:submit).and_return("jobflow_id!")
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           xml_result = nil
@@ -665,7 +665,7 @@ describe Elasticity::EMR do
         end
         it "should terminate the specific jobflow" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).with({
+          aws_request.should_receive(:submit).with({
             "Operation" => "TerminateJobFlows",
             "JobFlowIds.member.1" => "j-1"
           }).and_return(@terminate_jobflows_xml)
@@ -678,7 +678,7 @@ describe Elasticity::EMR do
       context "when the jobflow does not exist" do
         it "should raise an ArgumentError" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).and_raise(RestClient::BadRequest)
+          aws_request.should_receive(:submit).and_raise(RestClient::BadRequest)
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           lambda {
@@ -690,7 +690,7 @@ describe Elasticity::EMR do
       context "when a block is given" do
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:aws_emr_request).and_return("terminated!")
+          aws_request.should_receive(:submit).and_return("terminated!")
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           xml_result = nil
@@ -732,7 +732,7 @@ describe Elasticity::EMR do
       it "should enable protection on the specified job flows" do
         aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        aws_request.should_receive(:aws_emr_request).with({
+        aws_request.should_receive(:submit).with({
           "Operation" => "SetTerminationProtection",
           "JobFlowIds.member.1" => "jobflow1",
           "JobFlowIds.member.2" => "jobflow2",
@@ -745,7 +745,7 @@ describe Elasticity::EMR do
       it "should disable protection on the specified job flows" do
         aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        aws_request.should_receive(:aws_emr_request).with({
+        aws_request.should_receive(:submit).with({
           "Operation" => "SetTerminationProtection",
           "JobFlowIds.member.1" => "jobflow1",
           "JobFlowIds.member.2" => "jobflow2",
@@ -758,7 +758,7 @@ describe Elasticity::EMR do
       it "should enable protection when not specified" do
         aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        aws_request.should_receive(:aws_emr_request).with({
+        aws_request.should_receive(:submit).with({
           "Operation" => "SetTerminationProtection",
           "JobFlowIds.member.1" => "jobflow1",
           "JobFlowIds.member.2" => "jobflow2",
@@ -781,7 +781,7 @@ describe Elasticity::EMR do
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          aws_request.should_receive(:aws_emr_request).and_return(@xml_response)
+          aws_request.should_receive(:submit).and_return(@xml_response)
           emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
           xml = nil
           emr.set_termination_protection([]) do |aws_response|
@@ -820,7 +820,7 @@ describe Elasticity::EMR do
       end
       it "should pass through directly to the request" do
         aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        aws_request.should_receive(:aws_emr_request).with({
+        aws_request.should_receive(:submit).with({
           "Operation" => "TerminateJobFlows",
           "JobFlowIds.member.1" => "j-1"
         }).and_return(@terminate_jobflows_xml)

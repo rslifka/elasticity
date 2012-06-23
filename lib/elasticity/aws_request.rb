@@ -18,7 +18,7 @@ module Elasticity
       @protocol = {:secure => true}.merge(options)[:secure] ? 'https' : 'http'
     end
 
-    def aws_emr_request(params)
+    def submit(params)
       signed_params = sign_params(params, 'GET')
       signed_request = "#@protocol://#@host?#{signed_params}"
       RestClient.get signed_request

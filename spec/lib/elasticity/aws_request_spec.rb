@@ -64,7 +64,7 @@ describe Elasticity::AwsRequest do
     end
   end
 
-  describe '#aws_emr_request' do
+  describe '#submit' do
 
     let(:request) do
       Elasticity::AwsRequest.new('_', '_').tap do |r|
@@ -76,7 +76,7 @@ describe Elasticity::AwsRequest do
 
     it 'should GET a properly assembled request' do
       RestClient.should_receive(:get).with('PROTOCOL://HOSTNAME?SIGNED_PARAMS')
-      request.aws_emr_request({})
+      request.submit({})
     end
 
   end
