@@ -1,67 +1,89 @@
 describe Elasticity::AwsRequest do
 
-  subject do
-    Elasticity::AwsRequest.new('aws_access_key_id', 'aws_secret_access_key')
-  end
-
   before do
     Time.stub(:now).and_return(Time.at(1302461096))
   end
 
-  its(:access_key) { should == 'aws_access_key_id' }
-  its(:secret_key) { should == 'aws_secret_access_key' }
-  its(:options)    { should == {:secure => true} }
+  subject do
+    Elasticity::AwsRequest.new('access', 'secret')
+  end
+
+  its(:access_key) { should == 'access' }
+  its(:secret_key) { should == 'secret' }
+
+  describe '#host' do
+
+    context 'when the region is not specified' do
+      its(:host) { should == 'elasticmapreduce.amazonaws.com' }
+    end
+
+    context 'when the region is specified' do
+      let(:request_with_region) do
+        Elasticity::AwsRequest.new('_', '_', {:region => 'us-west-1'})
+      end
+      it 'should incorporate the region into the hostname' do
+        request_with_region.host.should == 'elasticmapreduce.us-west-1.amazonaws.com'
+      end
+    end
+
+  end
+
+  describe '#protocol' do
+
+    context 'when :secure is not specified' do
+      let(:default_request) { Elasticity::AwsRequest.new('_', '_') }
+      it 'should be https by default' do
+        default_request.protocol.should == 'https'
+      end
+    end
+
+    context 'when :secure is specified' do
+
+      context 'when :secure is truthy' do
+        let(:secure_request) { Elasticity::AwsRequest.new('_', '_', {:secure => true}) }
+        it 'should be https' do
+          secure_request.protocol.should == 'https'
+        end
+      end
+
+      context 'when :secure is falsey' do
+        let(:insecure_request) { Elasticity::AwsRequest.new('_', '_', {:secure => false}) }
+        it 'should be http' do
+          insecure_request.protocol.should == 'http'
+        end
+      end
+
+    end
+
+  end
 
   describe '#sign_params' do
     it 'should sign according to AWS rules' do
-      signed_params = subject.send(:sign_params, {}, 'GET', 'example.com', '/')
-      signed_params.should == 'AWSAccessKeyId=aws_access_key_id&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-04-10T18%3A44%3A56.000Z&Signature=jVLfPS056dNmjpCcikBnPmRHJNZ8YGaI7zdmHWUk658%3D'
+      signed_params = subject.send(:sign_params, {}, 'GET')
+      signed_params.should == 'AWSAccessKeyId=access&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-04-10T18%3A44%3A56.000Z&Signature=qZmS%2BWVb8ksweMcIHNLLybOeafrSbPaVX9H8rJ5qPO0%3D'
     end
   end
 
   describe '#aws_emr_request' do
-    describe 'options' do
 
-      context 'when no options are specified' do
-        it 'should use the default option values' do
-          RestClient.should_receive(:get).with(/^https:\/\/elasticmapreduce.amazonaws.com/)
-          subject.aws_emr_request({})
-        end
-      end
-
-      context 'when :region is specified' do
-        let(:region) { 'eu-west-1' }
-        let(:request) { Elasticity::AwsRequest.new('aws_access_key_id', 'aws_secret_access_key', :region => region) }
-
-        it 'should request against that region' do
-          RestClient.should_receive(:get).with(/elasticmapreduce\.#{region}\.amazonaws\.com/)
-          request.aws_emr_request({})
-        end
-      end
-
-      context 'when :secure is false' do
-        let(:request) { Elasticity::AwsRequest.new('aws_access_key_id', 'aws_secret_access_key', :secure => false) }
-
-        it 'should use the value to determine the request type' do
-          RestClient.should_receive(:get).with(/^http:/)
-          request.aws_emr_request({})
-        end
-      end
-
-      context 'when :secure is true' do
-        let(:request) { Elasticity::AwsRequest.new('aws_access_key_id', 'aws_secret_access_key', :secure => true) }
-
-        it 'should use the value to determine the request type' do
-          RestClient.should_receive(:get).with(/^https:/)
-          request.aws_emr_request({})
-        end
+    let(:request) do
+      Elasticity::AwsRequest.new('_', '_').tap do |r|
+        r.stub(:sign_params => 'SIGNED_PARAMS')
+        r.instance_variable_set(:@host, 'HOSTNAME')
+        r.instance_variable_set(:@protocol, 'PROTOCOL')
       end
     end
+
+    it 'should GET a properly assembled request' do
+      RestClient.should_receive(:get).with('PROTOCOL://HOSTNAME?SIGNED_PARAMS')
+      request.aws_emr_request({})
+    end
+
   end
 
   describe '#==' do
     let(:same_object) { subject }
-    let(:same_values) { Elasticity::AwsRequest.new('aws_access_key_id', 'aws_secret_access_key', {}) }
+    let(:same_values) { Elasticity::AwsRequest.new('access', 'secret', {}) }
     let(:diff_type) { Object.new }
 
     it { should == same_object }
@@ -127,5 +149,5 @@ describe Elasticity::AwsRequest do
       Elasticity::AwsRequest.send(:convert_ruby_to_aws, add_jobflow_steps_params).should == expected_result
     end
   end
-    
+
 end
