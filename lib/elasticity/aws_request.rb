@@ -22,7 +22,11 @@ module Elasticity
       aws_params = AwsRequest.convert_ruby_to_aws(ruby_params)
       signed_params = sign_params(aws_params, 'GET')
       signed_request = "#@protocol://#@host?#{signed_params}"
-      RestClient.get signed_request
+      begin
+        RestClient.get signed_request
+      rescue RestClient::BadRequest => e
+        raise ArgumentError, AwsRequest.parse_error_response(e.http_body)
+      end
     end
 
     def ==(other)
@@ -98,6 +102,14 @@ module Elasticity
       else
         lower_case_and_underscored_word.first + camelize(lower_case_and_underscored_word)[1..-1]
       end
+    end
+
+    # AWS error responses all follow the same form.  Extract the message from
+    # the error document.
+    def self.parse_error_response(error_xml)
+      xml_doc = Nokogiri::XML(error_xml)
+      xml_doc.remove_namespaces!
+      xml_doc.xpath("/ErrorResponse/Error/Message").text
     end
 
   end

@@ -258,14 +258,6 @@ module Elasticity
       true
     end
 
-    # AWS error responses all follow the same form.  Extract the message from
-    # the error document.
-    def self.parse_error_response(error_xml)
-      xml_doc = Nokogiri::XML(error_xml)
-      xml_doc.remove_namespaces!
-      xml_doc.xpath("/ErrorResponse/Error/Message").text
-    end
-
   end
 
 end

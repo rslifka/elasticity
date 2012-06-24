@@ -83,6 +83,31 @@ describe Elasticity::AwsRequest do
       request.submit(aws_params)
     end
 
+    context 'when there is an EMR error with the request' do
+      let(:error_message) { 'ERROR_MESSAGE' }
+      let(:error_xml) do
+        <<-ERROR
+          <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+            <Error>
+              <Message>#{error_message}</Message>
+            </Error>
+          </ErrorResponse>
+        ERROR
+      end
+      let(:error) do
+        RestClient::BadRequest.new.tap do |error|
+          error.stub(:http_body => error_xml)
+        end
+      end
+
+      it 'should raise an Argument error with the body of the error' do
+        RestClient.should_receive(:get).and_raise(error)
+        expect {
+          request.submit({})
+        }.to raise_error(ArgumentError, error_message)
+      end
+    end
+
   end
 
   describe '#==' do

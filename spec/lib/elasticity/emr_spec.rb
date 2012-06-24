@@ -177,31 +177,6 @@ describe Elasticity::EMR do
         })
       end
 
-      context "when there is an error" do
-        before do
-          @error_message = "2 validation errors detected: Value null at 'steps' failed to satisfy constraint: Member must not be null; Value null at 'jobFlowId' failed to satisfy constraint: Member must not be null"
-          @error_xml = <<-ERROR
-            <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-              <Error>
-                <Message>#{@error_message}</Message>
-              </Error>
-            </ErrorResponse>
-          ERROR
-        end
-
-        it "should raise an ArgumentError with the error message" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          @exception = RestClient::BadRequest.new
-          @exception.should_receive(:http_body).and_return(@error_xml)
-          aws_request.should_receive(:submit).and_raise(@exception)
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          lambda {
-            emr.add_jobflow_steps("", {})
-          }.should raise_error(ArgumentError, @error_message)
-        end
-      end
-
       context "when a block is given" do
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
@@ -215,7 +190,6 @@ describe Elasticity::EMR do
           xml_result.should == "xml_response"
         end
       end
-
 
     end
 
@@ -335,30 +309,6 @@ describe Elasticity::EMR do
       end
     end
 
-    context "when there is an error" do
-      before do
-        @error_xml = <<-ERROR
-          <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-            <Error>
-              <Message>Specified job flow ID not valid</Message>
-            </Error>
-          </ErrorResponse>
-        ERROR
-      end
-
-      it "should raise an ArgumentError with the error message" do
-        aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        @exception = RestClient::BadRequest.new
-        @exception.should_receive(:http_body).and_return(@error_xml)
-        aws_request.should_receive(:submit).and_raise(@exception)
-        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-        lambda {
-          emr.describe_jobflow("bad_jobflow_id")
-        }.should raise_error(ArgumentError, "Specified job flow ID not valid")
-      end
-    end
-
     context "when a block is provided" do
       it "should yield to the block" do
         aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
@@ -411,34 +361,6 @@ describe Elasticity::EMR do
           end
           xml_result.should == "xml result!"
         end
-      end
-
-
-      context "when there is an error" do
-
-        before do
-          @error_message = "1 validation error detected: Value null at 'instanceGroups.1.member.instanceCount' failed to satisfy constraint: Member must not be null"
-          @error_xml = <<-ERROR
-            <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-              <Error>
-                <Message>#{@error_message}</Message>
-              </Error>
-            </ErrorResponse>
-          ERROR
-        end
-
-        it "should raise an ArgumentError with the error message" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          @exception = RestClient::BadRequest.new
-          @exception.should_receive(:http_body).and_return(@error_xml)
-          aws_request.should_receive(:submit).and_raise(@exception)
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          lambda {
-            emr.modify_instance_groups({"ig-1" => 2})
-          }.should raise_error(ArgumentError, @error_message)
-        end
-
       end
 
     end
@@ -549,31 +471,6 @@ describe Elasticity::EMR do
         })
       end
 
-      context "when there is an error" do
-        before do
-          @error_message = "1 validation error detected: Value null at 'instanceGroups.1.member.instanceCount' failed to satisfy constraint: Member must not be null"
-          @error_xml = <<-ERROR
-            <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-              <Error>
-                <Message>#{@error_message}</Message>
-              </Error>
-            </ErrorResponse>
-          ERROR
-        end
-
-        it "should raise an ArgumentError with the error message" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          @exception = RestClient::BadRequest.new
-          @exception.should_receive(:http_body).and_return(@error_xml)
-          aws_request.should_receive(:submit).and_raise(@exception)
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          lambda {
-            emr.run_job_flow({})
-          }.should raise_error(ArgumentError, @error_message)
-        end
-      end
-
       context "when a block is given" do
         it "should yield the XML result" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
@@ -621,18 +518,6 @@ describe Elasticity::EMR do
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           emr.terminate_jobflows("j-1")
-        end
-      end
-
-      context "when the jobflow does not exist" do
-        it "should raise an ArgumentError" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).and_raise(RestClient::BadRequest)
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          lambda {
-            emr.terminate_jobflows("invalid_jobflow_id")
-          }.should raise_error(ArgumentError)
         end
       end
 
