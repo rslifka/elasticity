@@ -70,22 +70,7 @@ describe Elasticity::EMR do
               {:instance_type => "m1.small", :instance_role => "CORE", :market => "ON_DEMAND", :instance_count => 1, :name => "Go Canucks Go!", :bid_price => 0},
           ]
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).with({
-            "Operation" => "AddInstanceGroups",
-            "InstanceGroups.member.1.Name" => "Go Canucks Go!",
-            "InstanceGroups.member.1.InstanceRole" => "CORE",
-            "InstanceGroups.member.1.InstanceCount" => 1,
-            "InstanceGroups.member.1.BidPrice" => 0,
-            "InstanceGroups.member.1.InstanceType" => "m1.small",
-            "InstanceGroups.member.1.Market" => "ON_DEMAND",
-            "InstanceGroups.member.2.Name" => "Go Canucks Go!",
-            "InstanceGroups.member.2.InstanceRole" => "CORE",
-            "InstanceGroups.member.2.InstanceCount" => 1,
-            "InstanceGroups.member.2.BidPrice" => 0,
-            "InstanceGroups.member.2.InstanceType" => "m1.small",
-            "InstanceGroups.member.2.Market" => "ON_DEMAND",
-            "JobFlowId" => "j-19WDDS68ZUENP"
-          })
+          aws_request.should_receive(:submit).with({:operation => "AddInstanceGroups", :job_flow_id => "j-19WDDS68ZUENP", :instance_groups => [{:instance_type => "m1.small", :instance_role => "CORE", :market => "ON_DEMAND", :instance_count => 1, :name => "Go Canucks Go!", :bid_price => 0}, {:instance_type => "m1.small", :instance_role => "CORE", :market => "ON_DEMAND", :instance_count => 1, :name => "Go Canucks Go!", :bid_price => 0}]})
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           emr.add_instance_groups("j-19WDDS68ZUENP", instance_group_configs)
@@ -167,20 +152,7 @@ describe Elasticity::EMR do
 
       it "should add the specified steps to the job flow" do
         aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        aws_request.should_receive(:submit).with({
-          "Operation" => "AddJobFlowSteps",
-          "JobFlowId" => "j-1",
-          "Steps.member.1.Name" => "Step 1",
-          "Steps.member.1.ActionOnFailure" => "TERMINATE_JOB_FLOW",
-          "Steps.member.1.HadoopJarStep.Jar" => "jar1",
-          "Steps.member.1.HadoopJarStep.Args.member.1" => "arg1-1",
-          "Steps.member.1.HadoopJarStep.Args.member.2" => "arg1-2",
-          "Steps.member.2.Name" => "Step 2",
-          "Steps.member.2.ActionOnFailure" => "CONTINUE",
-          "Steps.member.2.HadoopJarStep.Jar" => "jar2",
-          "Steps.member.2.HadoopJarStep.Args.member.1" => "arg2-1",
-          "Steps.member.2.HadoopJarStep.Args.member.2" => "arg2-2",
-        })
+        aws_request.should_receive(:submit).with({:operation => "AddJobFlowSteps", :job_flow_id => "j-1", :steps => [{:action_on_failure => "TERMINATE_JOB_FLOW", :name => "Step 1", :hadoop_jar_step => {:args => ["arg1-1", "arg1-2"], :jar => "jar1"}}, {:action_on_failure => "CONTINUE", :name => "Step 2", :hadoop_jar_step => {:args => ["arg2-1", "arg2-2"], :jar => "jar2"}}]})
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
         emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         emr.add_jobflow_steps("j-1", {
@@ -292,7 +264,7 @@ describe Elasticity::EMR do
 
       it "should return the names of all running job flows" do
         aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        aws_request.should_receive(:submit).with({"Operation" => "DescribeJobFlows"}).and_return(@describe_jobflows_xml)
+        aws_request.should_receive(:submit).with({:operation => "DescribeJobFlows"}).and_return(@describe_jobflows_xml)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
         emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
         jobflows = emr.describe_jobflows
@@ -301,7 +273,7 @@ describe Elasticity::EMR do
 
       it "should accept additional parameters" do
         aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        aws_request.should_receive(:submit).with({"Operation" => "DescribeJobFlows", "CreatedBefore" => "2011-10-04"}).and_return(@describe_jobflows_xml)
+        aws_request.should_receive(:submit).with({:CreatedBefore => "2011-10-04", :operation => "DescribeJobFlows"}).and_return(@describe_jobflows_xml)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
         emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
         emr.describe_jobflows(:CreatedBefore => "2011-10-04")
@@ -346,10 +318,7 @@ describe Elasticity::EMR do
 
     it "should ask AWS about the specified job flow" do
       aws_request = Elasticity::AwsRequest.new("", "")
-      aws_request.should_receive(:submit).with({
-        "Operation" => "DescribeJobFlows",
-        "JobFlowIds.member.1" => "j-3UN6WX5RRO2AG"
-      })
+      aws_request.should_receive(:submit).with({:operation => "DescribeJobFlows", :job_flow_ids => ["j-3UN6WX5RRO2AG"]})
       Elasticity::AwsRequest.stub(:new).and_return(aws_request)
       emr = Elasticity::EMR.new("", "")
       emr.describe_jobflow("j-3UN6WX5RRO2AG")
@@ -358,10 +327,7 @@ describe Elasticity::EMR do
     context "when the job flow ID exists" do
       it "should return a JobFlow" do
         aws_request = Elasticity::AwsRequest.new("", "")
-        aws_request.stub(:submit).with({
-          "Operation" => "DescribeJobFlows",
-          "JobFlowIds.member.1" => "j-3UN6WX5RRO2AG"
-        }).and_return(@describe_jobflows_xml)
+        aws_request.stub(:submit).with({:operation => "DescribeJobFlows", :job_flow_ids => ["j-3UN6WX5RRO2AG"]}).and_return(@describe_jobflows_xml)
         Elasticity::AwsRequest.stub(:new).and_return(aws_request)
         emr = Elasticity::EMR.new("", "")
         jobflow = emr.describe_jobflow("j-3UN6WX5RRO2AG")
@@ -426,11 +392,7 @@ describe Elasticity::EMR do
       context "when the instance group exists" do
         it "should modify the specified instance group" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).with({
-            "Operation" => "ModifyInstanceGroups",
-            "InstanceGroups.member.1.InstanceGroupId" => "ig-1",
-            "InstanceGroups.member.1.InstanceCount" => 2
-          })
+          aws_request.should_receive(:submit).with({:operation => "ModifyInstanceGroups", :instance_groups => [{:instance_group_id => "ig-1", :instance_count => 2}]})
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           emr.modify_instance_groups({"ig-1" => 2})
@@ -563,17 +525,7 @@ describe Elasticity::EMR do
 
       it "should run the specified job flow" do
         aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        aws_request.should_receive(:submit).with({
-          "Operation" => "RunJobFlow",
-          "Name" => "Job flow name",
-          "Instances.MasterInstanceType" => "m1.small",
-          "Instances.Placement.AvailabilityZone" => "us-east-1a",
-          "Steps.member.1.Name" => "Streaming Job",
-          "Steps.member.1.ActionOnFailure" => "TERMINATE_JOB_FLOW",
-          "Steps.member.1.HadoopJarStep.Jar" => "/home/hadoop/contrib/streaming/hadoop-streaming.jar",
-          "Steps.member.1.HadoopJarStep.Args.member.1" => "-input",
-          "Steps.member.1.HadoopJarStep.Args.member.2" => "s3n://elasticmapreduce/samples/wordcount/input"
-        })
+        aws_request.should_receive(:submit).with({:operation => "RunJobFlow", :name => "Job flow name", :instances => {:master_instance_type => "m1.small", :placement => {:availability_zone => "us-east-1a"}}, :steps => [{:action_on_failure => "TERMINATE_JOB_FLOW", :name => "Streaming Job", :hadoop_jar_step => {:args => ["-input", "s3n://elasticmapreduce/samples/wordcount/input"], :jar => "/home/hadoop/contrib/streaming/hadoop-streaming.jar"}}]})
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
         emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         emr.run_job_flow({
@@ -665,10 +617,7 @@ describe Elasticity::EMR do
         end
         it "should terminate the specific jobflow" do
           aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).with({
-            "Operation" => "TerminateJobFlows",
-            "JobFlowIds.member.1" => "j-1"
-          }).and_return(@terminate_jobflows_xml)
+          aws_request.should_receive(:submit).with({:operation => "TerminateJobFlows", :job_flow_ids => ["j-1"]}).and_return(@terminate_jobflows_xml)
           Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
           emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
           emr.terminate_jobflows("j-1")
@@ -732,12 +681,7 @@ describe Elasticity::EMR do
       it "should enable protection on the specified job flows" do
         aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        aws_request.should_receive(:submit).with({
-          "Operation" => "SetTerminationProtection",
-          "JobFlowIds.member.1" => "jobflow1",
-          "JobFlowIds.member.2" => "jobflow2",
-          "TerminationProtected" => true
-        })
+        aws_request.should_receive(:submit).with({:operation => "SetTerminationProtection", :termination_protected => true, :job_flow_ids => ["jobflow1", "jobflow2"]})
         emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         emr.set_termination_protection(["jobflow1", "jobflow2"], true)
       end
@@ -745,12 +689,7 @@ describe Elasticity::EMR do
       it "should disable protection on the specified job flows" do
         aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        aws_request.should_receive(:submit).with({
-          "Operation" => "SetTerminationProtection",
-          "JobFlowIds.member.1" => "jobflow1",
-          "JobFlowIds.member.2" => "jobflow2",
-          "TerminationProtected" => false
-        })
+        aws_request.should_receive(:submit).with({:operation => "SetTerminationProtection", :termination_protected => false, :job_flow_ids => ["jobflow1", "jobflow2"]})
         emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         emr.set_termination_protection(["jobflow1", "jobflow2"], false)
       end
@@ -758,12 +697,7 @@ describe Elasticity::EMR do
       it "should enable protection when not specified" do
         aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        aws_request.should_receive(:submit).with({
-          "Operation" => "SetTerminationProtection",
-          "JobFlowIds.member.1" => "jobflow1",
-          "JobFlowIds.member.2" => "jobflow2",
-          "TerminationProtected" => true
-        })
+        aws_request.should_receive(:submit).with({:operation => "SetTerminationProtection", :termination_protected => true, :job_flow_ids => ["jobflow1", "jobflow2"]})
         emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
         emr.set_termination_protection(["jobflow1", "jobflow2"])
       end
@@ -832,52 +766,6 @@ describe Elasticity::EMR do
         }
         emr.direct(params).should == @terminate_jobflows_xml
       end
-    end
-  end
-
-  describe ".convert_ruby_to_aws" do
-    it "should convert the params" do
-      add_jobflow_steps_params = {
-        :job_flow_id => "j-1",
-        :steps => [
-          {
-            :action_on_failure => "CONTINUE",
-            :name => "First New Job Step",
-            :hadoop_jar_step => {
-              :args => ["arg1", "arg2", "arg3",],
-              :jar => "first_step.jar",
-              :main_class => "first_class.jar"
-            }
-          },
-            {
-              :action_on_failure => "CANCEL_AND_WAIT",
-              :name => "Second New Job Step",
-              :hadoop_jar_step => {
-                :args => ["arg4", "arg5", "arg6",],
-                :jar => "second_step.jar",
-                :main_class => "second_class.jar"
-              }
-            }
-        ]
-      }
-      expected_result = {
-        "JobFlowId" => "j-1",
-        "Steps.member.1.Name" => "First New Job Step",
-        "Steps.member.1.ActionOnFailure" => "CONTINUE",
-        "Steps.member.1.HadoopJarStep.Jar" => "first_step.jar",
-        "Steps.member.1.HadoopJarStep.MainClass" => "first_class.jar",
-        "Steps.member.1.HadoopJarStep.Args.member.1" => "arg1",
-        "Steps.member.1.HadoopJarStep.Args.member.2" => "arg2",
-        "Steps.member.1.HadoopJarStep.Args.member.3" => "arg3",
-        "Steps.member.2.Name" => "Second New Job Step",
-        "Steps.member.2.ActionOnFailure" => "CANCEL_AND_WAIT",
-        "Steps.member.2.HadoopJarStep.Jar" => "second_step.jar",
-        "Steps.member.2.HadoopJarStep.MainClass" => "second_class.jar",
-        "Steps.member.2.HadoopJarStep.Args.member.1" => "arg4",
-        "Steps.member.2.HadoopJarStep.Args.member.2" => "arg5",
-        "Steps.member.2.HadoopJarStep.Args.member.3" => "arg6"
-      }
-      Elasticity::EMR.send(:convert_ruby_to_aws, add_jobflow_steps_params).should == expected_result
     end
   end
 

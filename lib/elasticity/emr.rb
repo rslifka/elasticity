@@ -15,10 +15,10 @@ module Elasticity
     # Raises ArgumentError if the specified jobflow does not exist.
     def describe_jobflow(jobflow_id)
       begin
-        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws({
+        aws_result = @aws_request.submit({
           :operation => "DescribeJobFlows",
           :job_flow_ids => [jobflow_id]
-        }))
+        })
         xml_doc = Nokogiri::XML(aws_result)
         xml_doc.remove_namespaces!
         yield aws_result if block_given?
@@ -35,8 +35,8 @@ module Elasticity
     #
     #   describe_jobflows(:CreatedBefore => "2011-10-04")
     def describe_jobflows(params = {})
-      aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(
-        params.merge({:operation => "DescribeJobFlows"}))
+      aws_result = @aws_request.submit(
+        params.merge({:operation => "DescribeJobFlows"})
       )
       xml_doc = Nokogiri::XML(aws_result)
       xml_doc.remove_namespaces!
@@ -69,7 +69,7 @@ module Elasticity
         :instance_groups => instance_group_configs
       }
       begin
-        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(params)
         xml_doc = Nokogiri::XML(aws_result)
         xml_doc.remove_namespaces!
         instance_group_ids = []
@@ -108,7 +108,7 @@ module Elasticity
         :job_flow_id => jobflow_id
       }.merge!(steps_config)
       begin
-        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(params)
         yield aws_result if block_given?
       rescue RestClient::BadRequest => e
         raise ArgumentError, EMR.parse_error_response(e.http_body)
@@ -129,7 +129,7 @@ module Elasticity
         :instance_groups => instance_group_config.map { |k, v| {:instance_group_id => k, :instance_count => v} }
       }
       begin
-        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(params)
         yield aws_result if block_given?
       rescue RestClient::BadRequest => e
         raise ArgumentError, EMR.parse_error_response(e.http_body)
@@ -196,7 +196,7 @@ module Elasticity
         :operation => "RunJobFlow",
       }.merge!(job_flow_config)
       begin
-        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(params)
         yield aws_result if block_given?
         xml_doc = Nokogiri::XML(aws_result)
         xml_doc.remove_namespaces!
@@ -221,7 +221,7 @@ module Elasticity
         :job_flow_ids => jobflow_ids
       }
       begin
-        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(params)
         yield aws_result if block_given?
       rescue RestClient::BadRequest => e
         raise ArgumentError, EMR.parse_error_response(e.http_body)
@@ -238,7 +238,7 @@ module Elasticity
         :job_flow_ids => [jobflow_id]
       }
       begin
-        aws_result = @aws_request.submit(EMR.convert_ruby_to_aws(params))
+        aws_result = @aws_request.submit(params)
         yield aws_result if block_given?
       rescue RestClient::BadRequest
         raise ArgumentError, "Job flow '#{jobflow_id}' does not exist."
@@ -264,44 +264,6 @@ module Elasticity
       xml_doc = Nokogiri::XML(error_xml)
       xml_doc.remove_namespaces!
       xml_doc.xpath("/ErrorResponse/Error/Message").text
-    end
-
-    # Since we use the same structure as AWS, we can generate AWS param names
-    # from the Ruby versions of those names (and the param nesting).
-    def self.convert_ruby_to_aws(params)
-      result = {}
-      params.each do |key, value|
-        case value
-          when Array
-            prefix = "#{camelize(key.to_s)}.member"
-            value.each_with_index do |item, index|
-              if item.is_a?(String)
-                result["#{prefix}.#{index+1}"] = item
-              else
-                convert_ruby_to_aws(item).each do |nested_key, nested_value|
-                  result["#{prefix}.#{index+1}.#{nested_key}"] = nested_value
-                end
-              end
-            end
-          when Hash
-            prefix = "#{camelize(key.to_s)}"
-            convert_ruby_to_aws(value).each do |nested_key, nested_value|
-              result["#{prefix}.#{nested_key}"] = nested_value
-            end
-          else
-            result[camelize(key.to_s)] = value
-        end
-      end
-      result
-    end
-
-    # (Used from Rails' ActiveSupport)
-    def self.camelize(lower_case_and_underscored_word, first_letter_in_uppercase = true)
-      if first_letter_in_uppercase
-        lower_case_and_underscored_word.to_s.gsub(/\/(.?)/) { "::" + $1.upcase }.gsub(/(^|_)(.)/) { $2.upcase }
-      else
-        lower_case_and_underscored_word.first + camelize(lower_case_and_underscored_word)[1..-1]
-      end
     end
 
   end
