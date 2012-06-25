@@ -195,75 +195,65 @@ describe Elasticity::EMR do
 
   end
 
-  describe "#describe_jobflows" do
+  describe '#describe_jobflows' do
 
-    describe "integration happy path" do
-      use_vcr_cassette "describe_jobflows/all_jobflows", :record => :none
-      it "should return the names of all running job flows" do
-        emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        jobflows = emr.describe_jobflows
-        jobflows.map(&:name).should == ["WM+RS", "Interactive Audience Hive Test", "Audience (Hive)", "Audience Reporting"]
-        jobflows.map(&:jobflow_id).should == ["j-1MZ5TVWFJRSKN", "j-38EU2XZQP9KJ4", "j-2TDCVGEEHOFI9", "j-NKKQ429D858I"]
-        jobflows.map(&:state).should == ["TERMINATED", "TERMINATED", "TERMINATED", "TERMINATED"]
+    let(:describe_jobflows_xml) do
+      <<-XML
+        <DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+          <DescribeJobFlowsResult>
+            <JobFlows>
+              <member>
+                <ExecutionStatusDetail>
+                  <CreationDateTime>2011-04-04T17:41:51Z</CreationDateTime>
+                  <State>TERMINATED</State>
+                </ExecutionStatusDetail>
+                <JobFlowId>j-p</JobFlowId>
+                <Name>Pig Job</Name>
+              </member>
+              <member>
+                <ExecutionStatusDetail>
+                  <State>TERMINATED</State>
+                  <CreationDateTime>2011-04-04T17:41:51Z</CreationDateTime>
+                </ExecutionStatusDetail>
+                <JobFlowId>j-h</JobFlowId>
+                <Name>Hive Job</Name>
+              </member>
+            </JobFlows>
+          </DescribeJobFlowsResult>
+        </DescribeJobFlowsResponse>
+      XML
+    end
+
+    it 'should return an array of properly populated JobFlowStatusES' do
+      Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(describe_jobflows_xml)
+      jobflow_statuses = subject.describe_jobflows
+      jobflow_statuses.map(&:name).should == ['Pig Job', 'Hive Job']
+      jobflow_statuses.map(&:class).should == [Elasticity::JobFlowStatus, Elasticity::JobFlowStatus]
+    end
+
+    it 'should describe all jobflows' do
+      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+        :operation => 'DescribeJobFlows'
+      })
+      subject.describe_jobflows
+    end
+
+    context 'when additional parameters are provided' do
+      it 'should pass them through' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+          :CreatedBefore => '2011-10-04',
+          :operation => 'DescribeJobFlows'
+        })
+        subject.describe_jobflows(:CreatedBefore => '2011-10-04')
       end
     end
 
-    describe "unit tests" do
-      before do
-        @describe_jobflows_xml = <<-JOBFLOWS
-          <DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-            <DescribeJobFlowsResult>
-              <JobFlows>
-                <member>
-                  <ExecutionStatusDetail>
-                    <CreationDateTime>2011-04-04T17:41:51Z</CreationDateTime>
-                    <State>TERMINATED</State>
-                  </ExecutionStatusDetail>
-                  <JobFlowId>j-p</JobFlowId>
-                  <Name>Pig Job</Name>
-                </member>
-                <member>
-                  <ExecutionStatusDetail>
-                    <State>TERMINATED</State>
-                    <CreationDateTime>2011-04-04T17:41:51Z</CreationDateTime>
-                  </ExecutionStatusDetail>
-                  <JobFlowId>j-h</JobFlowId>
-                  <Name>Hive Job</Name>
-                </member>
-              </JobFlows>
-            </DescribeJobFlowsResult>
-          </DescribeJobFlowsResponse>
-        JOBFLOWS
-      end
-
-      it "should return the names of all running job flows" do
-        aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        aws_request.should_receive(:submit).with({:operation => "DescribeJobFlows"}).and_return(@describe_jobflows_xml)
-        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-        jobflows = emr.describe_jobflows
-        jobflows.map(&:name).should == ["Pig Job", "Hive Job"]
-      end
-
-      it "should accept additional parameters" do
-        aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        aws_request.should_receive(:submit).with({:CreatedBefore => "2011-10-04", :operation => "DescribeJobFlows"}).and_return(@describe_jobflows_xml)
-        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-        emr.describe_jobflows(:CreatedBefore => "2011-10-04")
-      end
-
-      context "when a block is provided" do
-        it "should yield the XML result" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).and_return("describe!")
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          xml_result = nil
-          emr.describe_jobflows do |xml|
-            xml_result = xml
-          end
-          xml_result.should == "describe!"
+    context 'when a block is given' do
+      let(:result) { 'RESULT' }
+      it 'should yield the submission results' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        subject.describe_jobflows do |xml|
+          xml.should == 'RESULT'
         end
       end
     end
