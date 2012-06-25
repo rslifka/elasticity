@@ -1,104 +1,52 @@
 describe Elasticity::EMR do
 
   subject do
-    Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
+    Elasticity::EMR.new('ACCESS', 'SECRET')
   end
 
-  its(:aws_request) { should == Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY, {}) }
+  its(:aws_request) { should == Elasticity::AwsRequest.new('ACCESS', 'SECRET', {}) }
 
-  describe "#add_instance_groups" do
+  describe '#add_instance_groups' do
 
-    describe "integration happy path" do
-
-      context "when properly specified" do
-        use_vcr_cassette "add_instance_groups/one_group_successful", :record => :none
-        it "should add the instance groups" do
-          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-          instance_group_config = {
-            :instance_count => 1,
-            :instance_role => "TASK",
-            :instance_type => "m1.small",
-            :market => "ON_DEMAND",
-            :name => "Go Canucks Go!"
-          }
-          instance_group_ids = emr.add_instance_groups("j-OALI7TZTQMHX", [instance_group_config])
-          instance_group_ids.should == ["ig-2GOVEN6HVJZID"]
-        end
-      end
-
-      context "when improperly specified" do
-        use_vcr_cassette "add_instance_groups/one_group_unsuccessful", :record => :none
-        it "should add the instance groups" do
-          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-          instance_group_config = {
-            :bid_price => 0,
-            :instance_count => 1,
-            :instance_role => "TASK",
-            :instance_type => "m1.small",
-            :market => "ON_DEMAND",
-            :name => "Go Canucks Go!"
-          }
-          lambda {
-            emr.add_instance_groups("j-19WDDS68ZUENP", [instance_group_config])
-          }.should raise_error(ArgumentError, "Task instance group already exists in the job flow, cannot add more task groups")
-        end
-      end
-
+    it 'should send the correct params to AWS' do
+      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+        :operation => 'AddInstanceGroups',
+        :job_flow_id => 'JOBFLOW_ID',
+        :instance_groups => ['INSTANCE_GROUP_CONFIGS']
+      })
+      subject.add_instance_groups('JOBFLOW_ID', ['INSTANCE_GROUP_CONFIGS'])
     end
 
-    describe "unit tests" do
-
-      context "when multiple instance groups are specified" do
-        before do
-          @add_instance_groups_xml = <<-ADD_GROUPS
-            <AddInstanceGroupsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-              <AddInstanceGroupsResult>
-                <JobFlowId>j-OALI7TZTQMHX</JobFlowId>
-                <InstanceGroupIds>
-                  <member>ig-1</member>
-                  <member>ig-2</member>
-                  <member>ig-3</member>
-                </InstanceGroupIds>
-              </AddInstanceGroupsResult>
-            </AddInstanceGroupsResponse>
-          ADD_GROUPS
-        end
-
-        it "should iterate over them and send the correct params to AWS" do
-          instance_group_configs = [
-            {:instance_type => "m1.small", :instance_role => "CORE", :market => "ON_DEMAND", :instance_count => 1, :name => "Go Canucks Go!", :bid_price => 0},
-              {:instance_type => "m1.small", :instance_role => "CORE", :market => "ON_DEMAND", :instance_count => 1, :name => "Go Canucks Go!", :bid_price => 0},
-          ]
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).with({:operation => "AddInstanceGroups", :job_flow_id => "j-19WDDS68ZUENP", :instance_groups => [{:instance_type => "m1.small", :instance_role => "CORE", :market => "ON_DEMAND", :instance_count => 1, :name => "Go Canucks Go!", :bid_price => 0}, {:instance_type => "m1.small", :instance_role => "CORE", :market => "ON_DEMAND", :instance_count => 1, :name => "Go Canucks Go!", :bid_price => 0}]})
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          emr.add_instance_groups("j-19WDDS68ZUENP", instance_group_configs)
-        end
-
-        it "should return an array of the instance groups created" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).and_return(@add_instance_groups_xml)
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          emr.add_instance_groups("", []).should == ["ig-1", "ig-2", "ig-3"]
-        end
+    describe 'return values' do
+      let(:aws_response) do
+        <<-XML
+          <AddInstanceGroupsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
+            <AddInstanceGroupsResult>
+              <JobFlowId>j-OALI7TZTQMHX</JobFlowId>
+              <InstanceGroupIds>
+                <member>ig-1</member>
+                <member>ig-2</member>
+                <member>ig-3</member>
+              </InstanceGroupIds>
+            </AddInstanceGroupsResult>
+          </AddInstanceGroupsResponse>
+        XML
       end
 
-      context "when a block is provided" do
-        it "should yield the XML result" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).and_return("AWS XML")
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          xml_result = nil
-          emr.add_instance_groups("", []) do |xml|
-            xml_result = xml
-          end
-          xml_result.should == "AWS XML"
+      it 'should return an array of the new instance groups IDs' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(aws_response)
+        subject.add_instance_groups('', []).should == ['ig-1', 'ig-2', 'ig-3']
+      end
+    end
+
+    context 'when a block is given' do
+      let(:result) { 'RESULT' }
+      it 'should yield the submission results' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        subject.add_instance_groups('', []) do |xml|
+          xml.should == 'RESULT'
         end
       end
-
     end
 
   end
@@ -385,7 +333,7 @@ describe Elasticity::EMR do
 
   describe '#==' do
     let(:same_object) { subject }
-    let(:same_values) { Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY) }
+    let(:same_values) { Elasticity::EMR.new('ACCESS', 'SECRET') }
     let(:diff_type) { Object.new }
 
     it { should == same_object }
