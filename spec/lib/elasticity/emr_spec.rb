@@ -324,45 +324,27 @@ describe Elasticity::EMR do
     end
   end
 
-  describe "#modify_instance_groups" do
+  describe '#modify_instance_groups' do
 
-    describe "integration happy path" do
-      context "when the instance group exists" do
-        use_vcr_cassette "modify_instance_groups/set_instances_to_3", :record => :none
-        it "should terminate the specified jobflow" do
-          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-          instance_group_config = {"ig-2T1HNUO61BG3O" => 2}
-          emr.modify_instance_groups(instance_group_config)
-        end
-      end
+    it 'should modify the specified instance groups' do
+      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+        :operation => 'ModifyInstanceGroups',
+        :instance_groups => [{
+          :instance_group_id => 'ig-2T1HNUO61BG3O',
+          :instance_count => 2
+        }]
+      })
+      subject.modify_instance_groups({'ig-2T1HNUO61BG3O' => 2})
     end
 
-    describe "unit tests" do
-
-      context "when the instance group exists" do
-        it "should modify the specified instance group" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).with({:operation => "ModifyInstanceGroups", :instance_groups => [{:instance_group_id => "ig-1", :instance_count => 2}]})
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          emr.modify_instance_groups({"ig-1" => 2})
+    context 'when a block is given' do
+      let(:result) { '_' }
+      it 'should yield the submission results' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        subject.modify_instance_groups({}) do |xml|
+          xml.should == '_'
         end
       end
-
-      context "when a block is given" do
-        it "should yield the XML result" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).and_return("xml result!")
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          xml_result = nil
-          emr.modify_instance_groups({"ig-1" => 2}) do |xml|
-            xml_result = xml
-          end
-          xml_result.should == "xml result!"
-        end
-      end
-
     end
 
   end
