@@ -431,75 +431,47 @@ describe Elasticity::EMR do
 
   end
 
-  describe "#set_termination_protection" do
+  describe '#set_termination_protection' do
 
-    describe "integration happy path" do
-
-      context "when protecting multiple job flows" do
-        use_vcr_cassette "set_termination_protection/protect_multiple_job_flows", :record => :none
-        it "should protect the specified job flows" do
-          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-          emr.set_termination_protection(["j-1B4D1XP0C0A35", "j-1YG2MYL0HVYS5"], true)
-        end
+    context 'when protection is enabled' do
+      it 'should enable protection on the specified jobflows' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+          :operation => 'SetTerminationProtection',
+          :termination_protected => true,
+          :job_flow_ids => ['jobflow1', 'jobflow2']
+        })
+        subject.set_termination_protection(['jobflow1', 'jobflow2'], true)
       end
-
-      context "when specifying a job flow that doesn't exist" do
-        use_vcr_cassette "set_termination_protection/nonexistent_job_flows", :record => :none
-        it "should have an error" do
-          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-          lambda {
-            emr.set_termination_protection(["j-1B4D1XP0C0A35", "j-2"], true)
-          }.should raise_error(ArgumentError, "Specified job flow ID not valid")
-        end
-      end
-
     end
 
-    describe "unit tests" do
-      it "should enable protection on the specified job flows" do
-        aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        aws_request.should_receive(:submit).with({:operation => "SetTerminationProtection", :termination_protected => true, :job_flow_ids => ["jobflow1", "jobflow2"]})
-        emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        emr.set_termination_protection(["jobflow1", "jobflow2"], true)
+    context 'when protection is disabled' do
+      it 'should disable protection on the specified jobflows' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+          :operation => 'SetTerminationProtection',
+          :termination_protected => false,
+          :job_flow_ids => ['jobflow1', 'jobflow2']
+        })
+        subject.set_termination_protection(['jobflow1', 'jobflow2'], false)
       end
+    end
 
-      it "should disable protection on the specified job flows" do
-        aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        aws_request.should_receive(:submit).with({:operation => "SetTerminationProtection", :termination_protected => false, :job_flow_ids => ["jobflow1", "jobflow2"]})
-        emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        emr.set_termination_protection(["jobflow1", "jobflow2"], false)
+    context 'when protection is not specified' do
+      it 'should enable protection on the specified jobflows' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+          :operation => 'SetTerminationProtection',
+          :termination_protected => true,
+          :job_flow_ids => ['jobflow1', 'jobflow2']
+        })
+        subject.set_termination_protection(['jobflow1', 'jobflow2'])
       end
+    end
 
-      it "should enable protection when not specified" do
-        aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        aws_request.should_receive(:submit).with({:operation => "SetTerminationProtection", :termination_protected => true, :job_flow_ids => ["jobflow1", "jobflow2"]})
-        emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        emr.set_termination_protection(["jobflow1", "jobflow2"])
-      end
-
-      context "when a block is given" do
-        before do
-          @xml_response = <<-RESPONSE
-            <SetTerminationProtectionResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-              <ResponseMetadata>
-                <RequestId>755ebe8a-6923-11e0-a9c2-c126f1bb4493</RequestId>
-              </ResponseMetadata>
-            </SetTerminationProtectionResponse>
-          RESPONSE
-        end
-        it "should yield the XML result" do
-          aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          aws_request.should_receive(:submit).and_return(@xml_response)
-          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-          xml = nil
-          emr.set_termination_protection([]) do |aws_response|
-            xml = aws_response
-          end
-          xml.should == @xml_response
+    context 'when a block is given' do
+      let(:result) { '_' }
+      it 'should yield the termination results' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        subject.set_termination_protection([]) do |xml|
+          xml.should == '_'
         end
       end
     end
