@@ -103,94 +103,25 @@ describe Elasticity::EMR do
 
   end
 
-  describe "#add_jobflow_steps" do
+  describe '#add_jobflow_steps' do
 
-    describe "integration happy path" do
-      use_vcr_cassette "add_jobflow_steps/add_multiple_steps", :record => :none
-
-      before do
-        @setup_pig_step = {
-          :action_on_failure => "TERMINATE_JOB_FLOW",
-          :hadoop_jar_step => {
-            :args => [
-              "s3://elasticmapreduce/libs/pig/pig-script",
-                "--base-path",
-                "s3://elasticmapreduce/libs/pig/",
-                "--install-pig"
-            ],
-            :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
-          },
-          :name => "Setup Pig"
-        }
-        @emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        @jobflow_id = @emr.run_job_flow({
-          :name => "Elasticity Test Flow (EMR Pig Script)",
-          :instances => {
-            :ec2_key_name => "sharethrough-dev",
-            :instance_count => 2,
-            :master_instance_type => "m1.small",
-            :slave_instance_type => "m1.small",
-          },
-          :steps => [@setup_pig_step]
-        })
-      end
-
-      it "should add a job flow step to the specified job flow" do
-        @emr.add_jobflow_steps(@jobflow_id, {
-          :steps => [
-            @setup_pig_step.merge(:name => "Setup Pig 2"),
-              @setup_pig_step.merge(:name => "Setup Pig 3")
-          ]
-        })
-        jobflow = @emr.describe_jobflows.select { |jf| jf.jobflow_id = @jobflow_id }.first
-        jobflow.steps.map(&:name).should == ["Setup Pig", "Setup Pig 2", "Setup Pig 3"]
-      end
-
+    it 'should add the specified steps to the job flow' do
+      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+        :operation => 'AddJobFlowSteps',
+        :job_flow_id => 'JOBFLOW_ID',
+        :steps => ['_']
+      })
+      subject.add_jobflow_steps('JOBFLOW_ID', {:steps => ['_']})
     end
 
-    describe "unit tests" do
-
-      it "should add the specified steps to the job flow" do
-        aws_request = Elasticity::AwsRequest.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        aws_request.should_receive(:submit).with({:operation => "AddJobFlowSteps", :job_flow_id => "j-1", :steps => [{:action_on_failure => "TERMINATE_JOB_FLOW", :name => "Step 1", :hadoop_jar_step => {:args => ["arg1-1", "arg1-2"], :jar => "jar1"}}, {:action_on_failure => "CONTINUE", :name => "Step 2", :hadoop_jar_step => {:args => ["arg2-1", "arg2-2"], :jar => "jar2"}}]})
-        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        emr.add_jobflow_steps("j-1", {
-          :steps => [
-            {
-              :action_on_failure => "TERMINATE_JOB_FLOW",
-              :name => "Step 1",
-              :hadoop_jar_step => {
-                :args => ["arg1-1", "arg1-2"],
-                :jar => "jar1",
-              }
-            },
-              {
-                :action_on_failure => "CONTINUE",
-                :name => "Step 2",
-                :hadoop_jar_step => {
-                  :args => ["arg2-1", "arg2-2"],
-                  :jar => "jar2",
-                }
-              }
-          ]
-        })
-      end
-
-      context "when a block is given" do
-        it "should yield the XML result" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).and_return("xml_response")
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          xml_result = nil
-          emr.add_jobflow_steps("", {}) do |xml|
-            xml_result = xml
-          end
-          xml_result.should == "xml_response"
+    context 'when a block is given' do
+      let(:result) { 'RESULT' }
+      it 'should yield the submission results' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        subject.add_jobflow_steps('', {}) do |xml|
+          xml.should == 'RESULT'
         end
       end
-
     end
 
   end
