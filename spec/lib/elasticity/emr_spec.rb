@@ -478,48 +478,16 @@ describe Elasticity::EMR do
 
   end
 
-  describe "#direct" do
+  describe '#direct' do
+    let(:params) { {:foo => 'bar'} }
 
-    describe "integration happy path" do
-      use_vcr_cassette "direct/terminate_jobflow", :record => :none
-      it "should terminate the specified jobflow" do
-        emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-        params = {
-          "Operation" => "TerminateJobFlows",
-          "JobFlowIds.member.1" => "j-1MZ5TVWFJRSKN"
-        }
-        emr.direct(params)
-      end
-    end
-
-    describe "unit tests" do
-      before do
-        @terminate_jobflows_xml = <<-RESPONSE
-          <TerminateJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-            <ResponseMetadata>
-              <RequestId>2690d7eb-ed86-11dd-9877-6fad448a8419</RequestId>
-            </ResponseMetadata>
-          </TerminateJobFlowsResponse>
-        RESPONSE
-      end
-      it "should pass through directly to the request" do
-        aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        aws_request.should_receive(:submit).with({
-          "Operation" => "TerminateJobFlows",
-          "JobFlowIds.member.1" => "j-1"
-        }).and_return(@terminate_jobflows_xml)
-        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-        params = {
-          "Operation" => "TerminateJobFlows",
-          "JobFlowIds.member.1" => "j-1"
-        }
-        emr.direct(params).should == @terminate_jobflows_xml
-      end
+    it 'should pass through directly to the request and return the results of the request' do
+      Elasticity::AwsRequest.any_instance.should_receive(:submit).with(params).and_return('RESULT')
+      subject.direct(params).should == 'RESULT'
     end
   end
 
-  describe "#==" do
+  describe '#==' do
     let(:same_object) { subject }
     let(:same_values) { Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY) }
     let(:diff_type) { Object.new }
@@ -528,7 +496,7 @@ describe Elasticity::EMR do
     it { should == same_values }
     it { should_not == diff_type }
 
-    it "should be false on deep comparison" do
+    it 'should be false on deep comparison' do
       other = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
       other.instance_variable_set(:@aws_request, Elasticity::AwsRequest.new('_', '_'))
       subject.should_not == other
