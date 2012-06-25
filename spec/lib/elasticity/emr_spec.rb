@@ -270,56 +270,49 @@ describe Elasticity::EMR do
 
   end
 
-  describe "#describe_jobflow" do
-    before do
-      @describe_jobflows_xml = <<-JOBFLOWS
+  describe '#describe_jobflow' do
+
+    let(:describe_jobflows_xml) {
+      <<-XML
         <DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
           <DescribeJobFlowsResult>
             <JobFlows>
               <member>
+                <JobFlowId>j-3UN6WX5RRO2AG</JobFlowId>
+                <Name>The One Job Flow</Name>
                 <ExecutionStatusDetail>
                   <State>TERMINATED</State>
                   <CreationDateTime>2011-04-04T17:41:51Z</CreationDateTime>
                 </ExecutionStatusDetail>
-                <JobFlowId>j-3UN6WX5RRO2AG</JobFlowId>
-                <Name>The One Job Flow</Name>
               </member>
             </JobFlows>
           </DescribeJobFlowsResult>
         </DescribeJobFlowsResponse>
-      JOBFLOWS
+      XML
+    }
+
+    it 'should describe the specified jobflow' do
+      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+        :operation => 'DescribeJobFlows',
+        :job_flow_ids => ['j-3UN6WX5RRO2AG']
+      })
+      subject.describe_jobflow('j-3UN6WX5RRO2AG')
     end
 
-    it "should ask AWS about the specified job flow" do
-      aws_request = Elasticity::AwsRequest.new("", "")
-      aws_request.should_receive(:submit).with({:operation => "DescribeJobFlows", :job_flow_ids => ["j-3UN6WX5RRO2AG"]})
-      Elasticity::AwsRequest.stub(:new).and_return(aws_request)
-      emr = Elasticity::EMR.new("", "")
-      emr.describe_jobflow("j-3UN6WX5RRO2AG")
+    it 'should return a properly populated JobFlowStatus' do
+      Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(describe_jobflows_xml)
+      jobflow_status = subject.describe_jobflow('_')
+      jobflow_status.should be_a Elasticity::JobFlowStatus
+      jobflow_status.jobflow_id.should == 'j-3UN6WX5RRO2AG'
     end
 
-    context "when the job flow ID exists" do
-      it "should return a JobFlow" do
-        aws_request = Elasticity::AwsRequest.new("", "")
-        aws_request.stub(:submit).with({:operation => "DescribeJobFlows", :job_flow_ids => ["j-3UN6WX5RRO2AG"]}).and_return(@describe_jobflows_xml)
-        Elasticity::AwsRequest.stub(:new).and_return(aws_request)
-        emr = Elasticity::EMR.new("", "")
-        jobflow = emr.describe_jobflow("j-3UN6WX5RRO2AG")
-        jobflow.jobflow_id.should == "j-3UN6WX5RRO2AG"
-      end
-    end
-
-    context "when a block is provided" do
-      it "should yield to the block" do
-        aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-        aws_request.should_receive(:submit).and_return("describe!")
-        Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-        emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-        xml_result = nil
-        emr.describe_jobflow("_") do |xml|
-          xml_result = xml
+    context 'when a block is given' do
+      let(:result) { 'RESULT' }
+      it 'should yield the submission results' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        subject.describe_jobflow('') do |xml|
+          xml.should == 'RESULT'
         end
-        xml_result.should == "describe!"
       end
     end
   end
