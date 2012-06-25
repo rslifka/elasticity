@@ -369,7 +369,15 @@ describe Elasticity::EMR do
 
   describe '#run_jobflow' do
 
-    context 'when the job flow is properly specified' do
+    it 'should start the specified job flow' do
+      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+        :operation => 'RunJobFlow',
+        :jobflow_params => '_'
+      })
+      subject.run_job_flow({:jobflow_params => '_'})
+    end
+
+    describe 'jobflow response handling' do
       let(:jobflow_xml_response) do
         <<-XML
           <RunJobFlowResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
@@ -382,11 +390,10 @@ describe Elasticity::EMR do
           </RunJobFlowResponse>
         XML
       end
-      it 'should start the specified job flow' do
+
+      it 'should return the ID of the running job flow' do
         Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(jobflow_xml_response)
-        emr = Elasticity::EMR.new('_', '_')
-        jobflow_id = emr.run_job_flow({})
-        jobflow_id.should == 'j-G6N5HA528AD4'
+        subject.run_job_flow({}).should == 'j-G6N5HA528AD4'
       end
     end
 
@@ -402,54 +409,26 @@ describe Elasticity::EMR do
 
   end
 
-  describe "#terminate_jobflows" do
+  describe '#terminate_jobflows' do
 
-    describe "integration happy path" do
-      context "when the job flow exists" do
-        use_vcr_cassette "terminate_jobflows/one_jobflow", :record => :none
-        it "should terminate the specified jobflow" do
-          emr = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-          emr.terminate_jobflows("j-1MZ5TVWFJRSKN")
+    it 'should terminate the specific jobflow' do
+      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+        :operation => 'TerminateJobFlows',
+        :job_flow_ids => ['j-1']
+      })
+      subject.terminate_jobflows('j-1')
+    end
+
+    context 'when a block is given' do
+      let(:result) { '_' }
+      it 'should yield the termination results' do
+        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        subject.terminate_jobflows('j-1') do |xml|
+          xml.should == '_'
         end
       end
     end
 
-    describe "unit tests" do
-
-      context "when the jobflow exists" do
-        before do
-          @terminate_jobflows_xml = <<-RESPONSE
-            <TerminateJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-              <ResponseMetadata>
-                <RequestId>2690d7eb-ed86-11dd-9877-6fad448a8419</RequestId>
-              </ResponseMetadata>
-            </TerminateJobFlowsResponse>
-          RESPONSE
-        end
-        it "should terminate the specific jobflow" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).with({:operation => "TerminateJobFlows", :job_flow_ids => ["j-1"]}).and_return(@terminate_jobflows_xml)
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          emr.terminate_jobflows("j-1")
-        end
-      end
-
-      context "when a block is given" do
-        it "should yield the XML result" do
-          aws_request = Elasticity::AwsRequest.new("aws_access_key_id", "aws_secret_key")
-          aws_request.should_receive(:submit).and_return("terminated!")
-          Elasticity::AwsRequest.should_receive(:new).and_return(aws_request)
-          emr = Elasticity::EMR.new("aws_access_key_id", "aws_secret_key")
-          xml_result = nil
-          emr.terminate_jobflows("j-1") do |xml|
-            xml_result = xml
-          end
-          xml_result.should == "terminated!"
-        end
-      end
-
-    end
   end
 
   describe "#set_termination_protection" do
