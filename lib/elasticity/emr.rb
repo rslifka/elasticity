@@ -14,18 +14,14 @@ module Elasticity
     #
     # Raises ArgumentError if the specified jobflow does not exist.
     def describe_jobflow(jobflow_id)
-      begin
-        aws_result = @aws_request.submit({
-          :operation => "DescribeJobFlows",
-          :job_flow_ids => [jobflow_id]
-        })
-        xml_doc = Nokogiri::XML(aws_result)
-        xml_doc.remove_namespaces!
-        yield aws_result if block_given?
-        JobFlowStatus.from_members_nodeset(xml_doc.xpath("/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member")).first
-      rescue RestClient::BadRequest => e
-        raise ArgumentError, EMR.parse_error_response(e.http_body)
-      end
+      aws_result = @aws_request.submit({
+        :operation => "DescribeJobFlows",
+        :job_flow_ids => [jobflow_id]
+      })
+      xml_doc = Nokogiri::XML(aws_result)
+      xml_doc.remove_namespaces!
+      yield aws_result if block_given?
+      JobFlowStatus.from_members_nodeset(xml_doc.xpath("/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member")).first
     end
 
     # Lists all jobflows in all states.
@@ -68,19 +64,15 @@ module Elasticity
         :job_flow_id => jobflow_id,
         :instance_groups => instance_group_configs
       }
-      begin
-        aws_result = @aws_request.submit(params)
-        xml_doc = Nokogiri::XML(aws_result)
-        xml_doc.remove_namespaces!
-        instance_group_ids = []
-        xml_doc.xpath("/AddInstanceGroupsResponse/AddInstanceGroupsResult/InstanceGroupIds/member").each do |member|
-          instance_group_ids << member.text
-        end
-        yield aws_result if block_given?
-        instance_group_ids
-      rescue RestClient::BadRequest => e
-        raise ArgumentError, EMR.parse_error_response(e.http_body)
+      aws_result = @aws_request.submit(params)
+      xml_doc = Nokogiri::XML(aws_result)
+      xml_doc.remove_namespaces!
+      instance_group_ids = []
+      xml_doc.xpath("/AddInstanceGroupsResponse/AddInstanceGroupsResult/InstanceGroupIds/member").each do |member|
+        instance_group_ids << member.text
       end
+      yield aws_result if block_given?
+      instance_group_ids
     end
 
     # Add a step (or steps) to the specified job flow.
@@ -107,12 +99,8 @@ module Elasticity
         :operation => "AddJobFlowSteps",
         :job_flow_id => jobflow_id
       }.merge!(steps_config)
-      begin
-        aws_result = @aws_request.submit(params)
-        yield aws_result if block_given?
-      rescue RestClient::BadRequest => e
-        raise ArgumentError, EMR.parse_error_response(e.http_body)
-      end
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
     end
 
     # Set the number of instances in the specified instance groups to the
@@ -128,12 +116,8 @@ module Elasticity
         :operation => "ModifyInstanceGroups",
         :instance_groups => instance_group_config.map { |k, v| {:instance_group_id => k, :instance_count => v} }
       }
-      begin
-        aws_result = @aws_request.submit(params)
-        yield aws_result if block_given?
-      rescue RestClient::BadRequest => e
-        raise ArgumentError, EMR.parse_error_response(e.http_body)
-      end
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
     end
 
     # Start a job flow with the specified configuration.  This is a very thin
@@ -195,15 +179,11 @@ module Elasticity
       params = {
         :operation => "RunJobFlow",
       }.merge!(job_flow_config)
-      begin
-        aws_result = @aws_request.submit(params)
-        yield aws_result if block_given?
-        xml_doc = Nokogiri::XML(aws_result)
-        xml_doc.remove_namespaces!
-        xml_doc.xpath("/RunJobFlowResponse/RunJobFlowResult/JobFlowId").text
-      rescue RestClient::BadRequest => e
-        raise ArgumentError, EMR.parse_error_response(e.http_body)
-      end
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
+      xml_doc = Nokogiri::XML(aws_result)
+      xml_doc.remove_namespaces!
+      xml_doc.xpath("/RunJobFlowResponse/RunJobFlowResult/JobFlowId").text
     end
 
     # Enabled or disable "termination protection" on the specified job flows.
@@ -220,12 +200,8 @@ module Elasticity
         :termination_protected => protection_enabled,
         :job_flow_ids => jobflow_ids
       }
-      begin
-        aws_result = @aws_request.submit(params)
-        yield aws_result if block_given?
-      rescue RestClient::BadRequest => e
-        raise ArgumentError, EMR.parse_error_response(e.http_body)
-      end
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
     end
 
     # Terminate the specified jobflow.  Amazon does not define a return value
@@ -237,12 +213,8 @@ module Elasticity
         :operation => "TerminateJobFlows",
         :job_flow_ids => [jobflow_id]
       }
-      begin
-        aws_result = @aws_request.submit(params)
-        yield aws_result if block_given?
-      rescue RestClient::BadRequest
-        raise ArgumentError, "Job flow '#{jobflow_id}' does not exist."
-      end
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
     end
 
     # Pass the specified params hash directly through to the AWS request URL.
