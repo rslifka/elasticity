@@ -4,11 +4,12 @@
 
 + The ```SimpleJob``` API has been removed in favour of a more modular 'step'-based approach using the "JobFlow" and "Step" vernacular, in line with Amazon's own communication.  If you understand the AWS Web UI, using Elasticity should be a bit more straightforward.
 + ```JobFlow``` and ```JobFlowStep``` are now ```JobFlowStatus``` and ```JobFlowStatusStep``` respectively, allowing the creation of ```JobFlow``` and ```JobFlowStep``` to be used in job submission.
++ AWS requests are now POSTs (thanks to [Menno van der Sman](https://github.com/menno)) in order to avoid server-imposed GET request size limits.
 + Bumped the default Hadoop version to 0.20.205.
 + Now possible to specify the AMI version.
 + Now possible to specify keep alive clusters.
 + Now possible to specify an EC2 subnet ID (VPC).
-+ Hadoop bootstrap actions can now be named.
++ Now possible to specify a name for Hadoop bootstrap actions.
 + Development dependency updates: ruby-1.9.3-p194, rspec-2.10.
 
 ### 1.5

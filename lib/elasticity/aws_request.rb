@@ -20,10 +20,9 @@ module Elasticity
 
     def submit(ruby_params)
       aws_params = AwsRequest.convert_ruby_to_aws(ruby_params)
-      signed_params = sign_params(aws_params, 'GET')
-      signed_request = "#@protocol://#@host?#{signed_params}"
+      signed_params = sign_params(aws_params)
       begin
-        RestClient.get signed_request
+        RestClient.post("#@protocol://#@host", signed_params, :content_type => 'application/x-www-form-urlencoded; charset=utf-8')
       rescue RestClient::BadRequest => e
         raise ArgumentError, AwsRequest.parse_error_response(e.http_body)
       end
@@ -43,7 +42,7 @@ module Elasticity
     # EC2, SQS, SDB and EMR requests must be signed by this guy.
     # See: http://docs.amazonwebservices.com/AmazonSimpleDB/2007-11-07/DeveloperGuide/index.html?REST_RESTAuth.html
     #      http://developer.amazonwebservices.com/connect/entry.jspa?externalID=1928
-    def sign_params(service_hash, http_verb)
+    def sign_params(service_hash)
       uri = '/' # TODO: Why are we hard-coding this?
       service_hash["AWSAccessKeyId"] = @access_key
       service_hash["Timestamp"] = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.000Z")
@@ -52,7 +51,7 @@ module Elasticity
       canonical_string = service_hash.keys.sort.map do |key|
         "#{AwsRequest.aws_escape(key)}=#{AwsRequest.aws_escape(service_hash[key])}"
       end.join('&')
-      string_to_sign = "#{http_verb.to_s.upcase}\n#{@host.downcase}\n#{uri}\n#{canonical_string}"
+      string_to_sign = "POST\n#{@host.downcase}\n#{uri}\n#{canonical_string}"
       signature = AwsRequest.aws_escape(Base64.encode64(OpenSSL::HMAC.digest("sha256", @secret_key, string_to_sign)).strip)
       "#{canonical_string}&Signature=#{signature}"
     end

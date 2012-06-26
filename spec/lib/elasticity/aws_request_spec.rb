@@ -59,8 +59,8 @@ describe Elasticity::AwsRequest do
 
   describe '#sign_params' do
     it 'should sign according to AWS rules' do
-      signed_params = subject.send(:sign_params, {}, 'GET')
-      signed_params.should == 'AWSAccessKeyId=access&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-04-10T18%3A44%3A56.000Z&Signature=qZmS%2BWVb8ksweMcIHNLLybOeafrSbPaVX9H8rJ5qPO0%3D'
+      signed_params = subject.send(:sign_params, {})
+      signed_params.should == 'AWSAccessKeyId=access&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-04-10T18%3A44%3A56.000Z&Signature=QwQIiizWrfvWuLNnzmCMfaeXFfh9IQTvOix5MNVTh2s%3D'
     end
   end
 
@@ -73,14 +73,13 @@ describe Elasticity::AwsRequest do
       end
     end
 
-    it 'should GET a properly assembled request' do
+    it 'should POST a properly assembled request' do
       ruby_params = {}
       aws_params = {}
-      Elasticity::AwsRequest.should_receive(:convert_ruby_to_aws).with(ruby_params).and_return(aws_params)
-      request.should_receive(:sign_params).with(ruby_params, 'GET').and_return('SIGNED_PARAMS')
-      RestClient.should_receive(:get).with('PROTOCOL://HOSTNAME?SIGNED_PARAMS')
-
-      request.submit(aws_params)
+      Elasticity::AwsRequest.should_receive(:convert_ruby_to_aws).with(ruby_params).and_return(ruby_params)
+      request.should_receive(:sign_params).with(aws_params).and_return('SIGNED_PARAMS')
+      RestClient.should_receive(:post).with('PROTOCOL://HOSTNAME', 'SIGNED_PARAMS', :content_type => 'application/x-www-form-urlencoded; charset=utf-8')
+      request.submit(ruby_params)
     end
 
     context 'when there is an EMR error with the request' do
@@ -101,7 +100,7 @@ describe Elasticity::AwsRequest do
       end
 
       it 'should raise an Argument error with the body of the error' do
-        RestClient.should_receive(:get).and_raise(error)
+        RestClient.should_receive(:post).and_raise(error)
         expect {
           request.submit({})
         }.to raise_error(ArgumentError, error_message)
