@@ -332,18 +332,17 @@ describe Elasticity::EMR do
   end
 
   describe '#==' do
-    let(:same_object) { subject }
-    let(:same_values) { Elasticity::EMR.new('ACCESS', 'SECRET') }
+    let(:emr1) { Elasticity::EMR.new('ACCESS1', 'SECRET1') }
+    let(:emr2) { Elasticity::EMR.new('ACCESS2', 'SECRET2') }
+
+    let(:same_object) { emr1 }
+    let(:same_values) { Elasticity::EMR.new('ACCESS1', 'SECRET1') }
     let(:diff_type) { Object.new }
 
-    it { should == same_object }
-    it { should == same_values }
-    it { should_not == diff_type }
-
-    it 'should be false on deep comparison' do
-      other = Elasticity::EMR.new(AWS_ACCESS_KEY_ID, AWS_SECRET_KEY)
-      other.instance_variable_set(:@aws_request, Elasticity::AwsRequest.new('_', '_'))
-      subject.should_not == other
+    it 'should pass comparison checks' do
+      emr1.should == same_object
+      emr1.should == same_values
+      emr1.should_not == diff_type
     end
   end
 
