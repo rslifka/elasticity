@@ -27,7 +27,7 @@ module Elasticity
       @name = 'Elasticity Job Flow'
       @slave_instance_type = 'm1.small'
       @ami_version = 'latest'
-      @keep_job_flow_alive_when_no_steps = true
+      @keep_job_flow_alive_when_no_steps = false
 
       @emr = Elasticity::EMR.new(access, secret)
 

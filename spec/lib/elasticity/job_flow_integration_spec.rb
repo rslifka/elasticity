@@ -28,7 +28,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :log_uri => 's3n://slif-test/output/logs',
         :ami_version => 'latest',
         :instances => {
-          :keep_job_flow_alive_when_no_steps => true,
+          :keep_job_flow_alive_when_no_steps => false,
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
           :instance_count => 2,
@@ -95,7 +95,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :log_uri => 's3n://slif-test/output/logs',
         :ami_version => 'latest',
         :instances => {
-          :keep_job_flow_alive_when_no_steps => true,
+          :keep_job_flow_alive_when_no_steps => false,
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
           :instance_count => 8,
@@ -166,7 +166,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :log_uri => 's3n://slif-test/output/logs',
         :ami_version => 'latest',
         :instances => {
-          :keep_job_flow_alive_when_no_steps => true,
+          :keep_job_flow_alive_when_no_steps => false,
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
           :instance_count => 2,
