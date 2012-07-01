@@ -72,7 +72,7 @@ module Elasticity
 
     def status
       raise_unless is_jobflow_running?, JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.'
-      @emr.describe_jobflow(@jobflow_id).state
+      @emr.describe_jobflow(@jobflow_id)
     end
 
     private
