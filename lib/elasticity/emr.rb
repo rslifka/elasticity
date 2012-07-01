@@ -15,13 +15,13 @@ module Elasticity
     # Raises ArgumentError if the specified jobflow does not exist.
     def describe_jobflow(jobflow_id)
       aws_result = @aws_request.submit({
-        :operation => "DescribeJobFlows",
+        :operation => 'DescribeJobFlows',
         :job_flow_ids => [jobflow_id]
       })
       xml_doc = Nokogiri::XML(aws_result)
       xml_doc.remove_namespaces!
       yield aws_result if block_given?
-      JobFlowStatus.from_members_nodeset(xml_doc.xpath("/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member")).first
+      JobFlowStatus.from_members_nodeset(xml_doc.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member')).first
     end
 
     # Lists all jobflows in all states.
@@ -32,12 +32,12 @@ module Elasticity
     #   describe_jobflows(:CreatedBefore => "2011-10-04")
     def describe_jobflows(params = {})
       aws_result = @aws_request.submit(
-        params.merge({:operation => "DescribeJobFlows"})
+        params.merge({:operation => 'DescribeJobFlows'})
       )
       xml_doc = Nokogiri::XML(aws_result)
       xml_doc.remove_namespaces!
       yield aws_result if block_given?
-      JobFlowStatus.from_members_nodeset(xml_doc.xpath("/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member"))
+      JobFlowStatus.from_members_nodeset(xml_doc.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member'))
     end
 
     # Adds a new group of instances to the specified jobflow.  Elasticity maps a
@@ -60,7 +60,7 @@ module Elasticity
     #   ["ig-2GOVEN6HVJZID", "ig-1DU9M2UQMM051", "ig-3DZRW4Y2X4S", ...]
     def add_instance_groups(jobflow_id, instance_group_configs)
       params = {
-        :operation => "AddInstanceGroups",
+        :operation => 'AddInstanceGroups',
         :job_flow_id => jobflow_id,
         :instance_groups => instance_group_configs
       }
@@ -68,7 +68,7 @@ module Elasticity
       xml_doc = Nokogiri::XML(aws_result)
       xml_doc.remove_namespaces!
       instance_group_ids = []
-      xml_doc.xpath("/AddInstanceGroupsResponse/AddInstanceGroupsResult/InstanceGroupIds/member").each do |member|
+      xml_doc.xpath('/AddInstanceGroupsResponse/AddInstanceGroupsResult/InstanceGroupIds/member').each do |member|
         instance_group_ids << member.text
       end
       yield aws_result if block_given?
@@ -96,7 +96,7 @@ module Elasticity
     #   })
     def add_jobflow_steps(jobflow_id, steps_config)
       params = {
-        :operation => "AddJobFlowSteps",
+        :operation => 'AddJobFlowSteps',
         :job_flow_id => jobflow_id
       }.merge!(steps_config)
       aws_result = @aws_request.submit(params)
@@ -113,7 +113,7 @@ module Elasticity
     #   {"ig-1" => 40, "ig-2" => 5, ...}
     def modify_instance_groups(instance_group_config)
       params = {
-        :operation => "ModifyInstanceGroups",
+        :operation => 'ModifyInstanceGroups',
         :instance_groups => instance_group_config.map { |k, v| {:instance_group_id => k, :instance_count => v} }
       }
       aws_result = @aws_request.submit(params)
@@ -177,13 +177,13 @@ module Elasticity
     #   })
     def run_job_flow(job_flow_config)
       params = {
-        :operation => "RunJobFlow",
+        :operation => 'RunJobFlow',
       }.merge!(job_flow_config)
       aws_result = @aws_request.submit(params)
       yield aws_result if block_given?
       xml_doc = Nokogiri::XML(aws_result)
       xml_doc.remove_namespaces!
-      xml_doc.xpath("/RunJobFlowResponse/RunJobFlowResult/JobFlowId").text
+      xml_doc.xpath('/RunJobFlowResponse/RunJobFlowResult/JobFlowId').text
     end
 
     # Enabled or disable "termination protection" on the specified job flows.
@@ -196,7 +196,7 @@ module Elasticity
     #   ["j-1B4D1XP0C0A35", "j-1YG2MYL0HVYS5", ...]
     def set_termination_protection(jobflow_ids, protection_enabled=true)
       params = {
-        :operation => "SetTerminationProtection",
+        :operation => 'SetTerminationProtection',
         :termination_protected => protection_enabled,
         :job_flow_ids => jobflow_ids
       }
@@ -210,7 +210,7 @@ module Elasticity
     # flow does not exist.
     def terminate_jobflows(jobflow_id)
       params = {
-        :operation => "TerminateJobFlows",
+        :operation => 'TerminateJobFlows',
         :job_flow_ids => [jobflow_id]
       }
       aws_result = @aws_request.submit(params)
