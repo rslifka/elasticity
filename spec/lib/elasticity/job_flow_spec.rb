@@ -328,17 +328,44 @@ describe Elasticity::JobFlow do
     end
 
     context 'after the jobflow has been run' do
-      let(:emr) { double('Elasticity::EMR', :run_job_flow => '_') }
+      let(:emr) { double('Elasticity::EMR', :run_job_flow => 'JOBFLOW_ID') }
       let(:running_jobflow) { Elasticity::JobFlow.new('_', '_') }
       before do
         Elasticity::EMR.stub(:new).and_return(emr)
         running_jobflow.add_step(Elasticity::CustomJarStep.new('_'))
-        @jobflow_id = running_jobflow.run
+        running_jobflow.run
       end
       it 'should return the AWS status' do
-        emr.should_receive(:describe_jobflow).with(@jobflow_id).
+        emr.should_receive(:describe_jobflow).with('JOBFLOW_ID').
           and_return(double('Elasticity::JobFlowStatus', :state => 'TERMINATED'))
         running_jobflow.status.should == 'TERMINATED'
+      end
+    end
+
+  end
+
+  describe '#shutdown' do
+
+    context 'when the jobflow has not yet been started' do
+      let(:unstarted_job_flow) { Elasticity::JobFlow.new('_', '_')}
+      it 'should be an error' do
+        expect {
+          unstarted_job_flow.shutdown
+        }.to raise_error(Elasticity::JobFlowNotStartedError, 'Cannot #shutdown a job flow that has not yet been #run.')
+      end
+    end
+
+    context 'when the jobflow has been started' do
+      let(:emr) { double('Elasticity::EMR', :run_job_flow => 'JOBFLOW_ID') }
+      let(:running_jobflow) { Elasticity::JobFlow.new('_', '_') }
+      before do
+        Elasticity::EMR.stub(:new).and_return(emr)
+        running_jobflow.add_step(Elasticity::CustomJarStep.new('_'))
+        running_jobflow.run
+      end
+      it 'should shutdown the running jobflow' do
+        emr.should_receive(:terminate_jobflows).with('JOBFLOW_ID')
+        running_jobflow.shutdown
       end
     end
 

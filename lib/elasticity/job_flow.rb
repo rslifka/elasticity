@@ -61,8 +61,13 @@ module Elasticity
 
     def run
       raise_if @jobflow_steps.empty?, JobFlowMissingStepsError, 'Cannot run a job flow without adding steps.  Please use #add_step.'
-      raise_if @jobflow_id, JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.'
+      raise_if is_jobflow_running?, JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.'
       @jobflow_id ||= @emr.run_job_flow(jobflow_config)
+    end
+
+    def shutdown
+      raise_unless is_jobflow_running?, JobFlowNotStartedError, 'Cannot #shutdown a job flow that has not yet been #run.'
+      @emr.terminate_jobflows(@jobflow_id)
     end
 
     def status
