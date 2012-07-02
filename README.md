@@ -2,10 +2,10 @@ Elasticity provides programmatic access to Amazon's Elastic Map Reduce service. 
 
 [![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) REE, 1.8.7, 1.9.2, 1.9.3
 
-There are two sides to Elasticity:
+Elasticity provides two ways to access EMR:
 
-* An API wrapped around the EMR REST API.  This is my main focus hence thorough documentation will be concentrated here.
-* Direct access to the EMR REST API. Be forewarned: Making the calls directly requires that you understand how to structure EMR requests at the API level and from experience I can tell you there are more fun things you could be doing :)  Documentation for the API calls is in the source and located over at the RubyGems [auto-generated documentation site](http://rubydoc.info/gems/elasticity/frames).
+* **Indirectly through a JobFlow-based API**. This README discusses the Elasticity API.
+* **Directly through access to the EMR REST API**. The less-discussed hidden darkside... I use this to enable the Elasticity API though it is not documented save for RubyDoc available at the the RubyGems [auto-generated documentation site](http://rubydoc.info/gems/elasticity/frames).  Be forewarned: Making the calls directly requires that you understand how to structure EMR requests at the Amazon API level and from experience I can tell you there are more fun things you could be doing :)  Scroll to the end for more information on the Amazon API. 
 
 # Installation
 
@@ -66,7 +66,7 @@ Only your AWS credentials are needed.
 jobflow = Elasticity::JobFlow.new('AWS access key', 'AWS secret key')
 ```
 
-## 2 - Specify Job Flow Options
+## 2 - Specifying Job Flow Options
 
 Configuration job flow options, shown below with default values.  Note that these defaults are subject to change - they are reasonable defaults at the time(s) I work on them (e.g. the latest version of Hadoop).
 
@@ -86,7 +86,7 @@ jobflow.name                              = 'Elasticity Job Flow'
 jobflow.slave_instance_type               = 'm1.small'
 ```
 
-## 3 - Add Bootstrap Actions
+## 3 - Adding Bootstrap Actions
 
 Bootstrap actions are run as part of setting up the job flow, so be sure to configure these before running the job.
 
@@ -100,15 +100,77 @@ Bootstrap actions are run as part of setting up the job flow, so be sure to conf
 end
 ```
 
-## 4 - Add Steps
+## 4 - Adding Steps
+
+Each type of step has a default name that can be overridden (the :name field).  Apart from that, steps are configured differently - exhaustively described below.
 
 ### Adding a Pig Step
 
+```
+# Path to the Pig script
+pig_step = Elasticity::PigStep.new('s3n://mybucket/script.pig')
+
+# (optional) These variables are available during the execution of your script
+pig_step.variables = {
+  'VAR1' => 'VALUE1',
+  'VAR2' => 'VALUE2'
+}
+
+jobflow.add_step(pig_step)
+```
+
+#### PARALLEL
+
+Given the importance of specifying a reasonable value for [the number of parallel reducers](http://pig.apache.org/docs/r0.8.1/cookbook.html#Use+the+Parallel+Features PARALLEL), Elasticity calculates and passes through a reasonable default up with every invocation in the form of a script variable called E_PARALLELS.  This default value is based off of the formula in the Pig Cookbook and the number of reducers AWS configures per instance.
+
+For example, if you had 8 instances in total and your slaves were m1.xlarge, the value is 26 (as shown below).
+
+```
+  s3://elasticmapreduce/libs/pig/pig-script
+    --run-pig-script
+      --args
+        -p INPUT=s3n://elasticmapreduce/samples/pig-apache/input
+        -p OUTPUT=s3n://slif-elasticity/pig-apache/output/2011-05-04
+        -p E_PARALLELS=26
+    s3n://elasticmapreduce/samples/pig-apache/do-reports.pig
+```
+
+Use this as you would any other Pig variable.
+
+```
+  A = LOAD 'myfile' AS (t, u, v);
+  B = GROUP A BY t PARALLEL $E_PARALLELS;
+  ...
+```
+
 ### Adding a Hive Step
+
+```
+# Path to the Hive Script
+hive_step = Elasticity::HiveStep.new('s3n://mybucket/script.hql')
+
+# (optional) These variables are available during the execution of your script
+hive_step.variables = {
+  'VAR1' => 'VALUE1',
+  'VAR2' => 'VALUE2'
+}
+
+jobflow.add_step(hive_step)
+```
 
 ### Adding a Custom Jar Step
 
-## 5 - Run the Job Flow
+```
+# Path to your jar
+jar_step = Elasticity::CustomJarStep.new('s3n://mybucket/my.jar')
+
+# (optional) Arguments passed to the jar
+jar_step.arguments = ['arg1', 'arg2']
+
+jobflow.add_step(jar_step)
+```
+
+## 5 - Running the Job Flow
 
 Submit the job flow to Amazon, storing the ID of the running job flow.
 
@@ -116,11 +178,11 @@ Submit the job flow to Amazon, storing the ID of the running job flow.
 jobflow_id = jobflow.run
 ```
 
-## 6 - Add Additional Steps (optional)
+## 6 - Adding Additional Steps (optional)
 
 Steps can be added to a running jobflow just by calling ```#add_step``` on the job flow exactly how you add them prior to submitting the job.
 
-## 7 - Shutdown the Job Flow (optional)
+## 7 - Shutting Down the Job Flow (optional)
 
 By default, job flows are set to terminate when there are no more running steps.  You can tell the job flow to stay alive when it has nothing left to do:
 
