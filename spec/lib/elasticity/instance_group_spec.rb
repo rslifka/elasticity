@@ -1,5 +1,6 @@
 describe Elasticity::InstanceGroup do
 
+  its(:bid_price) { should == nil }
   its(:count) { should == 1 }
   its(:type) { should == 'm1.large' }
   its(:market) { should == 'ON_DEMAND' }
@@ -62,6 +63,34 @@ describe Elasticity::InstanceGroup do
           }.to change{subject.count}.to(1)
         end
       end
+    end
+
+  end
+
+  describe '#set_spot_instances' do
+
+    it 'should set the type and price' do
+      subject.set_spot_instances(0.25)
+      subject.market.should == 'SPOT'
+      subject.bid_price.should == 0.25
+    end
+
+    context 'when the price is <= 0' do
+      it 'should be an error' do
+        expect {
+          subject.set_spot_instances(-1)
+        }.to raise_error(ArgumentError, 'The bid price for spot instances should be greater than 0 (-1 requested)')
+      end
+    end
+
+  end
+
+  describe '#set_on_demand_instances' do
+
+    it 'should set the type and price' do
+      subject.set_on_demand_instances
+      subject.market.should == 'ON_DEMAND'
+      subject.bid_price.should == nil
     end
 
   end

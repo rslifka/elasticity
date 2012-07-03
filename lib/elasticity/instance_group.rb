@@ -7,8 +7,10 @@ module Elasticity
     attr_accessor :count
     attr_accessor :type
     attr_accessor :name
-    attr_accessor :market
     attr_accessor :role
+
+    attr_reader :bid_price
+    attr_reader :market
 
     def initialize
       @count = 1
@@ -28,6 +30,17 @@ module Elasticity
       raise_unless ROLES.include?(group_role), ArgumentError, "Role must be one of MASTER, CORE or TASK (#{group_role} was requested)"
       @count = 1 if group_role == 'MASTER'
       @role = group_role
+    end
+
+    def set_spot_instances(bid_price)
+      raise_unless bid_price > 0, ArgumentError, "The bid price for spot instances should be greater than 0 (#{bid_price} requested)"
+      @bid_price = bid_price
+      @market = 'SPOT'
+    end
+
+    def set_on_demand_instances
+      @bid_price = nil
+      @market = 'ON_DEMAND'
     end
 
   end
