@@ -37,4 +37,33 @@ describe Elasticity::InstanceGroup do
 
   end
 
+  describe '#role=' do
+
+    it 'should set the role' do
+      subject.role = 'MASTER'
+      subject.role.should == 'MASTER'
+    end
+
+    context 'when the role is unknown' do
+      it 'should be an error' do
+        expect {
+          subject.role = '_'
+        }.to raise_error(ArgumentError, 'Role must be one of MASTER, CORE or TASK (_ was requested)')
+      end
+    end
+
+    context 'when the role is switching to MASTER' do
+      context 'and the count is != 1' do
+        it 'should set the count to 1' do
+          subject.role = 'CORE'
+          subject.count = 2
+          expect {
+            subject.role = 'MASTER'
+          }.to change{subject.count}.to(1)
+        end
+      end
+    end
+
+  end
+
 end

@@ -2,6 +2,8 @@ module Elasticity
 
   class InstanceGroup
 
+    ROLES = %w(MASTER CORE TASK)
+
     attr_accessor :count
     attr_accessor :type
     attr_accessor :name
@@ -20,6 +22,12 @@ module Elasticity
       raise_if instance_count <= 0, ArgumentError, "Instance groups require at least 1 instance (#{instance_count} requested)"
       raise_if @role == 'MASTER' && instance_count != 1, ArgumentError, "MASTER instance groups can only have 1 instance (#{instance_count} requested)"
       @count = instance_count
+    end
+
+    def role=(group_role)
+      raise_unless ROLES.include?(group_role), ArgumentError, "Role must be one of MASTER, CORE or TASK (#{group_role} was requested)"
+      @count = 1 if group_role == 'MASTER'
+      @role = group_role
     end
 
   end
