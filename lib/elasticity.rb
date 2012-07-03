@@ -13,6 +13,8 @@ require 'elasticity/hadoop_bootstrap_action'
 require 'elasticity/job_flow_step'
 
 require 'elasticity/job_flow'
+require 'elasticity/instance_group'
+
 require 'elasticity/job_flow_status'
 require 'elasticity/job_flow_status_step'
 
