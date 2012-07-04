@@ -43,6 +43,18 @@ module Elasticity
       @market = 'ON_DEMAND'
     end
 
+    def to_aws_instance_config
+      {
+        :name => @name,
+        :market => @market,
+        :instance_count => @count,
+        :instance_type => @type,
+        :instance_role => @role,
+      }.tap do |config|
+        config.merge!(:bid_price => @bid_price) if @market == 'SPOT'
+      end
+    end
+
   end
 
 end
