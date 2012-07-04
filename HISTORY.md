@@ -25,59 +25,61 @@ In order to move more quickly and support interesting features like a command-li
 + Drastic simplification of the testing around EMR submission, reducing LoC (however important that metric is you :) and complexity by ~50%.
 + Development dependency updates: updated to ruby-1.9.3-p194 and rspec-2.10.  Removed dependency on VCR and WebMock (no longer using either of these).
 
-## 1.5
+## 1.5 - March 5, 2012
 
 + Added support for Hadoop bootstrap actions to all job types (Pig, Hive and Custom Jar).
 + Added support for REE 1.8.7-2011.12, Ruby 1.9.2 and 1.9.3.
 + Updated to the latest versions of all development dependencies (notably VCR 2).
 
-## 1.4.1
+## 1.4.1 - December 17, 2011
 
 + Added ```Elasticity::EMR#describe_jobflow("jobflow_id")``` for describing a specific job.  If you happen to run hundreds of EMR jobs, this makes retrieving jobflow status much faster than using ```Elasticity::EMR#describe_jobflowS``` which pulls down and parses XML status for hundreds of jobs.
 
-## 1.4
+## 1.4 - December 9, 2011
 
 + Added ```Elasticity::CustomJarJob``` for launching "Custom Jar" jobs.
 
-## 1.3.1
+## 1.3.1 - November 16, 2011
 
 + Explicitly requiring 'time' (only a problem if you aren't running from within a Rails environment).
 + ```Elasticity::JobFlow``` now exposes ```last_state_change_reason```.
 
-## 1.3 (Contributions from Wouter Broekhof)
+## 1.3 - October 10, 2011
+
+This release primarily contains contributions from Wouter Broekhof
 
 + The default mode of communication is now via HTTPS.
 + ```Elasticity::AwsRequest``` new option ```:secure => true|false``` (whether to use HTTPS).
 + ```Elasticity::AwsRequest``` new option ```:region => eu-west-1|...``` (which region to run the EMR job).
 + ```Elasticity::EMR#describe_jobflows``` now accepts additional params for filtering the jobflow query (see docs).
 
-## 1.2.2
+## 1.2.2 - May 10, 2011
 
 + ```HiveJob``` and ```PigJob``` now support configuring Hadoop options via ```#add_hadoop_bootstrap_action()```.
 
-## 1.2.1
+## 1.2.1 - May 7, 2011
 
 + Shipping up E_PARALLELS Pig variable with each invocation; reasonable default value for PARALLEL based on the number and type of instances configured.
 
-## 1.2
+## 1.2 - May 4, 2011
 
 + Added ```PigJob```!
 
-## 1.1.1
+## 1.1.1 - April 25, 2011
 
 + ```HiveJob``` critical bug fixed, now it works :)
 + Added ```log_uri``` and ```action_on_failure``` as options to ```HiveJob```.
 + Added integration tests to ```HiveJob```.
 
-## 1.1
+## 1.1 - April 24, 2011
 
 + Added ```HiveJob```, a simplified way to launch basic Hive job flows.
 + Added HISTORY.
 
-## 1.0.1
+## 1.0.1 - April 22, 2011
 
 + Added LICENSE.
 
-## 1.0
+## 1.0 - April 22, 2011
 
 + Released!
