@@ -6,7 +6,6 @@ module Elasticity
 
     attr_accessor :count
     attr_accessor :type
-    attr_accessor :name
     attr_accessor :role
 
     attr_reader :bid_price
@@ -15,7 +14,6 @@ module Elasticity
     def initialize
       @count = 1
       @type = 'm1.large'
-      @name = 'Elasticity Instance Group'
       @market = 'ON_DEMAND'
       @role = 'CORE'
     end
@@ -45,7 +43,6 @@ module Elasticity
 
     def to_aws_instance_config
       {
-        :name => @name,
         :market => @market,
         :instance_count => @count,
         :instance_type => @type,

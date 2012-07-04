@@ -4,7 +4,6 @@ describe Elasticity::InstanceGroup do
   its(:count) { should == 1 }
   its(:type) { should == 'm1.large' }
   its(:market) { should == 'ON_DEMAND' }
-  its(:name) { should == 'Elasticity Instance Group' }
   its(:role) { should == 'CORE' }
 
   describe '#count=' do
@@ -101,7 +100,6 @@ describe Elasticity::InstanceGroup do
       let(:on_demand_instance_group) do
         Elasticity::InstanceGroup.new.tap do |i|
           i.count = 5
-          i.name = '_'
           i.type = 'c1.medium'
           i.role = 'CORE'
           i.set_on_demand_instances
@@ -109,7 +107,6 @@ describe Elasticity::InstanceGroup do
       end
       it 'should generate an AWS config' do
         on_demand_instance_group.to_aws_instance_config.should == {
-          :name => '_',
           :market => 'ON_DEMAND',
           :instance_count => 5,
           :instance_type => 'c1.medium',
@@ -122,7 +119,6 @@ describe Elasticity::InstanceGroup do
       let(:on_demand_instance_group) do
         Elasticity::InstanceGroup.new.tap do |i|
           i.count = 5
-          i.name = '_'
           i.type = 'c1.medium'
           i.role = 'CORE'
           i.set_spot_instances(0.25)
@@ -130,7 +126,6 @@ describe Elasticity::InstanceGroup do
       end
       it 'should generate an AWS config' do
         on_demand_instance_group.to_aws_instance_config.should == {
-          :name => '_',
           :market => 'SPOT',
           :bid_price => 0.25,
           :instance_count => 5,
