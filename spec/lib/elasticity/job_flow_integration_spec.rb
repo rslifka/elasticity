@@ -184,7 +184,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
                   's3n://slif_hadoop_test/cloudburst/output/2011-12-09',
               ],
             },
-            :name => 'Elasticity Custom Jar Step (s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar)'
+            :name => 'Elasticity Custom Jar Step'
           }
         ]
       }).and_return('CUSTOM_JAR_JOBFLOW_ID')

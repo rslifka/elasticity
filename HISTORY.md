@@ -1,3 +1,7 @@
+## 2.1 - In Progress
+
++ Remove name of jar from default name of ```CustomJarStep``` since the AWS UI already calls it out in a separate column when looking at job flow steps.
+
 ## 2.0 - June 26, 2012
 
 2.0 is a rewrite of the simplified API after a year's worth of daily use at [Sharethrough](http://www.sharethrough.com/).  We're investing heavily in our data processing infrastucture and many Elasticity feature ideas have come from those efforts.
