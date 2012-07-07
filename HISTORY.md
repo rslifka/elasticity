@@ -1,6 +1,8 @@
-## 2.1 - In Progress
+## 2.1 - July 7, 2012
 
-+ Remove name of jar from default name of ```CustomJarStep``` since the AWS UI already calls it out in a separate column when looking at job flow steps.
++ TASK instance group support added.
++ SPOT instance support added for all instance group types. 
++ Removed name of jar from default name of ```CustomJarStep``` since the AWS UI already calls it out in a separate column when looking at job flow steps.
 
 ## 2.0 - June 26, 2012
 
