@@ -23,18 +23,69 @@ describe Elasticity::JobFlow do
   describe '#instance_count=' do
 
     context 'when set to more than 1' do
+
       it 'should set the number of instances' do
         subject.instance_count = 10
         subject.instance_count.should == 10
       end
+
+      it 'should set the CORE group instance count to COUNT-1 instances' do
+        instance_group = Elasticity::InstanceGroup.new
+        instance_group.count = 4
+        instance_group.role = 'CORE'
+
+        subject.instance_count = 5
+        subject.send(:jobflow_instance_groups).should be_include(instance_group.to_aws_instance_config)
+      end
+
     end
 
     context 'when set to less than 2' do
-      it 'should be an error' do
+
+      it 'should be an error and not set the instance count' do
+        subject.instance_count = 10
         expect {
           subject.instance_count = 1
         }.to raise_error(ArgumentError, 'Instance count cannot be set to less than 2 (requested 1)')
+        subject.instance_count.should == 10
       end
+
+    end
+
+  end
+
+  describe '#master_instance_type=' do
+
+    it 'should set the master_instance_type' do
+      subject.master_instance_type = '_'
+      subject.master_instance_type.should == '_'
+    end
+
+    it 'should set the MASTER group instance type' do
+      instance_group = Elasticity::InstanceGroup.new
+      instance_group.type = 'c1.medium'
+      instance_group.role = 'MASTER'
+
+      subject.master_instance_type = 'c1.medium'
+      subject.send(:jobflow_instance_groups).should be_include(instance_group.to_aws_instance_config)
+    end
+
+  end
+
+  describe '#slave_instance_type=' do
+
+    it 'should set the slave_instance_type' do
+      subject.slave_instance_type = '_'
+      subject.slave_instance_type.should == '_'
+    end
+
+    it 'should set the CORE group instance type' do
+      instance_group = Elasticity::InstanceGroup.new
+      instance_group.type = 'c1.medium'
+      instance_group.role = 'CORE'
+
+      subject.slave_instance_type = 'c1.medium'
+      subject.send(:jobflow_instance_groups).should be_include(instance_group.to_aws_instance_config)
     end
 
   end
@@ -231,6 +282,59 @@ describe Elasticity::JobFlow do
 
   end
 
+  describe '#jobflow_instance_groups' do
+
+    describe 'default instance groups' do
+
+      let(:default_instance_groups) do
+        [
+          {
+            :instance_count => 1,
+            :instance_role => 'MASTER',
+            :instance_type => 'm1.small',
+            :market => 'ON_DEMAND',
+          },
+            {
+              :instance_count => 1,
+              :instance_role => 'CORE',
+              :instance_type => 'm1.small',
+              :market => 'ON_DEMAND'
+            },
+        ]
+      end
+
+      it 'should create a properly specified instance group config' do
+        subject.send(:jobflow_instance_groups).should == default_instance_groups
+      end
+
+    end
+
+    context 'when a task instance group is specified' do
+
+      let(:task_instance_group) do
+        Elasticity::InstanceGroup.new.tap do |i|
+          i.count = 2
+          i.type = 'c1.medium'
+        end
+      end
+
+      let(:task_instance_group_config) do
+        {
+          :instance_count => 2,
+          :instance_role => 'TASK',
+          :instance_type => 'c1.medium',
+          :market => 'ON_DEMAND'
+        }
+      end
+
+      it 'should include it in the group config' do
+        subject.set_task_instance_group(task_instance_group)
+        subject.send(:jobflow_instance_groups).should be_include(task_instance_group_config)
+      end
+
+    end
+  end
+
   describe '#jobflow_preamble' do
 
     let(:basic_preamble) do
@@ -241,11 +345,13 @@ describe Elasticity::JobFlow do
           :keep_job_flow_alive_when_no_steps => false,
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
-          :instance_count => 2,
-          :master_instance_type => 'm1.small',
-          :slave_instance_type => 'm1.small',
+          :instance_groups => ['INSTANCE_GROUP_CONFIGURATION']
         }
       }
+    end
+
+    before do
+      subject.stub(:jobflow_instance_groups).and_return(['INSTANCE_GROUP_CONFIGURATION'])
     end
 
     it 'should create a jobflow configuration section' do
@@ -353,7 +459,7 @@ describe Elasticity::JobFlow do
   describe '#shutdown' do
 
     context 'when the jobflow has not yet been started' do
-      let(:unstarted_job_flow) { Elasticity::JobFlow.new('_', '_')}
+      let(:unstarted_job_flow) { Elasticity::JobFlow.new('_', '_') }
       it 'should be an error' do
         expect {
           unstarted_job_flow.shutdown

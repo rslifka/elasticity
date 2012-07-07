@@ -13,7 +13,7 @@ module Elasticity
 
     def initialize
       @count = 1
-      @type = 'm1.large'
+      @type = 'm1.small'
       @market = 'ON_DEMAND'
       @role = 'CORE'
     end

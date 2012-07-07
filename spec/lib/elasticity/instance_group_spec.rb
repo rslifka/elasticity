@@ -2,7 +2,7 @@ describe Elasticity::InstanceGroup do
 
   its(:bid_price) { should == nil }
   its(:count) { should == 1 }
-  its(:type) { should == 'm1.large' }
+  its(:type) { should == 'm1.small' }
   its(:market) { should == 'ON_DEMAND' }
   its(:role) { should == 'CORE' }
 

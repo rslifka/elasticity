@@ -31,9 +31,20 @@ describe 'Elasticity::JobFlow Integration Examples' do
           :keep_job_flow_alive_when_no_steps => false,
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
-          :instance_count => 2,
-          :master_instance_type => 'm1.small',
-          :slave_instance_type => 'm1.small',
+          :instance_groups => [
+            {
+              :instance_count => 1,
+              :instance_role => 'MASTER',
+              :instance_type => 'm1.small',
+              :market => 'ON_DEMAND',
+            },
+              {
+                :instance_count => 1,
+                :instance_role => 'CORE',
+                :instance_type => 'm1.small',
+                :market => 'ON_DEMAND'
+              },
+          ],
         },
         :steps => [
           {
@@ -98,9 +109,20 @@ describe 'Elasticity::JobFlow Integration Examples' do
           :keep_job_flow_alive_when_no_steps => false,
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
-          :instance_count => 8,
-          :master_instance_type => 'm1.small',
-          :slave_instance_type => 'm1.xlarge',
+          :instance_groups => [
+            {
+              :instance_count => 1,
+              :instance_role => 'MASTER',
+              :instance_type => 'm1.small',
+              :market => 'ON_DEMAND',
+            },
+              {
+                :instance_count => 7,
+                :instance_role => 'CORE',
+                :instance_type => 'm1.xlarge',
+                :market => 'ON_DEMAND'
+              },
+          ]
         },
         :steps => [
           {
@@ -169,9 +191,20 @@ describe 'Elasticity::JobFlow Integration Examples' do
           :keep_job_flow_alive_when_no_steps => false,
           :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
-          :instance_count => 2,
-          :master_instance_type => 'm1.small',
-          :slave_instance_type => 'm1.small',
+          :instance_groups => [
+            {
+              :instance_count => 1,
+              :instance_role => 'MASTER',
+              :instance_type => 'm1.small',
+              :market => 'ON_DEMAND',
+            },
+              {
+                :instance_count => 1,
+                :instance_role => 'CORE',
+                :instance_type => 'm1.small',
+                :market => 'ON_DEMAND'
+              },
+          ]
         },
         :steps => [
           {

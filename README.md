@@ -52,7 +52,8 @@ Job flows are the center of the EMR universe.  The general order of operations i
 
   1. Create a job flow.
   1. Specify options.
-  1. Add bootstrap actions.
+  1. (optional) Configure instance groups.
+  1. (optional) Add bootstrap actions.
   1. Create steps.
   1. Run the job flow.
   1. (optional) Add additional steps.
@@ -78,15 +79,63 @@ jobflow.ami_version                       = 'latest'
 jobflow.ec2_key_name                      = 'default'
 jobflow.ec2_subnet_id                     = nil
 jobflow.hadoop_version                    = '0.20.205'
-jobflow.instance_count                    = 2
 jobflow.keep_job_flow_alive_when_no_steps = true
 jobflow.log_uri                           = nil
-jobflow.master_instance_type              = 'm1.small'
 jobflow.name                              = 'Elasticity Job Flow'
+jobflow.instance_count                    = 2
+jobflow.master_instance_type              = 'm1.small'
 jobflow.slave_instance_type               = 'm1.small'
 ```
 
-## 3 - Adding Bootstrap Actions
+## 3 - Configuring Instance Groups (optional)
+
+Technically this is optional since Elasticity creates MASTER and CORE instance groups for you (one m1.small instance in each).  If you'd like your jobs to finish in an appreciable amount of time, you'll want to at least add a few instances to the CORE group :)
+
+### The Easy Way™
+
+If all you'd like to do is change the type or number of instances, ```JobFlow``` provides a few shortcuts to do just that.
+
+```
+jobflow.instance_count       = 10
+jobflow.master_instance_type = 'm1.small'
+jobflow.slave_instance_type  = 'c1.medium'
+```
+
+This says "I want 10 instances from EMR: one m1.small MASTER instance and nine c1.medium CORE instances."
+
+### The Still-Easy Way™
+
+Elasticity supports all EMR instance group types and all configuration options. The MASTER, CORE and TASK instance groups can be configured via ```JobFlow#set_master_instance_group```, ```JobFlow#set_core_instance_group``` and ```JobFlow#set_task_instance_group``` respectively.
+
+#### On-Demand Instance Groups
+
+These instances will be available for the life of your EMR job, versus Spot instances which are transient depending on your bid price (see below).
+
+```
+ig = Elasticity::InstanceGroup.new
+ig.count = 10                       # Provision 10 instances
+ig.type  = 'c1.medium'              # See the EMR docs for a list of supported types
+ig.set_on_demand_instances          # This is the default setting
+
+
+jobflow.set_core_instance_group(ig)
+```
+
+#### Spot Instance Groups
+
+*When Amazon EC2 has unused capacity, it offers EC2 instances at a reduced cost, called the Spot Price. This price fluctuates based on availability and demand. You can purchase Spot Instances by placing a request that includes the highest bid price you are willing to pay for those instances. When the Spot Price is below your bid price, your Spot Instances are launched and you are billed the Spot Price. If the Spot Price rises above your bid price, Amazon EC2 terminates your Spot Instances.* - [EMR Developer Guide](http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/UsingEMR_SpotInstances.html)
+
+```
+ig = Elasticity::InstanceGroup.new
+ig.count = 10                       # Provision 10 instances
+ig.type  = 'c1.medium'              # See the EMR docs for a list of supported types
+ig.set_spot_instances(0.25)         # Makes this a SPOT group with a $0.25 bid price
+
+
+jobflow.set_core_instance_group(ig)
+```
+
+## 4 - Adding Bootstrap Actions (optional)
 
 Bootstrap actions are run as part of setting up the job flow, so be sure to configure these before running the job.
 
@@ -100,7 +149,7 @@ Bootstrap actions are run as part of setting up the job flow, so be sure to conf
 end
 ```
 
-## 4 - Adding Steps
+## 5 - Adding Steps
 
 Each type of step has a default name that can be overridden (the :name field).  Apart from that, steps are configured differently - exhaustively described below.
 
@@ -170,7 +219,7 @@ jar_step.arguments = ['arg1', 'arg2']
 jobflow.add_step(jar_step)
 ```
 
-## 5 - Running the Job Flow
+## 6 - Running the Job Flow
 
 Submit the job flow to Amazon, storing the ID of the running job flow.
 
@@ -178,11 +227,11 @@ Submit the job flow to Amazon, storing the ID of the running job flow.
 jobflow_id = jobflow.run
 ```
 
-## 6 - Adding Additional Steps (optional)
+## 7 - Adding Additional Steps (optional)
 
 Steps can be added to a running jobflow just by calling ```#add_step``` on the job flow exactly how you add them prior to submitting the job.
 
-## 7 - Shutting Down the Job Flow (optional)
+## 8 - Shutting Down the Job Flow (optional)
 
 By default, job flows are set to terminate when there are no more running steps.  You can tell the job flow to stay alive when it has nothing left to do:
 
