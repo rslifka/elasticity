@@ -2,6 +2,8 @@ module Elasticity
 
   module JobFlowStep
 
+    @@step_klasses = []
+
     def to_aws_step(jobflow_step)
       raise RuntimeError, '#to_aws_step is required to be defined on all job flow steps.'
     end
@@ -28,6 +30,11 @@ module Elasticity
 
     def self.included(base)
       base.extend(ClassMethods)
+      @@step_klasses << base
+    end
+
+    def self.steps_requiring_installation
+      @@step_klasses.select{|klass| klass.requires_installation?}
     end
 
   end

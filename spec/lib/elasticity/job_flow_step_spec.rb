@@ -48,4 +48,10 @@ describe Elasticity::JobFlowStep do
     end
   end
 
+  describe '.steps_requiring_installation' do
+    it 'should list all of the steps requiring installation' do
+      Elasticity::JobFlowStep.steps_requiring_installation.should =~ [Elasticity::PigStep, Elasticity::HiveStep]
+    end
+  end
+
 end
