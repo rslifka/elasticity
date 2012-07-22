@@ -110,37 +110,37 @@ describe Elasticity::JobFlowStatus do
     @members_nodeset = describe_jobflows_document.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member')
   end
 
-  describe ".from_xml" do
-    it "should return a JobFlow with the appropriate fields initialized" do
+  describe '.from_xml' do
+    it 'should return a JobFlow with the appropriate fields initialized' do
       jobflow = Elasticity::JobFlowStatus.from_member_element(@members_nodeset[0])
-      jobflow.name.should == "Pig Job"
-      jobflow.jobflow_id.should == "j-p"
-      jobflow.state.should == "TERMINATED"
-      jobflow.steps.map(&:name).should == ["Setup Hive", "Run Hive Script"]
-      jobflow.steps.map(&:state).should == ["FAILED", "PENDING"]
-      jobflow.created_at.should == Time.parse("2011-10-04T21:49:16Z")
-      jobflow.started_at.should == Time.parse("2011-10-04T21:49:17Z")
-      jobflow.ready_at.should == Time.parse("2011-10-04T21:49:18Z")
-      jobflow.master_instance_type.should == "m1.small"
-      jobflow.slave_instance_type.should == "m1.small"
-      jobflow.instance_count.should == "4"
-      jobflow.last_state_change_reason.should == "Steps completed with errors"
+      jobflow.name.should == 'Pig Job'
+      jobflow.jobflow_id.should == 'j-p'
+      jobflow.state.should == 'TERMINATED'
+      jobflow.steps.map(&:name).should == ['Setup Hive', 'Run Hive Script']
+      jobflow.steps.map(&:state).should == %w(FAILED PENDING)
+      jobflow.created_at.should == Time.parse('2011-10-04T21:49:16Z')
+      jobflow.started_at.should == Time.parse('2011-10-04T21:49:17Z')
+      jobflow.ready_at.should == Time.parse('2011-10-04T21:49:18Z')
+      jobflow.master_instance_type.should == 'm1.small'
+      jobflow.slave_instance_type.should == 'm1.small'
+      jobflow.instance_count.should == '4'
+      jobflow.last_state_change_reason.should == 'Steps completed with errors'
     end
   end
 
-  describe ".from_jobflows_nodeset" do
-    it "should return JobFlows with the appropriate fields initialized" do
+  describe '.from_jobflows_nodeset' do
+    it 'should return JobFlows with the appropriate fields initialized' do
       jobflow = Elasticity::JobFlowStatus.from_members_nodeset(@members_nodeset)
-      jobflow.map(&:name).should == ["Pig Job", "Hive Job"]
-      jobflow.map(&:jobflow_id).should == ["j-p", "j-h"]
-      jobflow.map(&:state).should == ["TERMINATED", "TERMINATED"]
-      jobflow.map(&:created_at).should == [Time.parse("2011-10-04T21:49:16Z"), Time.parse("2011-10-04T22:49:16Z")]
-      jobflow.map(&:started_at).should == [Time.parse("2011-10-04T21:49:17Z"), nil]
-      jobflow.map(&:ready_at).should == [Time.parse("2011-10-04T21:49:18Z"), nil]
-      jobflow.map(&:master_instance_type).should == ["m1.small","c1.medium"]
-      jobflow.map(&:slave_instance_type).should == ["m1.small", "c1.medium"]
-      jobflow.map(&:instance_count).should == ["4","2"]
-      jobflow.map(&:last_state_change_reason).should == ["Steps completed with errors", "Steps completed"]
+      jobflow.map(&:name).should == ['Pig Job', 'Hive Job']
+      jobflow.map(&:jobflow_id).should == %w(j-p j-h)
+      jobflow.map(&:state).should == %w(TERMINATED TERMINATED)
+      jobflow.map(&:created_at).should == [Time.parse('2011-10-04T21:49:16Z'), Time.parse('2011-10-04T22:49:16Z')]
+      jobflow.map(&:started_at).should == [Time.parse('2011-10-04T21:49:17Z'), nil]
+      jobflow.map(&:ready_at).should == [Time.parse('2011-10-04T21:49:18Z'), nil]
+      jobflow.map(&:master_instance_type).should == %w(m1.small c1.medium)
+      jobflow.map(&:slave_instance_type).should == %w(m1.small c1.medium)
+      jobflow.map(&:instance_count).should == %w(4 2)
+      jobflow.map(&:last_state_change_reason).should == ['Steps completed with errors', 'Steps completed']
     end
   end
 
