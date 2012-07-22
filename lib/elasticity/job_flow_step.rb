@@ -6,6 +6,14 @@ module Elasticity
       raise RuntimeError, '#to_aws_step is required to be defined on all job flow steps.'
     end
 
+    def requires_installation?
+      self.class.requires_installation?
+    end
+
+    def aws_installation_step
+      self.class.aws_installation_step
+    end
+
     module ClassMethods
 
       def requires_installation?

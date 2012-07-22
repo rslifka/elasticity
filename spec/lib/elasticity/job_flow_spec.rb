@@ -483,4 +483,18 @@ describe Elasticity::JobFlow do
 
   end
 
+  describe '.from_jobflow_id' do
+
+    let(:jobflow) { Elasticity::JobFlow.from_jobflow_id('JOBFLOW_ID') }
+
+    it 'should create a running jobflow' do
+      jobflow.send(:is_jobflow_running?).should == true
+    end
+
+    it 'should remember the jobflow ID' do
+      jobflow.instance_variable_get(:@jobflow_id).should == 'JOBFLOW_ID'
+    end
+
+  end
+
 end

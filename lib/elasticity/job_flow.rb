@@ -41,6 +41,12 @@ module Elasticity
       @emr = Elasticity::EMR.new(access, secret)
     end
 
+    def self.from_jobflow_id(jobflow_id)
+      JobFlow.new('_', '_').tap do |j|
+        j.instance_variable_set(:@jobflow_id, jobflow_id)
+      end
+    end
+
     def instance_count=(count)
       raise ArgumentError, 'Instance count cannot be set to less than 2 (requested 1)' unless count > 1
       @instance_groups[:core].count = count - 1
@@ -80,8 +86,8 @@ module Elasticity
     def add_step(jobflow_step)
       if is_jobflow_running?
         jobflow_steps = []
-        if jobflow_step.class.send(:requires_installation?) && !@installed_steps.include?(jobflow_step.class)
-          jobflow_steps << jobflow_step.class.send(:aws_installation_step)
+        if jobflow_step.requires_installation? && !@installed_steps.include?(jobflow_step.class)
+          jobflow_steps << jobflow_step.aws_installation_step
         end
         jobflow_steps << jobflow_step.to_aws_step(self)
         @emr.add_jobflow_steps(@jobflow_id, {:steps => jobflow_steps})
@@ -93,7 +99,7 @@ module Elasticity
     def run
       raise_if @jobflow_steps.empty?, JobFlowMissingStepsError, 'Cannot run a job flow without adding steps.  Please use #add_step.'
       raise_if is_jobflow_running?, JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.'
-      @jobflow_id ||= @emr.run_job_flow(jobflow_config)
+      @jobflow_id = @emr.run_job_flow(jobflow_config)
     end
 
     def shutdown
@@ -109,7 +115,7 @@ module Elasticity
     private
 
     def is_jobflow_running?
-      @jobflow_id
+      !@jobflow_id.nil?
     end
 
     def jobflow_config

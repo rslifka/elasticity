@@ -20,6 +20,13 @@ describe Elasticity::JobFlowStep do
 
   end
 
+  describe '#requires_installation?' do
+    it 'should delegate to the class method' do
+      FakeStep.should_receive(:requires_installation?).and_return(true)
+      subject.requires_installation?.should == true
+    end
+  end
+
   describe '.requires_installation?' do
     it 'should be false by default' do
       FakeStep.requires_installation?.should be_false
@@ -31,6 +38,13 @@ describe Elasticity::JobFlowStep do
       expect {
         FakeStep.aws_installation_step
       }.to raise_error(RuntimeError, '.aws_installation_step is required to be defined when a step requires installation (e.g. Pig, Hive).')
+    end
+  end
+
+  describe '#aws_installation_step' do
+    it 'should delegate to the class method' do
+      FakeStep.should_receive(:aws_installation_step).and_return('AWS_INSTALLATION_STEP')
+      subject.aws_installation_step.should == 'AWS_INSTALLATION_STEP'
     end
   end
 
