@@ -1,7 +1,7 @@
 describe Elasticity::JobFlowStatus do
 
-  before do
-    describe_jobflows_xml = <<-JOBFLOWS
+  let(:describe_jobflows_xml) do
+    <<-JOBFLOWS
       <DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
         <DescribeJobFlowsResult>
           <JobFlows>
@@ -105,14 +105,17 @@ describe Elasticity::JobFlowStatus do
         </DescribeJobFlowsResult>
       </DescribeJobFlowsResponse>
     JOBFLOWS
+  end
+
+  let(:members_nodeset) do
     describe_jobflows_document = Nokogiri::XML(describe_jobflows_xml)
     describe_jobflows_document.remove_namespaces!
-    @members_nodeset = describe_jobflows_document.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member')
+    describe_jobflows_document.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member')
   end
 
   describe '.from_xml' do
     it 'should return a JobFlow with the appropriate fields initialized' do
-      jobflow = Elasticity::JobFlowStatus.from_member_element(@members_nodeset[0])
+      jobflow = Elasticity::JobFlowStatus.from_member_element(members_nodeset[0])
       jobflow.name.should == 'Pig Job'
       jobflow.jobflow_id.should == 'j-p'
       jobflow.state.should == 'TERMINATED'
@@ -130,7 +133,7 @@ describe Elasticity::JobFlowStatus do
 
   describe '.from_jobflows_nodeset' do
     it 'should return JobFlows with the appropriate fields initialized' do
-      jobflow = Elasticity::JobFlowStatus.from_members_nodeset(@members_nodeset)
+      jobflow = Elasticity::JobFlowStatus.from_members_nodeset(members_nodeset)
       jobflow.map(&:name).should == ['Pig Job', 'Hive Job']
       jobflow.map(&:jobflow_id).should == %w(j-p j-h)
       jobflow.map(&:state).should == %w(TERMINATED TERMINATED)
