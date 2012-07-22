@@ -1,13 +1,43 @@
 describe Elasticity::JobFlowStatus do
 
+  let(:hive_setup_config) do
+    <<-XML
+      <member>
+        <StepConfig>
+          <Name>Elasticity - Install Hive</Name>
+        </StepConfig>
+        <ExecutionStatusDetail>
+          <State>FAILED</State>
+        </ExecutionStatusDetail>
+      </member>
+    XML
+  end
+
+  let(:pig_setup_config) do
+    <<-XML
+      <member>
+        <StepConfig>
+          <Name>Elasticity - Install Pig</Name>
+        </StepConfig>
+        <ExecutionStatusDetail>
+          <State>FAILED</State>
+        </ExecutionStatusDetail>
+      </member>
+    XML
+  end
+
+  let(:setup_config) do
+    hive_setup_config
+  end
+
   let(:describe_jobflows_xml) do
-    <<-JOBFLOWS
+    <<-XML
       <DescribeJobFlowsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
         <DescribeJobFlowsResult>
           <JobFlows>
             <member>
               <JobFlowId>j-p</JobFlowId>
-              <Name>Pig Job</Name>
+              <Name>Hive Job 1</Name>
               <ExecutionStatusDetail>
                 <CreationDateTime>
                    2011-10-04T21:49:16Z
@@ -24,14 +54,7 @@ describe Elasticity::JobFlowStatus do
                 <State>TERMINATED</State>
               </ExecutionStatusDetail>
               <Steps>
-                <member>
-                  <StepConfig>
-                    <Name>Setup Hive</Name>
-                  </StepConfig>
-                  <ExecutionStatusDetail>
-                    <State>FAILED</State>
-                  </ExecutionStatusDetail>
-                </member>
+                #{setup_config}
                 <member>
                   <StepConfig>
                     <Name>Run Hive Script</Name>
@@ -63,7 +86,7 @@ describe Elasticity::JobFlowStatus do
             </member>
             <member>
               <JobFlowId>j-h</JobFlowId>
-              <Name>Hive Job</Name>
+              <Name>Hive Job 2</Name>
               <ExecutionStatusDetail>
                 <CreationDateTime>
                    2011-10-04T22:49:16Z
@@ -104,7 +127,7 @@ describe Elasticity::JobFlowStatus do
           </JobFlows>
         </DescribeJobFlowsResult>
       </DescribeJobFlowsResponse>
-    JOBFLOWS
+    XML
   end
 
   let(:members_nodeset) do
@@ -113,37 +136,70 @@ describe Elasticity::JobFlowStatus do
     describe_jobflows_document.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member')
   end
 
+  let(:single_jobflow) { Elasticity::JobFlowStatus.from_member_element(members_nodeset[0]) }
+
+  let(:multiple_jobflows) { Elasticity::JobFlowStatus.from_members_nodeset(members_nodeset) }
+
   describe '.from_xml' do
     it 'should return a JobFlow with the appropriate fields initialized' do
-      jobflow = Elasticity::JobFlowStatus.from_member_element(members_nodeset[0])
-      jobflow.name.should == 'Pig Job'
-      jobflow.jobflow_id.should == 'j-p'
-      jobflow.state.should == 'TERMINATED'
-      jobflow.steps.map(&:name).should == ['Setup Hive', 'Run Hive Script']
-      jobflow.steps.map(&:state).should == %w(FAILED PENDING)
-      jobflow.created_at.should == Time.parse('2011-10-04T21:49:16Z')
-      jobflow.started_at.should == Time.parse('2011-10-04T21:49:17Z')
-      jobflow.ready_at.should == Time.parse('2011-10-04T21:49:18Z')
-      jobflow.master_instance_type.should == 'm1.small'
-      jobflow.slave_instance_type.should == 'm1.small'
-      jobflow.instance_count.should == '4'
-      jobflow.last_state_change_reason.should == 'Steps completed with errors'
+      single_jobflow.name.should == 'Hive Job 1'
+      single_jobflow.jobflow_id.should == 'j-p'
+      single_jobflow.state.should == 'TERMINATED'
+      single_jobflow.steps.map(&:name).should == ['Elasticity - Install Hive', 'Run Hive Script']
+      single_jobflow.steps.map(&:state).should == %w(FAILED PENDING)
+      single_jobflow.created_at.should == Time.parse('2011-10-04T21:49:16Z')
+      single_jobflow.started_at.should == Time.parse('2011-10-04T21:49:17Z')
+      single_jobflow.ready_at.should == Time.parse('2011-10-04T21:49:18Z')
+      single_jobflow.master_instance_type.should == 'm1.small'
+      single_jobflow.slave_instance_type.should == 'm1.small'
+      single_jobflow.instance_count.should == '4'
+      single_jobflow.last_state_change_reason.should == 'Steps completed with errors'
     end
   end
 
   describe '.from_jobflows_nodeset' do
     it 'should return JobFlows with the appropriate fields initialized' do
-      jobflow = Elasticity::JobFlowStatus.from_members_nodeset(members_nodeset)
-      jobflow.map(&:name).should == ['Pig Job', 'Hive Job']
-      jobflow.map(&:jobflow_id).should == %w(j-p j-h)
-      jobflow.map(&:state).should == %w(TERMINATED TERMINATED)
-      jobflow.map(&:created_at).should == [Time.parse('2011-10-04T21:49:16Z'), Time.parse('2011-10-04T22:49:16Z')]
-      jobflow.map(&:started_at).should == [Time.parse('2011-10-04T21:49:17Z'), nil]
-      jobflow.map(&:ready_at).should == [Time.parse('2011-10-04T21:49:18Z'), nil]
-      jobflow.map(&:master_instance_type).should == %w(m1.small c1.medium)
-      jobflow.map(&:slave_instance_type).should == %w(m1.small c1.medium)
-      jobflow.map(&:instance_count).should == %w(4 2)
-      jobflow.map(&:last_state_change_reason).should == ['Steps completed with errors', 'Steps completed']
+      multiple_jobflows.map(&:name).should == ['Hive Job 1', 'Hive Job 2']
+      multiple_jobflows.map(&:jobflow_id).should == %w(j-p j-h)
+      multiple_jobflows.map(&:state).should == %w(TERMINATED TERMINATED)
+      multiple_jobflows.map(&:created_at).should == [Time.parse('2011-10-04T21:49:16Z'), Time.parse('2011-10-04T22:49:16Z')]
+      multiple_jobflows.map(&:started_at).should == [Time.parse('2011-10-04T21:49:17Z'), nil]
+      multiple_jobflows.map(&:ready_at).should == [Time.parse('2011-10-04T21:49:18Z'), nil]
+      multiple_jobflows.map(&:master_instance_type).should == %w(m1.small c1.medium)
+      multiple_jobflows.map(&:slave_instance_type).should == %w(m1.small c1.medium)
+      multiple_jobflows.map(&:instance_count).should == %w(4 2)
+      multiple_jobflows.map(&:last_state_change_reason).should == ['Steps completed with errors', 'Steps completed']
+    end
+  end
+
+  describe '#installed_steps' do
+
+    context 'when nothing has been installed' do
+      let(:setup_config) { }
+      it 'should be empty' do
+        single_jobflow.installed_steps.should == []
+      end
+    end
+
+    context 'when Hive has been installed by Elasticity' do
+      let(:setup_config) { hive_setup_config }
+      it 'should include HiveStep' do
+        single_jobflow.installed_steps.should == [Elasticity::HiveStep]
+      end
+    end
+
+    context 'when Pig has been installed by Elasticity' do
+      let(:setup_config) { pig_setup_config }
+      it 'should include PigStep' do
+        single_jobflow.installed_steps.should == [Elasticity::PigStep]
+      end
+    end
+
+    context 'when more than one step has been installed by Elasticity' do
+      let(:setup_config) { hive_setup_config + pig_setup_config }
+      it 'should include all of them' do
+        single_jobflow.installed_steps.should =~ [Elasticity::HiveStep, Elasticity::PigStep]
+      end
     end
   end
 
