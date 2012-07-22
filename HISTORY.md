@@ -1,3 +1,7 @@
+## 2.2 - In Progress
+
++ Updated to rspec-2.11.
+
 ## 2.1 - July 7, 2012
 
 + TASK instance group support added.
