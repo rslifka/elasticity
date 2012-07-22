@@ -59,13 +59,21 @@ Job flows are the center of the EMR universe.  The general order of operations i
   1. (optional) Add additional steps.
   1. (optional) Shutdown the job flow.
 
-## 1 - Creating Job Flows
+## 1 - Create a Job Flow
 
 Only your AWS credentials are needed.
 
 ```
 jobflow = Elasticity::JobFlow.new('AWS access key', 'AWS secret key')
 ```
+
+If you want to access a job flow that's already running:
+
+```
+jobflow = Elasticity::JobFlow.from_jobflow_id('AWS access key', 'AWS secret key', 'jobflow ID')
+```
+
+This is useful if you'd like to attach to a running job flow and add more steps, etc.
 
 ## 2 - Specifying Job Flow Options
 

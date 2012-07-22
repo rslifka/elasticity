@@ -1,5 +1,6 @@
-## 2.2 - In Progress
+## 2.1.1 - July 22, 2012
 
++ ```JobFlow::from_jobflow_id``` factory method added so that you can operate on running job flows (add steps, shutdown, status, etc.) that you didn't start in the same Ruby instance.
 + Updated to rspec-2.11.
 
 ## 2.1 - July 7, 2012
