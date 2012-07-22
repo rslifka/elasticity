@@ -41,9 +41,10 @@ module Elasticity
       @emr = Elasticity::EMR.new(access, secret)
     end
 
-    def self.from_jobflow_id(jobflow_id)
-      JobFlow.new('_', '_').tap do |j|
+    def self.from_jobflow_id(access, secret, jobflow_id)
+      JobFlow.new(access, secret).tap do |j|
         j.instance_variable_set(:@jobflow_id, jobflow_id)
+        j.instance_variable_set(:@installed_steps, j.status.installed_steps)
       end
     end
 

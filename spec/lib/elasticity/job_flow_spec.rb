@@ -484,8 +484,20 @@ describe Elasticity::JobFlow do
   end
 
   describe '.from_jobflow_id' do
+    before do
+      Elasticity::JobFlow.any_instance.stub_chain(:status, :installed_steps => [])
+    end
 
-    let(:jobflow) { Elasticity::JobFlow.from_jobflow_id('JOBFLOW_ID') }
+    let(:jobflow) { Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', 'JOBFLOW_ID') }
+
+    it 'should create a jobflow with the specified credentials' do
+      Elasticity::EMR.should_receive(:new).with('ACCESS', 'SECRET')
+      Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', '_')
+    end
+
+    it 'should create a jobflow' do
+      jobflow.should be_a Elasticity::JobFlow
+    end
 
     it 'should create a running jobflow' do
       jobflow.send(:is_jobflow_running?).should == true
@@ -493,6 +505,24 @@ describe Elasticity::JobFlow do
 
     it 'should remember the jobflow ID' do
       jobflow.instance_variable_get(:@jobflow_id).should == 'JOBFLOW_ID'
+    end
+
+    context 'when no steps have been installed' do
+      before do
+        Elasticity::JobFlow.any_instance.should_receive(:status).and_return(double('Elasticity::JobFlowStatus', :installed_steps => []))
+      end
+      it 'should show that no steps are installed' do
+        jobflow.instance_variable_get(:@installed_steps).should == []
+      end
+    end
+
+    context 'when steps have been installed do' do
+      before do
+        Elasticity::JobFlow.any_instance.should_receive(:status).and_return(double('Elasticity::JobFlowStatus', :installed_steps => [Elasticity::HiveStep, Elasticity::PigStep]))
+      end
+      it 'should show that no steps are installed' do
+        jobflow.instance_variable_get(:@installed_steps).should =~ [Elasticity::PigStep, Elasticity::HiveStep]
+      end
     end
 
   end
