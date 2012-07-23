@@ -159,7 +159,7 @@ end
 
 ## 5 - Adding Steps
 
-Each type of step has a default name that can be overridden (the :name field).  Apart from that, steps are configured differently - exhaustively described below.
+Each type of step has ```#name``` and ```#action_on_failure``` fields that can be overridden.  Apart from that, steps are configured differently - exhaustively described below.
 
 ### Adding a Pig Step
 
@@ -213,6 +213,15 @@ hive_step.variables = {
 }
 
 jobflow.add_step(hive_step)
+```
+
+### Adding a Streaming Step
+
+```ruby
+# Input bucket, output bucket, mapper and reducer scripts
+streaming_step = Elasticity::StreamingStep.new('s3n://elasticmapreduce/samples/wordcount/input', 's3n://elasticityoutput/wordcount/output/2012-07-23', 's3n://elasticmapreduce/samples/wordcount/wordSplitter.py', 'aggregate')
+
+jobflow.add_step(streaming_step)
 ```
 
 ### Adding a Custom Jar Step

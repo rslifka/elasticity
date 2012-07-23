@@ -21,6 +21,7 @@ require 'elasticity/job_flow_status_step'
 require 'elasticity/custom_jar_step'
 require 'elasticity/hive_step'
 require 'elasticity/pig_step'
+require 'elasticity/streaming_step'
 
 module Elasticity
 end

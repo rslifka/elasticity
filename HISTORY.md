@@ -1,3 +1,7 @@
+## 2.2 - July 23, 2012
+
++ Hadoop streaming jobs are now supported via ```Elasticity::StreamingStep```.
+
 ## 2.1.1 - July 22, 2012
 
 + ```JobFlow::from_jobflow_id``` factory method added so that you can operate on running job flows (add steps, shutdown, status, etc.) that you didn't start in the same Ruby instance.
