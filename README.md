@@ -9,13 +9,13 @@ Elasticity provides two ways to access EMR:
 
 # Installation
 
-```
+```ruby
   gem install elasticity
 ```
 
 or in your Gemfile
 
-```
+```ruby
   gem 'elasticity', '~> 2.0'
 ```
 
@@ -25,7 +25,7 @@ This will ensure that you protect yourself from API changes, which will only be 
 
 When using the EMR UI, there are several sample jobs that Amazon supplies.  The assets for these sample jobs are hosted on S3 and publicly available meaning you can run this code as-is (supplying your AWS credentials appropriately) and ```JobFlow#run``` will return the ID of the job flow.
 
-```
+```ruby
 require 'elasticity'
 
 # Create a job flow with your AWS credentials
@@ -63,13 +63,13 @@ Job flows are the center of the EMR universe.  The general order of operations i
 
 Only your AWS credentials are needed.
 
-```
+```ruby
 jobflow = Elasticity::JobFlow.new('AWS access key', 'AWS secret key')
 ```
 
 If you want to access a job flow that's already running:
 
-```
+```ruby
 jobflow = Elasticity::JobFlow.from_jobflow_id('AWS access key', 'AWS secret key', 'jobflow ID')
 ```
 
@@ -81,7 +81,7 @@ Configuration job flow options, shown below with default values.  Note that thes
 
 These options are sent up as part of job flow submission (i.e. ```JobFlow#run```), so be sure to configure these before running the job.
 
-```
+```ruby
 jobflow.action_on_failure                 = 'TERMINATE_JOB_FLOW'
 jobflow.ami_version                       = 'latest'
 jobflow.ec2_key_name                      = 'default'
@@ -103,7 +103,7 @@ Technically this is optional since Elasticity creates MASTER and CORE instance g
 
 If all you'd like to do is change the type or number of instances, ```JobFlow``` provides a few shortcuts to do just that.
 
-```
+```ruby
 jobflow.instance_count       = 10
 jobflow.master_instance_type = 'm1.small'
 jobflow.slave_instance_type  = 'c1.medium'
@@ -119,7 +119,7 @@ Elasticity supports all EMR instance group types and all configuration options. 
 
 These instances will be available for the life of your EMR job, versus Spot instances which are transient depending on your bid price (see below).
 
-```
+```ruby
 ig = Elasticity::InstanceGroup.new
 ig.count = 10                       # Provision 10 instances
 ig.type  = 'c1.medium'              # See the EMR docs for a list of supported types
@@ -133,7 +133,7 @@ jobflow.set_core_instance_group(ig)
 
 *When Amazon EC2 has unused capacity, it offers EC2 instances at a reduced cost, called the Spot Price. This price fluctuates based on availability and demand. You can purchase Spot Instances by placing a request that includes the highest bid price you are willing to pay for those instances. When the Spot Price is below your bid price, your Spot Instances are launched and you are billed the Spot Price. If the Spot Price rises above your bid price, Amazon EC2 terminates your Spot Instances.* - [EMR Developer Guide](http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/UsingEMR_SpotInstances.html)
 
-```
+```ruby
 ig = Elasticity::InstanceGroup.new
 ig.count = 10                       # Provision 10 instances
 ig.type  = 'c1.medium'              # See the EMR docs for a list of supported types
@@ -147,7 +147,7 @@ jobflow.set_core_instance_group(ig)
 
 Bootstrap actions are run as part of setting up the job flow, so be sure to configure these before running the job.
 
-```
+```ruby
 [
   Elasticity::HadoopBootstrapAction.new('-m', 'mapred.map.tasks=101'),
   Elasticity::HadoopBootstrapAction.new('-m', 'mapred.reduce.child.java.opts=-Xmx200m')
@@ -163,7 +163,7 @@ Each type of step has a default name that can be overridden (the :name field).  
 
 ### Adding a Pig Step
 
-```
+```ruby
 # Path to the Pig script
 pig_step = Elasticity::PigStep.new('s3n://mybucket/script.pig')
 
@@ -182,7 +182,7 @@ Given the importance of specifying a reasonable value for [the number of paralle
 
 For example, if you had 8 instances in total and your slaves were m1.xlarge, the value is 26 (as shown below).
 
-```
+```sh
   s3://elasticmapreduce/libs/pig/pig-script
     --run-pig-script
       --args
@@ -194,7 +194,7 @@ For example, if you had 8 instances in total and your slaves were m1.xlarge, the
 
 Use this as you would any other Pig variable.
 
-```
+```pig
   A = LOAD 'myfile' AS (t, u, v);
   B = GROUP A BY t PARALLEL $E_PARALLELS;
   ...
@@ -202,7 +202,7 @@ Use this as you would any other Pig variable.
 
 ### Adding a Hive Step
 
-```
+```ruby
 # Path to the Hive Script
 hive_step = Elasticity::HiveStep.new('s3n://mybucket/script.hql')
 
@@ -217,7 +217,7 @@ jobflow.add_step(hive_step)
 
 ### Adding a Custom Jar Step
 
-```
+```ruby
 # Path to your jar
 jar_step = Elasticity::CustomJarStep.new('s3n://mybucket/my.jar')
 
@@ -231,7 +231,7 @@ jobflow.add_step(jar_step)
 
 Submit the job flow to Amazon, storing the ID of the running job flow.
 
-```
+```ruby
 jobflow_id = jobflow.run
 ```
 
@@ -243,13 +243,13 @@ Steps can be added to a running jobflow just by calling ```#add_step``` on the j
 
 By default, job flows are set to terminate when there are no more running steps.  You can tell the job flow to stay alive when it has nothing left to do:
 
-```
+```ruby
 jobflow.keep_job_flow_alive_when_no_steps = true
 ```
 
 If that's the case, or if you'd just like to terminate a running jobflow before waiting for it to finish:
 
-```
+```ruby
 jobflow.shutdown
 ```
 
