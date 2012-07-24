@@ -14,7 +14,7 @@ module Elasticity
     def initialize(access, secret, options = {})
       @access_key = access
       @secret_key = secret
-      @host = options[:region] ? "elasticmapreduce.#{options[:region]}.amazonaws.com" : 'elasticmapreduce.amazonaws.com'
+      @host = "elasticmapreduce.#{{:region => 'us-east-1'}.merge(options)[:region]}.amazonaws.com"
       @protocol = {:secure => true}.merge(options)[:secure] ? 'https' : 'http'
     end
 

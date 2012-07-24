@@ -14,7 +14,7 @@ describe Elasticity::AwsRequest do
   describe '#host' do
 
     context 'when the region is not specified' do
-      its(:host) { should == 'elasticmapreduce.amazonaws.com' }
+      its(:host) { should == 'elasticmapreduce.us-east-1.amazonaws.com' }
     end
 
     context 'when the region is specified' do
@@ -60,7 +60,7 @@ describe Elasticity::AwsRequest do
   describe '#sign_params' do
     it 'should sign according to AWS rules' do
       signed_params = subject.send(:sign_params, {})
-      signed_params.should == 'AWSAccessKeyId=access&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-04-10T18%3A44%3A56.000Z&Signature=QwQIiizWrfvWuLNnzmCMfaeXFfh9IQTvOix5MNVTh2s%3D'
+      signed_params.should == 'AWSAccessKeyId=access&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-04-10T18%3A44%3A56.000Z&Signature=t%2BccC38VxCKyk2ROTKo9vnECsntKoU0RBAFklHWP5bE%3D'
     end
   end
 
