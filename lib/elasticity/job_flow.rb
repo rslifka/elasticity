@@ -18,7 +18,7 @@ module Elasticity
     attr_accessor :keep_job_flow_alive_when_no_steps
     attr_accessor :ec2_subnet_id
 
-    def initialize(access, secret)
+    def initialize(access, secret, options = {})
       @action_on_failure = 'TERMINATE_JOB_FLOW'
       @ec2_key_name = 'default'
       @hadoop_version = '0.20.205'
@@ -38,7 +38,7 @@ module Elasticity
       @master_instance_type = 'm1.small'
       @slave_instance_type = 'm1.small'
 
-      @emr = Elasticity::EMR.new(access, secret)
+      @emr = Elasticity::EMR.new(access, secret, options)
     end
 
     def self.from_jobflow_id(access, secret, jobflow_id)
