@@ -123,7 +123,7 @@ describe Elasticity::JobFlow do
       end
 
       before do
-        Elasticity::EMR.should_receive(:new).with('access', 'secret').and_return(emr)
+        Elasticity::EMR.stub(:new).and_return(emr)
         running_jobflow.run
       end
 
@@ -488,8 +488,9 @@ describe Elasticity::JobFlow do
     let(:jobflow) { Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', 'JOBFLOW_ID') }
 
     it 'should create a jobflow with the specified credentials' do
-      Elasticity::EMR.should_receive(:new).with('ACCESS', 'SECRET')
-      Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', '_')
+      new_jobflow = Elasticity::JobFlow.new('_','_')
+      Elasticity::JobFlow.should_receive(:new).with('ACCESS', 'SECRET').and_return(new_jobflow)
+      Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', '_').should == new_jobflow
     end
 
     it 'should create a jobflow' do

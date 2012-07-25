@@ -33,12 +33,12 @@ module Elasticity
       @instance_groups = {}
       set_master_instance_group(Elasticity::InstanceGroup.new)
       set_core_instance_group(Elasticity::InstanceGroup.new)
-
       @instance_count = 2
       @master_instance_type = 'm1.small'
       @slave_instance_type = 'm1.small'
 
-      @emr = Elasticity::EMR.new(access, secret)
+      @access = access
+      @secret = secret
     end
 
     def self.from_jobflow_id(access, secret, jobflow_id)
@@ -91,7 +91,7 @@ module Elasticity
           jobflow_steps << jobflow_step.aws_installation_step
         end
         jobflow_steps << jobflow_step.to_aws_step(self)
-        @emr.add_jobflow_steps(@jobflow_id, {:steps => jobflow_steps})
+        emr.add_jobflow_steps(@jobflow_id, {:steps => jobflow_steps})
       else
         @jobflow_steps << jobflow_step
       end
@@ -100,20 +100,24 @@ module Elasticity
     def run
       raise_if @jobflow_steps.empty?, JobFlowMissingStepsError, 'Cannot run a job flow without adding steps.  Please use #add_step.'
       raise_if is_jobflow_running?, JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.'
-      @jobflow_id = @emr.run_job_flow(jobflow_config)
+      @jobflow_id = emr.run_job_flow(jobflow_config)
     end
 
     def shutdown
       raise_unless is_jobflow_running?, JobFlowNotStartedError, 'Cannot #shutdown a job flow that has not yet been #run.'
-      @emr.terminate_jobflows(@jobflow_id)
+      emr.terminate_jobflows(@jobflow_id)
     end
 
     def status
       raise_unless is_jobflow_running?, JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.'
-      @emr.describe_jobflow(@jobflow_id)
+      emr.describe_jobflow(@jobflow_id)
     end
 
     private
+
+    def emr
+      @emr ||= Elasticity::EMR.new(@access, @secret)
+    end
 
     def is_jobflow_running?
       !@jobflow_id.nil?
