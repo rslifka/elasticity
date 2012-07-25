@@ -1,10 +1,5 @@
 describe Elasticity::JobFlow do
 
-  before do
-    # Ensure we don't accidentally submit to EMR for all of these examples
-    Elasticity::EMR.stub(:new).and_return(double('Elasticity::EMR', :run_job_flow => '_'))
-  end
-
   subject do
     Elasticity::JobFlow.new('access', 'secret')
   end
@@ -102,6 +97,7 @@ describe Elasticity::JobFlow do
 
     context 'when the jobflow is already started' do
       before do
+        Elasticity::EMR.any_instance.stub(:run_job_flow => '_')
         subject.add_step(Elasticity::CustomJarStep.new('_'))
         subject.run
       end
@@ -401,6 +397,7 @@ describe Elasticity::JobFlow do
 
       context 'when the jobflow has already been run' do
         before do
+          Elasticity::EMR.any_instance.stub(:run_job_flow => '_')
           jobflow_with_steps.run
         end
         it 'should raise an error' do
