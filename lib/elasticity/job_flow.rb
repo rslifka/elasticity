@@ -55,7 +55,7 @@ module Elasticity
     end
 
     def instance_count=(count)
-      raise ArgumentError, 'Instance count cannot be set to less than 2 (requested 1)' unless count > 1
+      raise ArgumentError, "Instance count cannot be set to less than 2 (requested #{count})" unless count > 1
       @instance_groups[:core].count = count - 1
       @instance_count = count
     end
