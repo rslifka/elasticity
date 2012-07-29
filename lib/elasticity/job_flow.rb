@@ -17,6 +17,7 @@ module Elasticity
     attr_accessor :ami_version
     attr_accessor :keep_job_flow_alive_when_no_steps
     attr_accessor :ec2_subnet_id
+    attr_accessor :placement
 
     def initialize(access, secret)
       @action_on_failure = 'TERMINATE_JOB_FLOW'
@@ -25,6 +26,10 @@ module Elasticity
       @name = 'Elasticity Job Flow'
       @ami_version = 'latest'
       @keep_job_flow_alive_when_no_steps = false
+      @placement = 'us-east-1a'
+
+      @access = access
+      @secret = secret
 
       @bootstrap_actions = []
       @jobflow_steps = []
@@ -41,8 +46,9 @@ module Elasticity
       @secret = secret
     end
 
-    def self.from_jobflow_id(access, secret, jobflow_id)
+    def self.from_jobflow_id(access, secret, jobflow_id, placement = 'us-east-1a')
       JobFlow.new(access, secret).tap do |j|
+        j.instance_variable_set(:@placement, placement)
         j.instance_variable_set(:@jobflow_id, jobflow_id)
         j.instance_variable_set(:@installed_steps, j.status.installed_steps)
       end
@@ -116,7 +122,7 @@ module Elasticity
     private
 
     def emr
-      @emr ||= Elasticity::EMR.new(@access, @secret)
+      @emr ||= Elasticity::EMR.new(@access, @secret, :region => @placement.match(/(\w+-\w+-\d+)/)[0])
     end
 
     def is_jobflow_running?
