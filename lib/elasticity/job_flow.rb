@@ -46,9 +46,9 @@ module Elasticity
       @secret = secret
     end
 
-    def self.from_jobflow_id(access, secret, jobflow_id, placement = 'us-east-1a')
+    def self.from_jobflow_id(access, secret, jobflow_id, region = 'us-east-1')
       JobFlow.new(access, secret).tap do |j|
-        j.instance_variable_set(:@placement, placement)
+        j.instance_variable_set(:@region, region)
         j.instance_variable_set(:@jobflow_id, jobflow_id)
         j.instance_variable_set(:@installed_steps, j.status.installed_steps)
       end
@@ -122,7 +122,8 @@ module Elasticity
     private
 
     def emr
-      @emr ||= Elasticity::EMR.new(@access, @secret, :region => @placement.match(/(\w+-\w+-\d+)/)[0])
+      @region ||= @placement.match(/(\w+-\w+-\d+)/)[0]
+      @emr ||= Elasticity::EMR.new(@access, @secret, :region => @region)
     end
 
     def is_jobflow_running?
