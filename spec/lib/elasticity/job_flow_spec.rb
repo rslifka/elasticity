@@ -492,7 +492,7 @@ describe Elasticity::JobFlow do
     describe 'creating a jobflow with the specified credentials' do
 
       context 'when the region is not specified' do
-        it 'should use the default of us-east-1' do
+        it 'should use the default of us-east-1a' do
           j = Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', '_')
           j.send(:emr).should == Elasticity::EMR.new('ACCESS', 'SECRET', :region => 'us-east-1')
         end
