@@ -1,3 +1,8 @@
+## 2.3 - July 28, 2012
+
++ ```JobFlow``` now supports specifying availbility zone instance specification via ```JobFlow#placement=```.
++ ```JobFlow::from_jobflow_id``` now supports region specification so that jobs created in regions other than us-east-1 can be recreated.
+
 ## 2.2 - July 23, 2012
 
 + Hadoop streaming jobs are now supported via ```Elasticity::StreamingStep```.
