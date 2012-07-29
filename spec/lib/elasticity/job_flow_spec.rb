@@ -482,35 +482,26 @@ describe Elasticity::JobFlow do
   end
 
   describe '.from_jobflow_id' do
+
     before do
       Elasticity::JobFlow.any_instance.stub_chain(:status, :installed_steps => [])
     end
 
     let(:jobflow) { Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', 'JOBFLOW_ID') }
 
-    it 'should create a jobflow with the specified credentials' do
-      new_jobflow = Elasticity::JobFlow.new('_','_')
-      Elasticity::JobFlow.should_receive(:new).with('ACCESS', 'SECRET').and_return(new_jobflow)
-      Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', '_').should == new_jobflow
-    end
-
     describe 'creating a jobflow with the specified credentials' do
 
       context 'when the placement is not specified' do
         it 'should use the default of us-east-1a' do
-          jobflow = Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', '_')
-          jobflow.instance_variable_get(:@access).should == 'ACCESS'
-          jobflow.instance_variable_get(:@secret).should == 'SECRET'
-          jobflow.placement.should == 'us-east-1a'
+          j = Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', '_')
+          j.send(:emr).should == Elasticity::EMR.new('ACCESS', 'SECRET', :region => 'us-east-1')
         end
       end
 
       context 'when the placement is specified' do
         it 'should use the specified placement' do
-          jobflow = Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', '_', 'us-west-1b')
-          jobflow.instance_variable_get(:@access).should == 'ACCESS'
-          jobflow.instance_variable_get(:@secret).should == 'SECRET'
-          jobflow.placement.should == 'us-west-1b'
+          j = Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', '_', 'us-west-1')
+          j.send(:emr).should == Elasticity::EMR.new('ACCESS', 'SECRET', :region => 'us-west-1')
         end
       end
 
