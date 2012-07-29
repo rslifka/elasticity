@@ -85,13 +85,13 @@ describe Elasticity::AwsRequest do
     context 'when there is an EMR error with the request' do
       let(:error_message) { 'ERROR_MESSAGE' }
       let(:error_xml) do
-        <<-ERROR
+        <<-XML
           <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
             <Error>
               <Message>#{error_message}</Message>
             </Error>
           </ErrorResponse>
-        ERROR
+        XML
       end
       let(:error) do
         RestClient::BadRequest.new.tap do |error|
@@ -110,24 +110,39 @@ describe Elasticity::AwsRequest do
   end
 
   describe '#==' do
-    let(:same_object) { subject }
-    let(:same_values) { Elasticity::AwsRequest.new('access', 'secret', {}) }
-    let(:diff_type) { Object.new }
 
-    it { should == same_object }
-    it { should == same_values }
-    it { should_not == diff_type }
+    describe 'basic equality checks with subject' do
+      let(:same_object) { subject }
+      let(:same_values) { Elasticity::AwsRequest.new('access', 'secret', {}) }
+      let(:diff_type) { Object.new }
 
-    it 'should be false on deep comparison' do
-      {
-        :@access_key => '_',
-        :@secret_key => '_',
-        :@options => {:foo => :bar}
-      }.each do |variable, value|
-        other = Elasticity::AwsRequest.new('aws_access_key_id', 'aws_secret_access_key', {})
-        other.instance_variable_set(variable, value)
-        subject.should_not == other
+      it { should == same_object }
+      it { should == same_values }
+      it { should_not == diff_type }
+    end
+
+    describe 'deep comparisons' do
+
+      it 'should fail on access key check' do
+        Elasticity::AwsRequest.new('access', '_').should_not == Elasticity::AwsRequest.new('_', '_')
       end
+
+      it 'should fail on secret key check' do
+        Elasticity::AwsRequest.new('_', 'secret').should_not == Elasticity::AwsRequest.new('_', '_')
+      end
+
+      it 'should fail on host check' do
+        aws1 = Elasticity::AwsRequest.new('_', '_', :region => 'us-east-1')
+        aws2 = Elasticity::AwsRequest.new('_', '_', :region => 'us-west-1')
+        aws1.should_not == aws2
+      end
+
+      it 'should fail on protocol check' do
+        aws1 = Elasticity::AwsRequest.new('_', '_', :secure => true)
+        aws2 = Elasticity::AwsRequest.new('_', '_', :secure => false)
+        aws1.should_not == aws2
+      end
+
     end
 
   end

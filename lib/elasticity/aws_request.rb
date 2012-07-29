@@ -4,7 +4,6 @@ module Elasticity
 
     attr_reader :access_key
     attr_reader :secret_key
-    attr_reader :options
     attr_reader :host
     attr_reader :protocol
 
@@ -32,7 +31,8 @@ module Elasticity
       return false unless other.is_a? AwsRequest
       return false unless @access_key == other.access_key
       return false unless @secret_key == other.secret_key
-      return false unless @options == other.options
+      return false unless @host == other.host
+      return false unless @protocol == other.protocol
       true
     end
 
