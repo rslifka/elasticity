@@ -35,7 +35,7 @@ jobflow = Elasticity::JobFlow.new('AWS access key', 'AWS secret key')
 step = Elasticity::CustomJarStep.new('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar')
 
 # Here are the arguments to pass to the jar
-c.arguments = %w(s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br s3n://elasticmapreduce/samples/cloudburst/input/100k.br s3n://slif-output/cloudburst/output/2012-06-22 36 3 0 1 240 48 24 24 128 16)
+step.arguments = %w(s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br s3n://elasticmapreduce/samples/cloudburst/input/100k.br s3n://slif-output/cloudburst/output/2012-06-22 36 3 0 1 240 48 24 24 128 16)
 
 # Add the step to the jobflow
 jobflow.add_step(step)
