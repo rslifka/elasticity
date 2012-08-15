@@ -126,7 +126,6 @@ ig.count = 10                       # Provision 10 instances
 ig.type  = 'c1.medium'              # See the EMR docs for a list of supported types
 ig.set_on_demand_instances          # This is the default setting
 
-
 jobflow.set_core_instance_group(ig)
 ```
 
@@ -139,7 +138,6 @@ ig = Elasticity::InstanceGroup.new
 ig.count = 10                       # Provision 10 instances
 ig.type  = 'c1.medium'              # See the EMR docs for a list of supported types
 ig.set_spot_instances(0.25)         # Makes this a SPOT group with a $0.25 bid price
-
 
 jobflow.set_core_instance_group(ig)
 ```
