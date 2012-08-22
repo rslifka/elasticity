@@ -22,6 +22,8 @@ describe Elasticity::HiveStep do
         's3://elasticmapreduce/libs/hive/hive-script',
           '--run-hive-script',
           '--args',
+          '--hive-versions',
+          '0.7.1',
           '-f',
           'script.hql'
       ])
@@ -39,8 +41,22 @@ describe Elasticity::HiveStep do
 
       it 'should convert to aws step format' do
         step = hs_with_variables.to_aws_step(Elasticity::JobFlow.new('access', 'secret'))
-        step[:hadoop_jar_step][:args][5..9].should == %w(-d VAR1=VALUE1 -d VAR2=VALUE2)
+        step[:hadoop_jar_step][:args][7..10].should == %w(-d VAR1=VALUE1 -d VAR2=VALUE2)
       end
+    end
+
+    context 'when a version is provided' do
+      let(:hs_with_version) do
+        Elasticity::HiveStep.new('script.pig').tap do |hs|
+          hs.hive_version = "latest"
+        end
+      end
+
+      it 'should convert to aws step format' do
+        step = hs_with_version.to_aws_step(Elasticity::JobFlow.new('access', 'secret'))
+        step[:hadoop_jar_step][:args][3..4].should == %w(--hive-versions latest)
+      end
+
     end
 
   end
@@ -52,8 +68,10 @@ describe Elasticity::HiveStep do
   end
 
   describe '.aws_installation_step' do
-
     it 'should provide a means to install Hive' do
+      Elasticity::HiveStep.new('script.pig').tap do |hs|
+         hs.hive_version = "0.7.1"
+      end
       Elasticity::HiveStep.aws_installation_step.should == {
         :action_on_failure => 'TERMINATE_JOB_FLOW',
         :hadoop_jar_step => {
@@ -62,7 +80,9 @@ describe Elasticity::HiveStep do
             's3://elasticmapreduce/libs/hive/hive-script',
               '--base-path',
               's3://elasticmapreduce/libs/hive/',
-              '--install-hive'
+              '--install-hive',
+              '--hive-versions',
+              '0.7.1'
           ],
         },
         :name => 'Elasticity - Install Hive'

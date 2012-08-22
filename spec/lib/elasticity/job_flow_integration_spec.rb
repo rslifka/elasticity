@@ -56,7 +56,9 @@ describe 'Elasticity::JobFlow Integration Examples' do
                 's3://elasticmapreduce/libs/hive/hive-script',
                   '--base-path',
                   's3://elasticmapreduce/libs/hive/',
-                  '--install-hive'
+                  '--install-hive',
+                  '--hive-versions',
+                  '0.7.1'
               ],
             },
             :name => 'Elasticity - Install Hive'
@@ -69,6 +71,8 @@ describe 'Elasticity::JobFlow Integration Examples' do
                   's3://elasticmapreduce/libs/hive/hive-script',
                     '--run-hive-script',
                     '--args',
+                    '--hive-versions',
+                    '0.7.1',
                     '-f', 's3n://slif-hive/test.q',
                     '-d', 'OUTPUT=s3n://slif-test/output'
                 ],
