@@ -21,9 +21,9 @@ describe Elasticity::HiveStep do
       step[:hadoop_jar_step][:args].should start_with([
         's3://elasticmapreduce/libs/hive/hive-script',
           '--run-hive-script',
-          '--args',
           '--hive-versions',
           '0.7.1',
+          '--args',
           '-f',
           'script.hql'
       ])
@@ -54,7 +54,7 @@ describe Elasticity::HiveStep do
 
       it 'should convert to aws step format' do
         step = hs_with_version.to_aws_step(Elasticity::JobFlow.new('access', 'secret'))
-        step[:hadoop_jar_step][:args][3..4].should == %w(--hive-versions latest)
+        step[:hadoop_jar_step][:args][2..3].should == %w(--hive-versions latest)
       end
 
     end

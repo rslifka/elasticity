@@ -70,9 +70,9 @@ describe 'Elasticity::JobFlow Integration Examples' do
                 :args => [
                   's3://elasticmapreduce/libs/hive/hive-script',
                     '--run-hive-script',
-                    '--args',
                     '--hive-versions',
                     '0.7.1',
+                    '--args',
                     '-f', 's3n://slif-hive/test.q',
                     '-d', 'OUTPUT=s3n://slif-test/output'
                 ],
