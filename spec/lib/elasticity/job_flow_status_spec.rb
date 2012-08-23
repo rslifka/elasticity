@@ -65,6 +65,9 @@ describe Elasticity::JobFlowStatus do
                 </member>
               </Steps>
               <Instances>
+                 <MasterPublicDnsName>
+                   ec2-107-22-77-99.compute-1.amazonaws.com
+                 </MasterPublicDnsName>
                  <Placement>
                     <AvailabilityZone>
                       eu-west-1a
@@ -154,6 +157,7 @@ describe Elasticity::JobFlowStatus do
       single_jobflow.slave_instance_type.should == 'm1.small'
       single_jobflow.instance_count.should == '4'
       single_jobflow.last_state_change_reason.should == 'Steps completed with errors'
+      single_jobflow.master_public_dns_name.should == 'ec2-107-22-77-99.compute-1.amazonaws.com'
     end
   end
 
@@ -169,6 +173,7 @@ describe Elasticity::JobFlowStatus do
       multiple_jobflows.map(&:slave_instance_type).should == %w(m1.small c1.medium)
       multiple_jobflows.map(&:instance_count).should == %w(4 2)
       multiple_jobflows.map(&:last_state_change_reason).should == ['Steps completed with errors', 'Steps completed']
+      multiple_jobflows.map(&:master_public_dns_name).should == ['ec2-107-22-77-99.compute-1.amazonaws.com', nil]
     end
   end
 

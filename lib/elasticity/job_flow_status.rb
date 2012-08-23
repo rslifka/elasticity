@@ -14,6 +14,7 @@ module Elasticity
     attr_accessor :slave_instance_type
     attr_accessor :last_state_change_reason
     attr_accessor :installed_steps
+    attr_accessor :master_public_dns_name
 
     def initialize
       @steps = []
@@ -48,6 +49,9 @@ module Elasticity
       jobflow.instance_count = xml_element.xpath('./Instances/InstanceCount').text.strip
       jobflow.master_instance_type = xml_element.xpath('./Instances/MasterInstanceType').text.strip
       jobflow.slave_instance_type = xml_element.xpath('./Instances/SlaveInstanceType').text.strip
+
+      master_public_dns_name = xml_element.xpath('./Instances/MasterPublicDnsName').text.strip
+      jobflow.master_public_dns_name = (master_public_dns_name == '') ? (nil) : (master_public_dns_name)
 
       jobflow
     end
