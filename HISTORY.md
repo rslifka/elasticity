@@ -1,3 +1,10 @@
+## 2.3.1 - August 23, 2012
+
++ Birthday release! ;)
++ Bumped the default version of Hadoop to 1.0.3.
++ Amazon now requires the --hive-versions argument when installing Hive (thanks to Johannes Wuerbach).
++ ```JobFlowStatus#master_public_dns_name``` is now available (thanks to Johannes Wuerbach).
+
 ## 2.3 - July 28, 2012
 
 + ```JobFlow``` now supports specifying availbility zone instance specification via ```JobFlow#placement=```.
