@@ -7,7 +7,7 @@ describe Elasticity::JobFlow do
   its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
   its(:ec2_key_name) { should == nil }
   its(:ec2_subnet_id) { should == nil }
-  its(:hadoop_version) { should == '0.20.205' }
+  its(:hadoop_version) { should == '1.0.3' }
   its(:instance_count) { should == 2 }
   its(:log_uri) { should == nil }
   its(:master_instance_type) { should == 'm1.small' }
@@ -341,7 +341,7 @@ describe Elasticity::JobFlow do
         :ami_version => 'latest',
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
-          :hadoop_version => '0.20.205',
+          :hadoop_version => '1.0.3',
           :instance_groups => ['INSTANCE_GROUP_CONFIGURATION']
         }
       }

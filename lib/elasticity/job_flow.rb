@@ -21,7 +21,7 @@ module Elasticity
 
     def initialize(access, secret)
       @action_on_failure = 'TERMINATE_JOB_FLOW'
-      @hadoop_version = '0.20.205'
+      @hadoop_version = '1.0.3'
       @name = 'Elasticity Job Flow'
       @ami_version = 'latest'
       @keep_job_flow_alive_when_no_steps = false

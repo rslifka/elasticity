@@ -30,7 +30,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :ami_version => 'latest',
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
-          :hadoop_version => '0.20.205',
+          :hadoop_version => '1.0.3',
           :instance_groups => [
             {
               :instance_count => 1,
@@ -108,7 +108,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :ami_version => 'latest',
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
-          :hadoop_version => '0.20.205',
+          :hadoop_version => '1.0.3',
           :instance_groups => [
             {
               :instance_count => 1,
@@ -190,7 +190,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :ami_version => 'latest',
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
-          :hadoop_version => '0.20.205',
+          :hadoop_version => '1.0.3',
           :instance_groups => [
             {
               :instance_count => 1,
