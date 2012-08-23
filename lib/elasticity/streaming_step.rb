@@ -2,7 +2,7 @@ module Elasticity
 
   class StreamingStep
 
-    include JobFlowStep
+    include Elasticity::JobFlowStep
 
     attr_accessor :name
     attr_accessor :action_on_failure

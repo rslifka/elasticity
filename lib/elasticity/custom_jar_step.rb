@@ -2,7 +2,7 @@ module Elasticity
 
   class CustomJarStep
 
-    include JobFlowStep
+    include Elasticity::JobFlowStep
 
     attr_accessor :name
     attr_accessor :jar
