@@ -45,7 +45,9 @@ module Elasticity
             's3://elasticmapreduce/libs/hive/hive-script',
               '--base-path',
               's3://elasticmapreduce/libs/hive/',
-              '--install-hive'
+              '--install-hive',
+              '--hive-versions',
+              'latest'
           ],
         },
         :name => 'Elasticity - Install Hive'

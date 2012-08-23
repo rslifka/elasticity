@@ -8,7 +8,7 @@ describe Elasticity::HiveStep do
 
   its(:name) { should == 'Elasticity Hive Step (script.hql)' }
   its(:script) { should == 'script.hql' }
-  its(:variables) { should == { } }
+  its(:variables) { should == {} }
   its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
 
   describe '#to_aws_step' do
@@ -62,7 +62,9 @@ describe Elasticity::HiveStep do
             's3://elasticmapreduce/libs/hive/hive-script',
               '--base-path',
               's3://elasticmapreduce/libs/hive/',
-              '--install-hive'
+              '--install-hive',
+              '--hive-versions',
+              'latest'
           ],
         },
         :name => 'Elasticity - Install Hive'
