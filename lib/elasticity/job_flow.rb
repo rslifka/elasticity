@@ -21,7 +21,6 @@ module Elasticity
 
     def initialize(access, secret)
       @action_on_failure = 'TERMINATE_JOB_FLOW'
-      @ec2_key_name = 'default'
       @hadoop_version = '0.20.205'
       @name = 'Elasticity Job Flow'
       @ami_version = 'latest'
@@ -144,12 +143,12 @@ module Elasticity
         :ami_version => @ami_version,
         :instances => {
           :keep_job_flow_alive_when_no_steps => @keep_job_flow_alive_when_no_steps,
-          :ec2_key_name => @ec2_key_name,
           :hadoop_version => @hadoop_version,
           :instance_groups => jobflow_instance_groups
         }
       }
       preamble.merge!(:ec2_subnet_id => @ec2_subnet_id) if @ec2_subnet_id
+      preamble[:instances].merge!(:ec2_key_name => @ec2_key_name) if @ec2_key_name
       preamble
     end
 

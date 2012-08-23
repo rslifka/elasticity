@@ -30,7 +30,6 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :ami_version => 'latest',
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
-          :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
           :instance_groups => [
             {
@@ -109,7 +108,6 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :ami_version => 'latest',
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
-          :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
           :instance_groups => [
             {
@@ -192,7 +190,6 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :ami_version => 'latest',
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
-          :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
           :instance_groups => [
             {

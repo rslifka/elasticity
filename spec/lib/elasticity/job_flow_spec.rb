@@ -5,7 +5,8 @@ describe Elasticity::JobFlow do
   end
 
   its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
-  its(:ec2_key_name) { should == 'default' }
+  its(:ec2_key_name) { should == nil }
+  its(:ec2_subnet_id) { should == nil }
   its(:hadoop_version) { should == '0.20.205' }
   its(:instance_count) { should == 2 }
   its(:log_uri) { should == nil }
@@ -340,7 +341,6 @@ describe Elasticity::JobFlow do
         :ami_version => 'latest',
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
-          :ec2_key_name => 'default',
           :hadoop_version => '0.20.205',
           :instance_groups => ['INSTANCE_GROUP_CONFIGURATION']
         }
@@ -353,6 +353,13 @@ describe Elasticity::JobFlow do
 
     it 'should create a jobflow configuration section' do
       subject.send(:jobflow_preamble).should == basic_preamble
+    end
+
+    context 'when a key name is provided' do
+      it 'should include it in the preamble' do
+        subject.ec2_key_name = 'default'
+        subject.send(:jobflow_preamble)[:instances].should be_a_hash_including({:ec2_key_name => 'default'})
+      end
     end
 
     context 'when a VPC subnet ID is specified' do
