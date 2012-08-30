@@ -1,15 +1,81 @@
 describe Elasticity::AwsRequest do
 
   before do
-    Time.stub(:now).and_return(Time.at(1302461096))
+    Timecop.freeze(Time.at(1302461096))
   end
 
   subject do
     Elasticity::AwsRequest.new('access', 'secret')
   end
 
-  its(:access_key) { should == 'access' }
-  its(:secret_key) { should == 'secret' }
+  describe '#initialize' do
+
+    context 'when access and/or secret keys are provided' do
+      it 'should set them to the provided values' do
+        subject.access_key.should == 'access'
+        subject.secret_key.should == 'secret'
+      end
+    end
+
+    context 'when either access or secret key is not provided or nil' do
+
+      context 'when the proper environment variables are set' do
+
+        context 'when access and secret key are not provided' do
+          let(:default_values) { Elasticity::AwsRequest.new }
+          before do
+            ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('ENV_ACCESS')
+            ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('ENV_SECRET')
+          end
+          it 'should set access and secret keys' do
+            default_values.access_key.should == 'ENV_ACCESS'
+            default_values.secret_key.should == 'ENV_SECRET'
+          end
+        end
+
+        context 'when access and secret key are nil' do
+          let(:nil_values) { Elasticity::AwsRequest.new(nil, nil) }
+          before do
+            ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('ENV_ACCESS')
+            ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('ENV_SECRET')
+          end
+          it 'should set access and secret keys' do
+            nil_values.access_key.should == 'ENV_ACCESS'
+            nil_values.secret_key.should == 'ENV_SECRET'
+          end
+        end
+
+      end
+
+      context 'when the environment variables are not set' do
+        let(:missing_something) { Elasticity::AwsRequest.new }
+        context 'when the access key is not set' do
+          before do
+            ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return(nil)
+            ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('_')
+          end
+          it 'should raise an error' do
+            expect {
+              missing_something.access_key
+            }.to raise_error(Elasticity::MissingKeyError, 'Please provide an access key or set AWS_ACCESS_KEY_ID.')
+          end
+        end
+        context 'when the secret key is not set' do
+          before do
+            ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('_')
+            ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return(nil)
+          end
+          it 'should raise an error' do
+            expect {
+              missing_something.access_key
+            }.to raise_error(Elasticity::MissingKeyError, 'Please provide a secret key or set AWS_ACCESS_KEY_ID.')
+          end
+        end
+      end
+
+    end
+
+  end
 
   describe '#host' do
 

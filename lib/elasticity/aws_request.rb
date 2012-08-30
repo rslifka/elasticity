@@ -1,5 +1,7 @@
 module Elasticity
 
+  class MissingKeyError < StandardError; end
+
   class AwsRequest
 
     attr_reader :access_key
@@ -10,9 +12,9 @@ module Elasticity
     # Supported values for options:
     #  :region - AWS region (e.g. us-west-1)
     #  :secure - true or false, default true.
-    def initialize(access, secret, options = {})
-      @access_key = access
-      @secret_key = secret
+    def initialize(access=nil, secret=nil, options={})
+      @access_key = get_access_key(access)
+      @secret_key = get_secret_key(secret)
       @host = "elasticmapreduce.#{{:region => 'us-east-1'}.merge(options)[:region]}.amazonaws.com"
       @protocol = {:secure => true}.merge(options)[:secure] ? 'https' : 'http'
     end
@@ -37,6 +39,18 @@ module Elasticity
     end
 
     private
+
+    def get_access_key(access)
+      return access if access
+      return ENV['AWS_ACCESS_KEY_ID'] if ENV['AWS_ACCESS_KEY_ID']
+      raise MissingKeyError, 'Please provide an access key or set AWS_ACCESS_KEY_ID.'
+    end
+
+    def get_secret_key(secret)
+      return secret if secret
+      return ENV['AWS_SECRET_ACCESS_KEY'] if ENV['AWS_SECRET_ACCESS_KEY']
+      raise MissingKeyError, 'Please provide a secret key or set AWS_ACCESS_KEY_ID.'
+    end
 
     # (Used from RightScale's right_aws gem.)
     # EC2, SQS, SDB and EMR requests must be signed by this guy.

@@ -4,6 +4,8 @@ describe Elasticity::JobFlow do
     Elasticity::JobFlow.new('access', 'secret')
   end
 
+  its(:access_key) { should == 'access' }
+  its(:secret_key) { should == 'secret' }
   its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
   its(:ec2_key_name) { should == nil }
   its(:ec2_subnet_id) { should == nil }
@@ -16,6 +18,18 @@ describe Elasticity::JobFlow do
   its(:ami_version) { should == 'latest' }
   its(:keep_job_flow_alive_when_no_steps) { should == false }
   its(:placement) { should == 'us-east-1a' }
+
+  describe '.initialize' do
+    it 'should set the access and secret keys to nil by default' do
+      Elasticity::JobFlow.new.tap do |j|
+        j.access_key.should == nil
+        j.secret_key.should == nil
+      end
+      Elasticity::JobFlow.new('_') do |j|
+        j.secret_key.should == nil
+      end
+    end
+  end
 
   describe '#instance_count=' do
 

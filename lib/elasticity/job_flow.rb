@@ -19,7 +19,10 @@ module Elasticity
     attr_accessor :ec2_subnet_id
     attr_accessor :placement
 
-    def initialize(access, secret)
+    attr_reader :access_key
+    attr_reader :secret_key
+    
+    def initialize(access=nil, secret=nil)
       @action_on_failure = 'TERMINATE_JOB_FLOW'
       @hadoop_version = '1.0.3'
       @name = 'Elasticity Job Flow'
@@ -27,8 +30,8 @@ module Elasticity
       @keep_job_flow_alive_when_no_steps = false
       @placement = 'us-east-1a'
 
-      @access = access
-      @secret = secret
+      @access_key = access
+      @secret_key = secret
 
       @bootstrap_actions = []
       @jobflow_steps = []
@@ -41,8 +44,8 @@ module Elasticity
       @master_instance_type = 'm1.small'
       @slave_instance_type = 'm1.small'
 
-      @access = access
-      @secret = secret
+      @access_key = access
+      @secret_key = secret
     end
 
     def self.from_jobflow_id(access, secret, jobflow_id, region = 'us-east-1')
@@ -122,7 +125,7 @@ module Elasticity
 
     def emr
       @region ||= @placement.match(/(\w+-\w+-\d+)/)[0]
-      @emr ||= Elasticity::EMR.new(@access, @secret, :region => @region)
+      @emr ||= Elasticity::EMR.new(@access_key, @secret_key, :region => @region)
     end
 
     def is_jobflow_running?
