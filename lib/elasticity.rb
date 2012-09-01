@@ -14,6 +14,7 @@ require 'elasticity/sync_to_s3'
 
 require 'elasticity/bootstrap_action'
 require 'elasticity/hadoop_bootstrap_action'
+require 'elasticity/hadoop_file_bootstrap_action'
 require 'elasticity/job_flow_step'
 
 require 'elasticity/job_flow'
