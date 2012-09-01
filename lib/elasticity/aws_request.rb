@@ -1,6 +1,7 @@
 module Elasticity
 
-  class MissingKeyError < StandardError; end
+  class MissingKeyError < StandardError;
+  end
 
   class AwsRequest
 
@@ -57,15 +58,16 @@ module Elasticity
     # See: http://docs.amazonwebservices.com/AmazonSimpleDB/2007-11-07/DeveloperGuide/index.html?REST_RESTAuth.html
     #      http://developer.amazonwebservices.com/connect/entry.jspa?externalID=1928
     def sign_params(service_hash)
-      uri = '/' # TODO: Why are we hard-coding this?
-      service_hash["AWSAccessKeyId"] = @access_key
-      service_hash["Timestamp"] = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-      service_hash["SignatureVersion"] = "2"
-      service_hash["SignatureMethod"] = "HmacSHA256"
+      service_hash.merge!({
+        'AWSAccessKeyId' => @access_key,
+        'Timestamp' => Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S.000Z'),
+        'SignatureVersion' => '2',
+        'SignatureMethod' => 'HmacSHA256'
+      })
       canonical_string = service_hash.keys.sort.map do |key|
         "#{AwsRequest.aws_escape(key)}=#{AwsRequest.aws_escape(service_hash[key])}"
       end.join('&')
-      string_to_sign = "POST\n#{@host.downcase}\n#{uri}\n#{canonical_string}"
+      string_to_sign = "POST\n#{@host.downcase}\n/\n#{canonical_string}"
       signature = AwsRequest.aws_escape(Base64.encode64(OpenSSL::HMAC.digest("sha256", @secret_key, string_to_sign)).strip)
       "#{canonical_string}&Signature=#{signature}"
     end
@@ -109,12 +111,8 @@ module Elasticity
     end
 
     # (Used from Rails' ActiveSupport)
-    def self.camelize(lower_case_and_underscored_word, first_letter_in_uppercase = true)
-      if first_letter_in_uppercase
-        lower_case_and_underscored_word.to_s.gsub(/\/(.?)/) { "::" + $1.upcase }.gsub(/(^|_)(.)/) { $2.upcase }
-      else
-        lower_case_and_underscored_word.first + camelize(lower_case_and_underscored_word)[1..-1]
-      end
+    def self.camelize(word)
+      word.to_s.gsub(/\/(.?)/) { "::" + $1.upcase }.gsub(/(^|_)(.)/) { $2.upcase }
     end
 
     # AWS error responses all follow the same form.  Extract the message from
