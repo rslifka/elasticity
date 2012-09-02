@@ -271,7 +271,7 @@ jar_step.arguments = ['arg1', 'arg2']
 jobflow.add_step(jar_step)
 ```
 
-## 6 - Upload assets (optional)
+## 6 - Upload Assets (optional)
 
 This isn't part of ```JobFlow```; more of an aside :)  Elasticity provides a very basic means of uploading assets to S3 so that your EMR job has access to them.  For example, a TSV file with a range of valid values, join tables, etc.
 
