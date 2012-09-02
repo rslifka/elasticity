@@ -58,6 +58,7 @@ Job flows are the center of the EMR universe.  The general order of operations i
   1. (optional) Configure instance groups.
   1. (optional) Add bootstrap actions.
   1. Add steps.
+  1. (optional) Upload assets.
   1. Run the job flow.
   1. (optional) Add additional steps.
   1. (optional) Shutdown the job flow.
@@ -270,7 +271,24 @@ jar_step.arguments = ['arg1', 'arg2']
 jobflow.add_step(jar_step)
 ```
 
-## 6 - Run the Job Flow
+## 6 - Upload assets (optional)
+
+This isn't part of ```JobFlow```; more of an aside :)  Elasticity provides a very basic means of uploading assets to S3 so that your EMR job has access to them.  For example, a TSV file with a range of valid values, join tables, etc.
+
+```ruby
+# Specify the bucket and AWS credentials
+s3 = Elasticity::SyncToS3('my-bucket', 'access', 'secret')
+
+# Use the standard environment variables (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY)
+# s3 = Elasticity::SyncToS3('my-bucket')
+
+# Recursively sync the contents of '/some/parent/dir' under the remote location 'remote-dir/this-job/assets'
+s3.sync('/some/parent/dir', 'remote-dir/this-job/assets')
+```
+
+If the files already exist, there is an MD5 checksum check.  If the checksums are the same, the file will be skipped.  Now you can use something like ```s3n://my-bucket/remote-dir/this-job/assets/join.tsv``` in your EMR jobs.
+
+## 7 - Run the Job Flow
 
 Submit the job flow to Amazon, storing the ID of the running job flow.
 
@@ -278,11 +296,11 @@ Submit the job flow to Amazon, storing the ID of the running job flow.
 jobflow_id = jobflow.run
 ```
 
-## 7 - Add Additional Steps (optional)
+## 8 - Add Additional Steps (optional)
 
 Steps can be added to a running jobflow just by calling ```#add_step``` on the job flow exactly how you add them prior to submitting the job.
 
-## 8 - Shut Down the Job Flow (optional)
+## 9 - Shut Down the Job Flow (optional)
 
 By default, job flows are set to terminate when there are no more running steps.  You can tell the job flow to stay alive when it has nothing left to do:
 
