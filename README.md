@@ -21,9 +21,9 @@ gem 'elasticity', '~> 2.0'
 
 This will ensure that you protect yourself from API changes, which will only be made in major revisions.
 
-# Kicking Off a Job
+# Roughly, What Am I Getting Myself Into?
 
-When using the EMR UI, there are several sample jobs that Amazon supplies.  The assets for these sample jobs are hosted on S3 and publicly available meaning you can run this code as-is (supplying your AWS credentials appropriately) and ```JobFlow#run``` will return the ID of the job flow.
+If you're familiar with the AWS EMR UI, you'll recall there are sample jobs Amazon supplies to help us get familiar with EMR.  Here's how you'd kick off the "Cloudburst (Custom Jar)" sample job with Elasticity.  You can run this code as-is (supplying your AWS credentials and an output location) and ```JobFlow#run``` will return the ID of the job flow.
 
 ```ruby
 require 'elasticity'
@@ -38,7 +38,7 @@ jobflow = Elasticity::JobFlow.new('AWS access key', 'AWS secret key')
 step = Elasticity::CustomJarStep.new('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar')
 
 # Here are the arguments to pass to the jar
-step.arguments = %w(s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br s3n://elasticmapreduce/samples/cloudburst/input/100k.br s3n://slif-output/cloudburst/output/2012-06-22 36 3 0 1 240 48 24 24 128 16)
+step.arguments = %w(s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br s3n://elasticmapreduce/samples/cloudburst/input/100k.br s3n://OUTPUT_BUCKET/cloudburst/output/2012-06-22 36 3 0 1 240 48 24 24 128 16)
 
 # Add the step to the jobflow
 jobflow.add_step(step)
