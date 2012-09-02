@@ -93,14 +93,16 @@ Configuration job flow options, shown below with default values.  Note that thes
 These options are sent up as part of job flow submission (i.e. ```JobFlow#run```), so be sure to configure these before running the job.
 
 ```ruby
-jobflow.action_on_failure                 = 'TERMINATE_JOB_FLOW'
-jobflow.ami_version                       = 'latest'
-jobflow.ec2_key_name                      = 'default'
-jobflow.ec2_subnet_id                     = nil
-jobflow.hadoop_version                    = '0.20.205'
-jobflow.keep_job_flow_alive_when_no_steps = true
-jobflow.log_uri                           = nil
 jobflow.name                              = 'Elasticity Job Flow'
+
+jobflow.action_on_failure                 = 'TERMINATE_JOB_FLOW'
+jobflow.keep_job_flow_alive_when_no_steps = false
+jobflow.ami_version                       = 'latest'
+jobflow.hadoop_version                    = '1.0.3'
+jobflow.log_uri                           = nil
+
+jobflow.ec2_key_name                      = nil
+jobflow.ec2_subnet_id                     = nil
 jobflow.placement                         = 'us-east-1a'
 jobflow.instance_count                    = 2
 jobflow.master_instance_type              = 'm1.small'
