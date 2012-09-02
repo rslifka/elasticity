@@ -163,7 +163,6 @@ With the basic ```BootstrapAction``` you specify everything about the action - t
 
 ```ruby
 action = Elasticity::BootstrapAction.new('s3n://my-bucket/my-script', '-g', '100')
-
 jobflow.add_bootstrap_action(action)
 ```
 
@@ -187,7 +186,6 @@ With EMR's current limit of 15 bootstrap actions, chances are you're going to cr
 
 ```ruby
 action = Elasticity::HadoopFileBootstrapAction.new('s3n://my-bucket/job-config.xml')
-
 jobflow.add_bootstrap_action(action)
 ```
 
