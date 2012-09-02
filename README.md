@@ -67,13 +67,21 @@ Job flows are the center of the EMR universe.  The general order of operations i
 Only your AWS credentials are needed.
 
 ```ruby
+# Manually specify AWS credentials
 jobflow = Elasticity::JobFlow.new('AWS access key', 'AWS secret key')
+
+# Use the standard environment variables (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY)
+jobflow = Elasticity::JobFlow.new
 ```
 
 If you want to access a job flow that's already running:
 
 ```ruby
+# Manually specify AWS credentials
 jobflow = Elasticity::JobFlow.from_jobflow_id('AWS access key', 'AWS secret key', 'jobflow ID', 'region')
+
+# Use the standard environment variables (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY)
+jobflow = Elasticity::JobFlow.from_jobflow_id(nil, nil, 'jobflow ID', 'region')
 ```
 
 This is useful if you'd like to attach to a running job flow and add more steps, etc.  The ```region``` parameter is necessary because job flows are only accessible from the the API when you connect to the same endpoint that created them (e.g. us-west-1).  If you don't specify the ```region``` parameter, us-east-1 is assumed.
