@@ -57,7 +57,7 @@ Job flows are the center of the EMR universe.  The general order of operations i
   1. Specify options.
   1. (optional) Configure instance groups.
   1. (optional) Add bootstrap actions.
-  1. Create steps.
+  1. Add steps.
   1. Run the job flow.
   1. (optional) Add additional steps.
   1. (optional) Shutdown the job flow.
@@ -86,7 +86,7 @@ jobflow = Elasticity::JobFlow.from_jobflow_id(nil, nil, 'jobflow ID', 'region')
 
 This is useful if you'd like to attach to a running job flow and add more steps, etc.  The ```region``` parameter is necessary because job flows are only accessible from the the API when you connect to the same endpoint that created them (e.g. us-west-1).  If you don't specify the ```region``` parameter, us-east-1 is assumed.
 
-## 2 - Specifying Job Flow Options
+## 2 - Specifying Options
 
 Configuration job flow options, shown below with default values.  Note that these defaults are subject to change - they are reasonable defaults at the time(s) I work on them (e.g. the latest version of Hadoop).
 
@@ -109,7 +109,7 @@ jobflow.master_instance_type              = 'm1.small'
 jobflow.slave_instance_type               = 'm1.small'
 ```
 
-## 3 - Configuring Instance Groups (optional)
+## 3 - Configure Instance Groups (optional)
 
 Technically this is optional since Elasticity creates MASTER and CORE instance groups for you (one m1.small instance in each).  If you'd like your jobs to finish in an appreciable amount of time, you'll want to at least add a few instances to the CORE group :)
 
@@ -155,7 +155,7 @@ ig.set_spot_instances(0.25)         # Makes this a SPOT group with a $0.25 bid p
 jobflow.set_core_instance_group(ig)
 ```
 
-## 4 - Adding Bootstrap Actions (optional)
+## 4 - Add Bootstrap Actions (optional)
 
 Bootstrap actions are run as part of setting up the job flow, so be sure to configure these before running the job.
 
@@ -191,7 +191,7 @@ action = Elasticity::HadoopFileBootstrapAction.new('s3n://my-bucket/job-config.x
 jobflow.add_bootstrap_action(action)
 ```
 
-## 5 - Adding Steps
+## 5 - Add Steps
 
 Each type of step has ```#name``` and ```#action_on_failure``` fields that can be overridden.  Apart from that, steps are configured differently - exhaustively described below.
 
@@ -270,7 +270,7 @@ jar_step.arguments = ['arg1', 'arg2']
 jobflow.add_step(jar_step)
 ```
 
-## 6 - Running the Job Flow
+## 6 - Run the Job Flow
 
 Submit the job flow to Amazon, storing the ID of the running job flow.
 
@@ -278,11 +278,11 @@ Submit the job flow to Amazon, storing the ID of the running job flow.
 jobflow_id = jobflow.run
 ```
 
-## 7 - Adding Additional Steps (optional)
+## 7 - Add Additional Steps (optional)
 
 Steps can be added to a running jobflow just by calling ```#add_step``` on the job flow exactly how you add them prior to submitting the job.
 
-## 8 - Shutting Down the Job Flow (optional)
+## 8 - Shut Down the Job Flow (optional)
 
 By default, job flows are set to terminate when there are no more running steps.  You can tell the job flow to stay alive when it has nothing left to do:
 
