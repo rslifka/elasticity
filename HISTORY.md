@@ -1,8 +1,16 @@
+## 2.4 - September 1, 2012
+
++ ```SyncToS3``` added to enable one-way asset synchronization.
++ Generic bootstrap actions are now supported via ```BootstrapAction```.
++ If you have several Hadoop bootstrap actions (15 is the current EMR limit), store all of your Hadoop configuration options in a file, ship it up with ```SyncToS3``` and use the new ```HadoopFileBootstrapAction``` to point at that file.
++ If no parameters are passed to ```JobFlow.new```, it will use the standard AWS environment variables to lookup the access and secret keys - ```AWS_ACCESS_KEY_ID``` and ```AWS_SECRET_ACCESS_KEY```.
++ New dependencies: [fog](https://github.com/fog/fog) (S3 access), [fakefs](https://github.com/defunkt/fakefs) (filesystem stubbing - development only), [timecop](https://github.com/jtrupiano/timecop) (freezing and manipulating time - development only).
+
 ## 2.3.1 - August 23, 2012
 
 + Birthday release! ;)
 + Bumped the default version of Hadoop to 1.0.3.
-+ Amazon now requires the --hive-versions argument when installing Hive (thanks to Johannes Wuerbach).
++ Amazon now requires the ```--hive-versions``` argument when installing Hive (thanks to Johannes Wuerbach).
 + ```JobFlowStatus#master_public_dns_name``` is now available (thanks to Johannes Wuerbach).
 
 ## 2.3 - July 28, 2012

@@ -1,22 +1,22 @@
-Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently map the EMR REST API calls to higher level operations that make working with job flows more productive and more enjoyable.
+Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently abstract away the complex EMR REST API and make working with job flows more productive and more enjoyable.
 
 [![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) REE, 1.8.7, 1.9.2, 1.9.3
 
 Elasticity provides two ways to access EMR:
 
 * **Indirectly through a JobFlow-based API**. This README discusses the Elasticity API.
-* **Directly through access to the EMR REST API**. The less-discussed hidden darkside... I use this to enable the Elasticity API though it is not documented save for RubyDoc available at the the RubyGems [auto-generated documentation site](http://rubydoc.info/gems/elasticity/frames).  Be forewarned: Making the calls directly requires that you understand how to structure EMR requests at the Amazon API level and from experience I can tell you there are more fun things you could be doing :)  Scroll to the end for more information on the Amazon API. 
+* **Directly through access to the EMR REST API**. The less-discussed hidden darkside... I use this to enable the Elasticity API.  RubyDoc can be found at the RubyGems [auto-generated documentation site](http://rubydoc.info/gems/elasticity/frames).  Be forewarned: Making the calls directly requires that you understand how to structure EMR requests at the Amazon API level and from experience I can tell you there are more fun things you could be doing :)  Scroll to the end for more information on the Amazon API.
 
 # Installation
 
-```ruby
-  gem install elasticity
+```
+gem install elasticity
 ```
 
 or in your Gemfile
 
-```ruby
-  gem 'elasticity', '~> 2.0'
+```
+gem 'elasticity', '~> 2.0'
 ```
 
 This will ensure that you protect yourself from API changes, which will only be made in major revisions.
@@ -31,6 +31,9 @@ require 'elasticity'
 # Create a job flow with your AWS credentials
 jobflow = Elasticity::JobFlow.new('AWS access key', 'AWS secret key')
 
+# Omit credentials to use the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
+# jobflow = Elasticity::JobFlow.new
+
 # This is the first step in the jobflow - running a custom jar
 step = Elasticity::CustomJarStep.new('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar')
 
@@ -44,7 +47,7 @@ jobflow.add_step(step)
 jobflow.run
 ```
 
-Note that this example is only for ```CustomJarStep```.  ```PigStep``` and ```HiveStep``` will have different means of passing parameters.
+Note that this example is only for ```CustomJarStep```.  Other steps will have different means of passing parameters.
 
 # Working with Job Flows
 
@@ -146,6 +149,20 @@ jobflow.set_core_instance_group(ig)
 
 Bootstrap actions are run as part of setting up the job flow, so be sure to configure these before running the job.
 
+### Bootstrap Actions
+
+With the basic ```BootstrapAction``` you specify everything about the action - the script, options and arguments.
+
+```ruby
+action = Elasticity::BootstrapAction.new('s3n://my-bucket/my-script', '-g', '100')
+
+jobflow.add_bootstrap_action(action)
+```
+
+### Hadoop Bootstrap Actions
+
+`HadoopBootstrapAction` handles passing Hadoop configuration options through.
+
 ```ruby
 [
   Elasticity::HadoopBootstrapAction.new('-m', 'mapred.map.tasks=101'),
@@ -154,6 +171,16 @@ Bootstrap actions are run as part of setting up the job flow, so be sure to conf
 ].each do |action|
   jobflow.add_bootstrap_action(action)
 end
+```
+
+### Hadoop File Bootstrap Actions
+
+With EMR's current limit of 15 bootstrap actions, chances are you're going to create a configuration file full of your options and opt to use that instead of passing all the options individually.  In that case, use the ```HadoopFileBootstrapAction```, supplying the location of your configuration file.
+
+```ruby
+action = Elasticity::HadoopFileBootstrapAction.new('s3n://my-bucket/job-config.xml')
+
+jobflow.add_bootstrap_action(action)
 ```
 
 ## 5 - Adding Steps
