@@ -21,7 +21,7 @@ module Elasticity
 
     attr_reader :access_key
     attr_reader :secret_key
-    
+
     def initialize(access=nil, secret=nil)
       @action_on_failure = 'TERMINATE_JOB_FLOW'
       @hadoop_version = '1.0.3'
@@ -73,7 +73,9 @@ module Elasticity
     end
 
     def add_bootstrap_action(bootstrap_action)
-      raise_if is_jobflow_running?, JobFlowRunningError, 'To modify bootstrap actions, please create a new job flow.'
+      if is_jobflow_running?
+        raise JobFlowRunningError, 'To modify bootstrap actions, please create a new job flow.'
+      end
       @bootstrap_actions << bootstrap_action
     end
 
@@ -106,18 +108,26 @@ module Elasticity
     end
 
     def run
-      raise_if @jobflow_steps.empty?, JobFlowMissingStepsError, 'Cannot run a job flow without adding steps.  Please use #add_step.'
-      raise_if is_jobflow_running?, JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.'
+      if @jobflow_steps.empty?
+        raise JobFlowMissingStepsError, 'Cannot run a job flow without adding steps.  Please use #add_step.'
+      end
+      if is_jobflow_running?
+        raise JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.'
+      end
       @jobflow_id = emr.run_job_flow(jobflow_config)
     end
 
     def shutdown
-      raise_unless is_jobflow_running?, JobFlowNotStartedError, 'Cannot #shutdown a job flow that has not yet been #run.'
+      if !is_jobflow_running?
+        raise JobFlowNotStartedError, 'Cannot #shutdown a job flow that has not yet been #run.'
+      end
       emr.terminate_jobflows(@jobflow_id)
     end
 
     def status
-      raise_unless is_jobflow_running?, JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.'
+      if !is_jobflow_running?
+        raise JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.'
+      end
       emr.describe_jobflow(@jobflow_id)
     end
 

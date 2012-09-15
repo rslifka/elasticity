@@ -5,8 +5,6 @@ require 'rest_client'
 require 'nokogiri'
 require 'fog'
 
-require 'elasticity/support/conditional_raise'
-
 require 'elasticity/aws_request'
 require 'elasticity/emr'
 

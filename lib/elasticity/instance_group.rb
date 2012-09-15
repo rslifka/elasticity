@@ -19,19 +19,27 @@ module Elasticity
     end
 
     def count=(instance_count)
-      raise_if instance_count <= 0, ArgumentError, "Instance groups require at least 1 instance (#{instance_count} requested)"
-      raise_if @role == 'MASTER' && instance_count != 1, ArgumentError, "MASTER instance groups can only have 1 instance (#{instance_count} requested)"
+      if instance_count <= 0
+        raise ArgumentError, "Instance groups require at least 1 instance (#{instance_count} requested)"
+      end
+      if @role == 'MASTER' && instance_count != 1
+        raise ArgumentError, "MASTER instance groups can only have 1 instance (#{instance_count} requested)"
+      end
       @count = instance_count
     end
 
     def role=(group_role)
-      raise_unless ROLES.include?(group_role), ArgumentError, "Role must be one of MASTER, CORE or TASK (#{group_role} was requested)"
+      if !ROLES.include?(group_role)
+        raise ArgumentError, "Role must be one of MASTER, CORE or TASK (#{group_role} was requested)"
+      end
       @count = 1 if group_role == 'MASTER'
       @role = group_role
     end
 
     def set_spot_instances(bid_price)
-      raise_unless bid_price > 0, ArgumentError, "The bid price for spot instances should be greater than 0 (#{bid_price} requested)"
+      if bid_price < 0
+        raise ArgumentError, "The bid price for spot instances should be greater than 0 (#{bid_price} requested)"
+      end
       @bid_price = bid_price
       @market = 'SPOT'
     end

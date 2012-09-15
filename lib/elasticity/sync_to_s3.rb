@@ -16,8 +16,12 @@ module Elasticity
     end
 
     def sync(local, remote)
-      raise_unless bucket, NoBucketError, "Bucket '#@bucket_name' does not exist"
-      raise_unless File.directory?(local), NoDirectoryError, "Directory '#{local}' does not exist or is not a directory"
+      if bucket.nil?
+        raise NoBucketError, "Bucket '#@bucket_name' does not exist"
+      end
+      if !File.directory?(local)
+        raise NoDirectoryError, "Directory '#{local}' does not exist or is not a directory"
+      end
       sync_dir(local, remote)
     end
 
