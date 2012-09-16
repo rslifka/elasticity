@@ -50,7 +50,7 @@ module Elasticity
     def get_secret_key(secret)
       return secret if secret
       return ENV['AWS_SECRET_ACCESS_KEY'] if ENV['AWS_SECRET_ACCESS_KEY']
-      raise MissingKeyError, 'Please provide a secret key or set AWS_ACCESS_KEY_ID.'
+      raise MissingKeyError, 'Please provide a secret key or set AWS_SECRET_ACCESS_KEY.'
     end
 
     # (Used from RightScale's right_aws gem.)

@@ -68,7 +68,7 @@ describe Elasticity::AwsRequest do
           it 'should raise an error' do
             expect {
               missing_something.access_key
-            }.to raise_error(Elasticity::MissingKeyError, 'Please provide a secret key or set AWS_ACCESS_KEY_ID.')
+            }.to raise_error(Elasticity::MissingKeyError, 'Please provide a secret key or set AWS_SECRET_ACCESS_KEY.')
           end
         end
       end
