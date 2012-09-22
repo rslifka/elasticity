@@ -283,7 +283,7 @@ s3 = Elasticity::SyncToS3('my-bucket', 'access', 'secret')
 # s3 = Elasticity::SyncToS3('my-bucket')
 
 # Recursively sync the contents of '/some/parent/dir' under the remote location 'remote-dir/this-job/assets'
-s3.sync('/some/parent/dir', 'remote-dir/this-job/assets')
+s3.sync_dir('/some/parent/dir', 'remote-dir/this-job/assets')
 ```
 
 If the files already exist, there is an MD5 checksum check.  If the checksums are the same, the file will be skipped.  Now you can use something like ```s3n://my-bucket/remote-dir/this-job/assets/join.tsv``` in your EMR jobs.
