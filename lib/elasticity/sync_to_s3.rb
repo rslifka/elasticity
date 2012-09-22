@@ -15,29 +15,39 @@ module Elasticity
       @bucket_name = bucket
     end
 
-    def sync(local, remote)
+    def sync_dir(local, remote)
       if bucket.nil?
         raise NoBucketError, "Bucket '#@bucket_name' does not exist"
       end
       if !File.directory?(local)
         raise NoDirectoryError, "Directory '#{local}' does not exist or is not a directory"
       end
-      sync_dir(local, remote)
+      _sync_dir(local, remote)
+    end
+
+    def sync_file(local, remote)
+      if bucket.nil?
+        raise NoBucketError, "Bucket '#@bucket_name' does not exist"
+      end
+      if !File.file?(local)
+        raise NoDirectoryError, "File '#{local}' does not exist or is not a file"
+      end
+      _sync_file(local, remote)
     end
 
     private
 
-    def sync_dir(local, remote)
+    def _sync_dir(local, remote)
       Dir.glob(File.join([local, '*'])).each do |entry|
         if File.directory?(entry)
-          sync_dir(entry, [remote, File.basename(entry)].join('/'))
+          _sync_dir(entry, [remote, File.basename(entry)].join('/'))
         else
-          sync_file(entry, remote)
+          _sync_file(entry, remote)
         end
       end
     end
 
-    def sync_file(file_name, remote_dir)
+    def _sync_file(file_name, remote_dir)
       remote_dir = remote_dir.gsub(/^(\/)/, '')
       remote_path = (remote_dir.empty?) ? (File.basename(file_name)) : [remote_dir, File.basename(file_name)].join('/')
       metadata = bucket.files.head(remote_path)
