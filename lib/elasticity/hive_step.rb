@@ -43,11 +43,11 @@ module Elasticity
           :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
           :args => [
             's3://elasticmapreduce/libs/hive/hive-script',
-              '--base-path',
-              's3://elasticmapreduce/libs/hive/',
-              '--install-hive',
-              '--hive-versions',
-              'latest'
+            '--base-path',
+            's3://elasticmapreduce/libs/hive/',
+            '--install-hive',
+            '--hive-versions',
+            'latest'
           ],
         },
         :name => 'Elasticity - Install Hive'
