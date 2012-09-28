@@ -115,11 +115,14 @@ describe Elasticity::SyncToS3 do
     end
 
     context 'when the bucket does not exist' do
-      let(:bucket_name) { 'BAD_BUCKET' }
-      it 'should raise an error' do
-        expect {
-          sync_to_s3.sync('_', '_')
-        }.to raise_error(Elasticity::NoBucketError, "Bucket 'BAD_BUCKET' does not exist")
+      before do
+        FileUtils.mkdir('GOOD_DIR')
+        FileUtils.touch(File.join(%w(GOOD_DIR file_1)))
+      end
+      it 'should create the bucket in s3' do
+        sync_to_s3.sync('GOOD_DIR', '_')
+        s3.should have(1).directories
+        s3.directories[0].key.should == 'TEST_BUCKET'
       end
     end
 

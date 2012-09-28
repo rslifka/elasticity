@@ -16,9 +16,6 @@ module Elasticity
     end
 
     def sync(local, remote)
-      if bucket.nil?
-        raise NoBucketError, "Bucket '#@bucket_name' does not exist"
-      end
       if !File.directory?(local)
         raise NoDirectoryError, "Directory '#{local}' does not exist or is not a directory"
       end
@@ -51,8 +48,8 @@ module Elasticity
     end
 
     def bucket
-      index = s3.directories.index { |d| d.key == @bucket_name }
-      @bucket ||= index ? s3.directories[index] : nil
+      @bucket ||= s3.directories.find { |d| d.key == @bucket_name }
+      @bucket ||= s3.directories.create(:key => @bucket_name)
     end
 
     def s3
