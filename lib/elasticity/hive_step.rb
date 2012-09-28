@@ -17,7 +17,7 @@ module Elasticity
     end
 
     def to_aws_step(job_flow)
-      args = %w(s3://elasticmapreduce/libs/hive/hive-script --run-hive-script --args)
+      args = %w(s3://elasticmapreduce/libs/hive/hive-script --run-hive-script --base-path s3://elasticmapreduce/libs/hive/ --hive-versions latest --args)
       args.concat(['-f', @script])
       @variables.keys.sort.each do |name|
         args.concat(['-d', "#{name}=#{@variables[name]}"])
@@ -43,11 +43,11 @@ module Elasticity
           :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
           :args => [
             's3://elasticmapreduce/libs/hive/hive-script',
-              '--base-path',
-              's3://elasticmapreduce/libs/hive/',
-              '--install-hive',
-              '--hive-versions',
-              'latest'
+            '--base-path',
+            's3://elasticmapreduce/libs/hive/',
+            '--install-hive',
+            '--hive-versions',
+            'latest'
           ],
         },
         :name => 'Elasticity - Install Hive'
