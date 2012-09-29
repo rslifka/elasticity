@@ -84,6 +84,29 @@ describe Elasticity::SyncToS3 do
 
   end
 
+  describe '#sync' do
+
+    let(:dir_name) { 'GOOD_DIR' }
+    let(:file_name) { File.join(%w(GOOD_DIR file_1)) }
+    let(:remote_dir) { 'REMOTE_DIR' }
+
+    before do
+      FileUtils.mkdir(dir_name)
+      FileUtils.touch(file_name)
+    end
+    
+    it 'should sync directories' do
+      sync_to_s3.should_receive(:sync_dir).with(dir_name, remote_dir)
+      sync_to_s3.sync(dir_name, remote_dir)
+    end
+
+    it 'should sync files' do
+      sync_to_s3.should_receive(:sync_file).with(file_name, remote_dir)
+      sync_to_s3.sync(file_name, remote_dir)
+    end
+
+  end
+
   describe '#sync_dir' do
 
     before do
@@ -131,13 +154,13 @@ describe Elasticity::SyncToS3 do
     let(:file_name) { 'test.out' }
     let(:full_path) { File.join([local_dir, file_name]) }
     let(:remote_dir) { 'job/assets' }
-    let(:remote_path) { "#{remote_dir}/#{file_name}"}
+    let(:remote_path) { "#{remote_dir}/#{file_name}" }
     let(:file_data) { 'Some test content' }
 
     before do
       s3.directories.create(:key => bucket_name)
       FileUtils.makedirs(local_dir)
-      File.open(full_path, 'w') {|f| f.write(file_data) }
+      File.open(full_path, 'w') { |f| f.write(file_data) }
     end
 
     it 'should write the specified file into the remote directory' do
@@ -169,21 +192,21 @@ describe Elasticity::SyncToS3 do
       end
 
       context 'when remote dir is empty' do
-        let(:remote_dir) {''}
+        let(:remote_dir) { '' }
         it 'should place files in the root without a bunk empty folder name' do
           s3.directories[0].files.head(file_name).should_not be_nil
         end
       end
 
       context 'when remote dir is /' do
-        let(:remote_dir) {'/'}
+        let(:remote_dir) { '/' }
         it 'should place files in the root without a bunk empty folder name' do
           s3.directories[0].files.head(file_name).should_not be_nil
         end
       end
 
       context 'when remote dir starts with a /' do
-        let(:remote_dir) {'/starts_with_slash'}
+        let(:remote_dir) { '/starts_with_slash' }
         it 'should place files in the root without a bunk empty folder name' do
           s3.directories[0].files.head('starts_with_slash/test.out').should_not be_nil
         end
