@@ -17,12 +17,23 @@ describe Elasticity::SyncToS3 do
     describe 'basic assignment' do
 
       it 'should set the proper values' do
-        sync = Elasticity::SyncToS3.new('bucket', 'access', 'secret')
+        sync = Elasticity::SyncToS3.new('bucket', 'access', 'secret', 'region')
         sync.access_key.should == 'access'
         sync.secret_key.should == 'secret'
         sync.bucket_name.should == 'bucket'
+        sync.region.should == 'region'
       end
 
+    end
+
+    context 'when region is nil or missing' do
+      let(:region_nil) { Elasticity::SyncToS3.new('_', nil, nil, nil) }
+      let(:region_missing) { Elasticity::SyncToS3.new('_') }
+
+      it 'should be us-east-1' do
+        region_nil.region.should == 'us-east-1'
+        region_missing.region.should == 'us-east-1'
+      end
     end
 
     context 'when access and secret keys are nil' do
@@ -229,10 +240,11 @@ describe Elasticity::SyncToS3 do
   end
 
   describe '#s3' do
-    let(:connection_test) { Elasticity::SyncToS3.new('_', 'access', 'secret') }
+    let(:connection_test) { Elasticity::SyncToS3.new('_', 'access', 'secret', 'region') }
     it 'should connect to S3 using the specified credentials' do
       Fog::Storage.should_receive(:new).with({
         :provider => 'AWS',
+        :region => 'region',
         :aws_access_key_id => 'access',
         :aws_secret_access_key => 'secret'
       }).and_return('GOOD_CONNECTION')

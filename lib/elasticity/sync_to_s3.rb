@@ -8,11 +8,13 @@ module Elasticity
     attr_reader :access_key
     attr_reader :secret_key
     attr_reader :bucket_name
+    attr_reader :region
 
-    def initialize(bucket, access=nil, secret=nil)
+    def initialize(bucket, access=nil, secret=nil, region=nil)
       @access_key = get_access_key(access)
       @secret_key = get_secret_key(secret)
       @bucket_name = bucket
+      @region = region ||= 'us-east-1'
     end
 
     def sync(local, remote)
@@ -55,6 +57,7 @@ module Elasticity
     def s3
       @connection ||= Fog::Storage.new({
         :provider => 'AWS',
+        :region => @region,
         :aws_access_key_id => @access_key,
         :aws_secret_access_key => @secret_key
       })
