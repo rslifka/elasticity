@@ -16,7 +16,7 @@ gem install elasticity
 or in your Gemfile
 
 ```
-gem 'elasticity', '~> 2.4'
+gem 'elasticity', '~> 2.5'
 ```
 
 This will ensure that you protect yourself from API changes, which will only be made in major revisions.
@@ -273,20 +273,27 @@ jobflow.add_step(jar_step)
 
 ## 6 - Upload Assets (optional)
 
-This isn't part of ```JobFlow```; more of an aside :)  Elasticity provides a very basic means of uploading assets to S3 so that your EMR job has access to them.  For example, a TSV file with a range of valid values, join tables, etc.
+This isn't part of ```JobFlow```; more of an aside.  Elasticity provides a very basic means of uploading assets to S3 so that your EMR job has access to them.  Most commonly this will be a set of resources to run the job (e.g. JAR files, streaming scripts, etc.) and a set of resources used by the job itself (e.g. a TSV file with a range of valid values, join tables, etc.).
 
 ```ruby
-# Specify the bucket and AWS credentials
-s3 = Elasticity::SyncToS3('my-bucket', 'access', 'secret')
+# Specify the bucket name, AWS credentials and region
+s3 = Elasticity::SyncToS3('my-bucket', 'access', 'secret', 'region')
 
-# Use the standard environment variables (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY)
+# Alternatively, specify nothing :)
+# - Use the standard environment variables (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY)
+# - Use the 'us-east-1' region by default
 # s3 = Elasticity::SyncToS3('my-bucket')
 
-# Recursively sync the contents of '/some/parent/dir' under the remote location 'remote-dir/this-job/assets'
-s3.sync('/some/parent/dir', 'remote-dir/this-job/assets')
+# Recursively sync the contents of '/foo' under the remote location 'remote-dir/this-job'
+s3.sync('/foo', 'remote-dir/this-job')
+
+# Sync a single file to a remote directory
+s3.sync('/foo/this-job/tables/join.tsv', 'remote-dir/this-job/tables')
 ```
 
-If the files already exist, there is an MD5 checksum check.  If the checksums are the same, the file will be skipped.  Now you can use something like ```s3n://my-bucket/remote-dir/this-job/assets/join.tsv``` in your EMR jobs.
+If the bucket doesn't exist, it will be created.
+
+If a file already exists, there is an MD5 checksum evaluation.  If the checksums are the same, the file will be skipped.  Now you can use something like ```s3n://my-bucket/remote-dir/this-job/tables/join.tsv``` in your EMR jobs.
 
 ## 7 - Run the Job Flow
 

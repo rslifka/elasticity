@@ -1,3 +1,8 @@
+## 2.5 - September 29, 2012
+
++ ```SyncToS3``` supports S3 region specification.
++ ```SyncToS3#sync``` supports being called with both files and directories.
+
 ## 2.4 - September 1, 2012
 
 + ```SyncToS3``` added to enable one-way asset synchronization.
