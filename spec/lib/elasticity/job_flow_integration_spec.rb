@@ -70,6 +70,8 @@ describe 'Elasticity::JobFlow Integration Examples' do
                   's3://elasticmapreduce/libs/hive/hive-script',
                   '--base-path',
                   's3://elasticmapreduce/libs/hive/',
+                  '--hive-versions',
+                  'latest',
                   '--run-hive-script',
                     '--args',
                     '-f', 's3n://slif-hive/test.q',
