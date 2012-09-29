@@ -18,20 +18,19 @@ module Elasticity
     end
 
     def sync(local, remote)
+      warn "[DEPRECATION] 'sync' will be removed in the next release.  Please use 'sync_dir' and 'sync_file' instead."
       if !File.directory?(local)
         raise NoDirectoryError, "Directory '#{local}' does not exist or is not a directory"
       end
       sync_dir(local, remote)
     end
 
-    private
-
-    def sync_dir(local, remote)
-      Dir.glob(File.join([local, '*'])).each do |entry|
+    def sync_dir(dir_name, remote_dir)
+      Dir.glob(File.join([dir_name, '*'])).each do |entry|
         if File.directory?(entry)
-          sync_dir(entry, [remote, File.basename(entry)].join('/'))
+          sync_dir(entry, [remote_dir, File.basename(entry)].join('/'))
         else
-          sync_file(entry, remote)
+          sync_file(entry, remote_dir)
         end
       end
     end
@@ -48,6 +47,8 @@ module Elasticity
         :public => false
       })
     end
+
+    private
 
     def bucket
       @bucket ||= s3.directories.find { |d| d.key == @bucket_name }
