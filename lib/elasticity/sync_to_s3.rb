@@ -2,6 +2,7 @@ module Elasticity
 
   class NoBucketError < StandardError; end
   class NoDirectoryError < StandardError; end
+  class NoFileError < StandardError; end
 
   class SyncToS3
 
@@ -18,14 +19,13 @@ module Elasticity
     end
 
     def sync(local, remote)
-      warn "[DEPRECATION] 'sync' will be removed in the next release.  Please use 'sync_dir' and 'sync_file' instead."
-      if !File.directory?(local)
-        raise NoDirectoryError, "Directory '#{local}' does not exist or is not a directory"
-      end
+      warn "[DEPRECATION] 'sync' will be removed in the next release.  Please use 'sync_dir' instead."
       sync_dir(local, remote)
     end
 
+    # Recursively sync the contents of directory 'dir_name' to 'remote_dir'
     def sync_dir(dir_name, remote_dir)
+      raise NoDirectoryError, "Directory '#{dir_name}' does not exist or is not a directory" unless File.directory?(dir_name)
       Dir.glob(File.join([dir_name, '*'])).each do |entry|
         if File.directory?(entry)
           sync_dir(entry, [remote_dir, File.basename(entry)].join('/'))
@@ -36,6 +36,7 @@ module Elasticity
     end
 
     def sync_file(file_name, remote_dir)
+      raise NoFileError, "File '#{file_name}' does not exist" unless File.exists?(file_name)
       remote_dir = remote_dir.gsub(/^(\/)/, '')
       remote_path = (remote_dir.empty?) ? (File.basename(file_name)) : [remote_dir, File.basename(file_name)].join('/')
       metadata = bucket.files.head(remote_path)

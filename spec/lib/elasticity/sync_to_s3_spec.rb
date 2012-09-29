@@ -84,59 +84,6 @@ describe Elasticity::SyncToS3 do
 
   end
 
-  describe '#sync' do
-
-    context 'when the bucket exists' do
-
-      before do
-        s3.directories.create(:key => bucket_name)
-      end
-
-      context 'when the local directory exists' do
-        before do
-          FileUtils.mkdir('GOOD_DIR')
-        end
-        it 'should sync that directory' do
-          sync_to_s3.should_receive(:sync_dir).with('GOOD_DIR', 'REMOTE_DIR')
-          sync_to_s3.sync('GOOD_DIR', 'REMOTE_DIR')
-        end
-      end
-
-      context 'when the local directory does not exist' do
-        it 'should raise an error' do
-          expect {
-            sync_to_s3.sync('BAD_DIR', '_')
-          }.to raise_error(Elasticity::NoDirectoryError, "Directory 'BAD_DIR' does not exist or is not a directory")
-        end
-      end
-
-      context 'when the local directory is not a directory' do
-        before do
-          FileUtils.touch('NOT_A_DIR')
-        end
-        it 'should raise an error' do
-          expect {
-            sync_to_s3.sync('NOT_A_DIR', '_')
-          }.to raise_error(Elasticity::NoDirectoryError, "Directory 'NOT_A_DIR' does not exist or is not a directory")
-        end
-      end
-
-    end
-
-    context 'when the bucket does not exist' do
-      before do
-        FileUtils.mkdir('GOOD_DIR')
-        FileUtils.touch(File.join(%w(GOOD_DIR file_1)))
-      end
-      it 'should create the bucket in s3' do
-        sync_to_s3.sync('GOOD_DIR', '_')
-        s3.should have(1).directories
-        s3.directories[0].key.should == 'TEST_BUCKET'
-      end
-    end
-
-  end
-
   describe '#sync_dir' do
 
     before do
@@ -154,7 +101,7 @@ describe Elasticity::SyncToS3 do
     end
 
     it 'should recursively sync all files and directories' do
-      sync_to_s3.send(:sync_dir, 'local_dir', 'remote_dir')
+      sync_to_s3.sync_dir('local_dir', 'remote_dir')
 
       %w(
         remote_dir/file_1
@@ -165,6 +112,14 @@ describe Elasticity::SyncToS3 do
         remote_dir/sub_dir_2/file_6
       ).each do |key|
         s3.directories[0].files.map(&:key).should include(key)
+      end
+    end
+
+    context 'when the directory does not exist or is not a directory' do
+      it 'should raise an error' do
+        expect {
+          sync_to_s3.sync_dir('NOT_A_DIR', '_')
+        }.to raise_error(Elasticity::NoDirectoryError, "Directory 'NOT_A_DIR' does not exist or is not a directory")
       end
     end
 
@@ -186,31 +141,31 @@ describe Elasticity::SyncToS3 do
     end
 
     it 'should write the specified file into the remote directory' do
-      sync_to_s3.send(:sync_file, full_path, remote_dir)
+      sync_to_s3.sync_file(full_path, remote_dir)
       s3.directories[0].files.head(remote_path).should_not be_nil
     end
 
     it 'should write the contents of the file' do
-      sync_to_s3.send(:sync_file, full_path, remote_dir)
+      sync_to_s3.sync_file(full_path, remote_dir)
       s3.directories[0].files.head(remote_path).body.should == file_data
     end
 
     it 'should write the remote file without public access' do
-      sync_to_s3.send(:sync_file, full_path, remote_dir)
+      sync_to_s3.sync_file(full_path, remote_dir)
       s3.directories[0].files.head(remote_path).public_url.should be_nil
     end
 
     it 'should not write identical content' do
-      sync_to_s3.send(:sync_file, full_path, remote_dir)
+      sync_to_s3.sync_file(full_path, remote_dir)
       last_modified = s3.directories[0].files.head(remote_path).last_modified
       Timecop.travel(Time.now + 60)
-      sync_to_s3.send(:sync_file, full_path, remote_dir)
+      sync_to_s3.sync_file(full_path, remote_dir)
       s3.directories[0].files.head(remote_path).last_modified.should == last_modified
     end
 
     context 'when remote dir is a corner case value' do
       before do
-        sync_to_s3.send(:sync_file, full_path, remote_dir)
+        sync_to_s3.sync_file(full_path, remote_dir)
       end
 
       context 'when remote dir is empty' do
@@ -232,6 +187,27 @@ describe Elasticity::SyncToS3 do
         it 'should place files in the root without a bunk empty folder name' do
           s3.directories[0].files.head('starts_with_slash/test.out').should_not be_nil
         end
+      end
+    end
+
+    context 'when the file does not exist' do
+      it 'should raise an error' do
+        expect {
+          sync_to_s3.sync_file('NO_FILE', '_')
+        }.to raise_error(Elasticity::NoFileError, "File 'NO_FILE' does not exist")
+      end
+    end
+
+    context 'when the bucket does not exist' do
+      let(:no_bucket_sync) { Elasticity::SyncToS3.new('NEW_BUCKET', '_', '_') }
+      before do
+        no_bucket_sync.stub(:s3).and_return(s3)
+        FileUtils.mkdir('GOOD_DIR')
+        FileUtils.touch(File.join(%w(GOOD_DIR file_1)))
+      end
+      it 'should create the bucket in s3' do
+        no_bucket_sync.sync('GOOD_DIR', '_')
+        s3.directories.find { |d| d.key == 'NEW_BUCKET' }.should_not be_nil
       end
     end
 
