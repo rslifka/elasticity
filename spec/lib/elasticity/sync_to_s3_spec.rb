@@ -26,20 +26,10 @@ describe Elasticity::SyncToS3 do
 
     end
 
-    context 'when region is nil or missing' do
-      let(:region_nil) { Elasticity::SyncToS3.new('_', nil, nil, nil) }
-      let(:region_missing) { Elasticity::SyncToS3.new('_') }
+    context 'when parameters are missing' do
 
-      it 'should be us-east-1' do
-        region_nil.region.should == 'us-east-1'
-        region_missing.region.should == 'us-east-1'
-      end
-    end
-
-    context 'when access and secret keys are nil' do
-
-      let(:both_keys_nil) { Elasticity::SyncToS3.new('_', nil, nil) }
-      let(:both_keys_missing) { Elasticity::SyncToS3.new('_') }
+      let(:optional_params_nil) { Elasticity::SyncToS3.new('_', nil, nil, nil) }
+      let(:optional_params_missing) { Elasticity::SyncToS3.new('_') }
 
       before do
         ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return(access_key)
@@ -49,13 +39,21 @@ describe Elasticity::SyncToS3 do
       context 'when environment variables are present' do
         let(:access_key) { 'ENV_ACCESS' }
         let(:secret_key) { 'ENV_SECRET' }
-        it 'should assign them to the keys' do
-          both_keys_nil.access_key.should == 'ENV_ACCESS'
-          both_keys_nil.secret_key.should == 'ENV_SECRET'
 
-          both_keys_missing.access_key.should == 'ENV_ACCESS'
-          both_keys_missing.secret_key.should == 'ENV_SECRET'
+        it 'should assign environment variables to the keys' do
+          optional_params_nil.access_key.should == 'ENV_ACCESS'
+          optional_params_nil.secret_key.should == 'ENV_SECRET'
+          optional_params_missing.access_key.should == 'ENV_ACCESS'
+          optional_params_missing.secret_key.should == 'ENV_SECRET'
         end
+
+        it 'should set the region to us-east-1' do
+          optional_params_nil.region.should == 'us-east-1'
+          optional_params_nil.region.should == 'us-east-1'
+          optional_params_missing.region.should == 'us-east-1'
+          optional_params_missing.region.should == 'us-east-1'
+        end
+
       end
 
       context 'when environment variables are not present' do
@@ -65,7 +63,7 @@ describe Elasticity::SyncToS3 do
           let(:secret_key) { '_' }
           it 'should raise an error' do
             expect {
-              both_keys_nil # Trigger instantiation
+              optional_params_nil # Trigger instantiation
             }.to raise_error(Elasticity::MissingKeyError, 'Please provide an access key or set AWS_ACCESS_KEY_ID.')
           end
         end
@@ -75,7 +73,7 @@ describe Elasticity::SyncToS3 do
           let(:secret_key) { nil }
           it 'should raise an error' do
             expect {
-              both_keys_nil # Trigger instantiation
+              optional_params_nil # Trigger instantiation
             }.to raise_error(Elasticity::MissingKeyError, 'Please provide a secret key or set AWS_SECRET_ACCESS_KEY.')
           end
         end
