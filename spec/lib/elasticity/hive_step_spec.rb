@@ -20,10 +20,12 @@ describe Elasticity::HiveStep do
       step[:hadoop_jar_step][:jar].should == 's3://elasticmapreduce/libs/script-runner/script-runner.jar'
       step[:hadoop_jar_step][:args].should start_with([
         's3://elasticmapreduce/libs/hive/hive-script',
-          '--run-hive-script',
-          '--args',
-          '-f',
-          'script.hql'
+        '--base-path',
+        's3://elasticmapreduce/libs/hive/',
+        '--run-hive-script',
+        '--args',
+        '-f',
+        'script.hql'
       ])
     end
 
@@ -39,7 +41,7 @@ describe Elasticity::HiveStep do
 
       it 'should convert to aws step format' do
         step = hs_with_variables.to_aws_step(Elasticity::JobFlow.new('access', 'secret'))
-        step[:hadoop_jar_step][:args][5..9].should == %w(-d VAR1=VALUE1 -d VAR2=VALUE2)
+        step[:hadoop_jar_step][:args][7..11].should == %w(-d VAR1=VALUE1 -d VAR2=VALUE2)
       end
     end
 
@@ -60,11 +62,11 @@ describe Elasticity::HiveStep do
           :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
           :args => [
             's3://elasticmapreduce/libs/hive/hive-script',
-              '--base-path',
-              's3://elasticmapreduce/libs/hive/',
-              '--install-hive',
-              '--hive-versions',
-              'latest'
+            '--base-path',
+            's3://elasticmapreduce/libs/hive/',
+            '--install-hive',
+            '--hive-versions',
+            'latest'
           ],
         },
         :name => 'Elasticity - Install Hive'

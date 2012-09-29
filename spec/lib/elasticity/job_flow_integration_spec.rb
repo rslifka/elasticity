@@ -68,7 +68,9 @@ describe 'Elasticity::JobFlow Integration Examples' do
                 :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
                 :args => [
                   's3://elasticmapreduce/libs/hive/hive-script',
-                    '--run-hive-script',
+                  '--base-path',
+                  's3://elasticmapreduce/libs/hive/',
+                  '--run-hive-script',
                     '--args',
                     '-f', 's3n://slif-hive/test.q',
                     '-d', 'OUTPUT=s3n://slif-test/output'
