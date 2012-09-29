@@ -19,11 +19,15 @@ module Elasticity
     end
 
     def sync(local, remote)
-      warn "[DEPRECATION] 'sync' will be removed in the next release.  Please use 'sync_dir' instead."
-      sync_dir(local, remote)
+      if File.directory?(local)
+        sync_dir(local, remote)
+      else
+        sync_file(local, remote)
+      end
     end
 
-    # Recursively sync the contents of directory 'dir_name' to 'remote_dir'
+    private
+
     def sync_dir(dir_name, remote_dir)
       raise NoDirectoryError, "Directory '#{dir_name}' does not exist or is not a directory" unless File.directory?(dir_name)
       Dir.glob(File.join([dir_name, '*'])).each do |entry|

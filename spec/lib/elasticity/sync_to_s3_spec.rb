@@ -101,7 +101,7 @@ describe Elasticity::SyncToS3 do
     end
 
     it 'should recursively sync all files and directories' do
-      sync_to_s3.sync_dir('local_dir', 'remote_dir')
+      sync_to_s3.send(:sync_dir, 'local_dir', 'remote_dir')
 
       %w(
         remote_dir/file_1
@@ -118,7 +118,7 @@ describe Elasticity::SyncToS3 do
     context 'when the directory does not exist or is not a directory' do
       it 'should raise an error' do
         expect {
-          sync_to_s3.sync_dir('NOT_A_DIR', '_')
+          sync_to_s3.send(:sync_dir, 'NOT_A_DIR', '_')
         }.to raise_error(Elasticity::NoDirectoryError, "Directory 'NOT_A_DIR' does not exist or is not a directory")
       end
     end
@@ -141,31 +141,31 @@ describe Elasticity::SyncToS3 do
     end
 
     it 'should write the specified file into the remote directory' do
-      sync_to_s3.sync_file(full_path, remote_dir)
+      sync_to_s3.send(:sync_file, full_path, remote_dir)
       s3.directories[0].files.head(remote_path).should_not be_nil
     end
 
     it 'should write the contents of the file' do
-      sync_to_s3.sync_file(full_path, remote_dir)
+      sync_to_s3.send(:sync_file, full_path, remote_dir)
       s3.directories[0].files.head(remote_path).body.should == file_data
     end
 
     it 'should write the remote file without public access' do
-      sync_to_s3.sync_file(full_path, remote_dir)
+      sync_to_s3.send(:sync_file, full_path, remote_dir)
       s3.directories[0].files.head(remote_path).public_url.should be_nil
     end
 
     it 'should not write identical content' do
-      sync_to_s3.sync_file(full_path, remote_dir)
+      sync_to_s3.send(:sync_file, full_path, remote_dir)
       last_modified = s3.directories[0].files.head(remote_path).last_modified
       Timecop.travel(Time.now + 60)
-      sync_to_s3.sync_file(full_path, remote_dir)
+      sync_to_s3.send(:sync_file, full_path, remote_dir)
       s3.directories[0].files.head(remote_path).last_modified.should == last_modified
     end
 
     context 'when remote dir is a corner case value' do
       before do
-        sync_to_s3.sync_file(full_path, remote_dir)
+        sync_to_s3.send(:sync_file, full_path, remote_dir)
       end
 
       context 'when remote dir is empty' do
@@ -193,7 +193,7 @@ describe Elasticity::SyncToS3 do
     context 'when the file does not exist' do
       it 'should raise an error' do
         expect {
-          sync_to_s3.sync_file('NO_FILE', '_')
+          sync_to_s3.send(:sync_file, 'NO_FILE', '_')
         }.to raise_error(Elasticity::NoFileError, "File 'NO_FILE' does not exist")
       end
     end
