@@ -98,9 +98,18 @@ module Elasticity
       if is_jobflow_running?
         jobflow_steps = []
         if jobflow_step.requires_installation? && !@installed_steps.include?(jobflow_step.class)
-          jobflow_steps << jobflow_step.aws_installation_step
+          if jobflow_step.aws_installation_step.kind_of?(Array)
+            jobflow_steps = jobflow_steps | jobflow_step.aws_installation_step
+          else
+            jobflow_steps << jobflow_step.aws_installation_step
+          end
         end
-        jobflow_steps << jobflow_step.to_aws_step(self)
+        newstep = jobflow_step.to_aws_step(self)
+        if newstep.kind_of?(Array)
+          jobflow_steps = jobflow_steps | newstep
+        else
+          jobflow_steps << newstep
+        end
         emr.add_jobflow_steps(@jobflow_id, {:steps => jobflow_steps})
       else
         @jobflow_steps << jobflow_step
