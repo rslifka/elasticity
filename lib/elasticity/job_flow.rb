@@ -157,7 +157,10 @@ module Elasticity
         :instances => {
           :keep_job_flow_alive_when_no_steps => @keep_job_flow_alive_when_no_steps,
           :hadoop_version => @hadoop_version,
-          :instance_groups => jobflow_instance_groups
+          :instance_groups => jobflow_instance_groups,
+          :placement => {
+            :availability_zone => @placement
+          }
         }
       }
       preamble.merge!(:ec2_subnet_id => @ec2_subnet_id) if @ec2_subnet_id

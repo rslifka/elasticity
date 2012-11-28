@@ -356,7 +356,10 @@ describe Elasticity::JobFlow do
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
           :hadoop_version => '1.0.3',
-          :instance_groups => ['INSTANCE_GROUP_CONFIGURATION']
+          :instance_groups => ['INSTANCE_GROUP_CONFIGURATION'],
+          :placement => {
+            :availability_zone => 'us-east-1a'
+          }
         }
       }
     end
