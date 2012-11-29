@@ -1,3 +1,7 @@
+## 2.5.2 - November 29, 2012
+
++ Configuration of Hive installations via ```hive_site``` is now supported.  See the README.md for details.
+
 ## 2.5.1 - November 28, 2012
 
 + When ```JobFlow#placement``` is specified, instances are created in that availability zone.  Previously, this setting was only used to derive the EMR API endpoint to connect to (i.e. the region).

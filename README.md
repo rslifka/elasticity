@@ -321,6 +321,19 @@ If that's the case, or if you'd just like to terminate a running jobflow before 
 jobflow.shutdown
 ```
 
+# Elasticity Configuration
+
+Elasticity supports a wide range of configuration options :) all of which are shown below.
+
+```ruby
+Elasticity.configure do |config|
+
+  # If using Hive, it will be configured via the directives here
+  config.hive_site = 's3://bucket/hive-site.xml'
+  
+end
+```
+
 # Amazon EMR Documentation
 
 Elasticity wraps all of the EMR API calls.  Please see the Amazon guide for details on these operations because the default values aren't obvious (e.g. the meaning of <code>DescribeJobFlows</code> without parameters).
