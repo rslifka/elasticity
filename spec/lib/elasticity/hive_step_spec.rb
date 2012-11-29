@@ -75,8 +75,40 @@ describe Elasticity::HiveStep do
       }
     end
 
-    it 'should specify how to install Hive' do
-      Elasticity::HiveStep.aws_installation_steps.should == [install_hive_step]
+    let(:configure_hive_step) do
+      {
+        :action_on_failure => 'TERMINATE_JOB_FLOW',
+        :hadoop_jar_step => {
+          :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+          :args => [
+            's3://elasticmapreduce/libs/hive/hive-script',
+            '--base-path',
+            's3://elasticmapreduce/libs/hive/',
+            '--install-hive-site',
+            '--hive-site=s3://TEST/hive-site.xml',
+            '--hive-versions',
+            'latest'
+          ],
+        },
+        :name => 'Elasticity - Configure Hive via Hive Site'
+      }
+    end
+
+    context 'when a hive site configuration file is not specified' do
+      it 'should specify how to install Hive' do
+        Elasticity::HiveStep.aws_installation_steps.should == [install_hive_step]
+      end
+    end
+
+    context 'when a hive site configuration file is specified' do
+      before do
+        Elasticity.configure do |config|
+          config.hive_site = 's3://TEST/hive-site.xml'
+        end
+      end
+      it 'should specify how to install Hive' do
+        Elasticity::HiveStep.aws_installation_steps.should == [install_hive_step, configure_hive_step]
+      end
     end
 
   end

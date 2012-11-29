@@ -27,4 +27,25 @@ require 'elasticity/pig_step'
 require 'elasticity/streaming_step'
 
 module Elasticity
+
+  class << self
+    attr_reader :configuration
+
+    def configuration
+      @configuration ||= Configuration.new
+    end
+
+    def default_configuration
+      @configuration = Configuration.new
+    end
+
+    def configure
+      yield(configuration)
+    end
+  end
+
+  class Configuration
+    attr_accessor :hive_site
+  end
+
 end

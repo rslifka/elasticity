@@ -41,7 +41,7 @@ module Elasticity
     end
 
     def self.aws_installation_steps
-      [
+      steps = [
         {
           :action_on_failure => 'TERMINATE_JOB_FLOW',
           :hadoop_jar_step => {
@@ -51,6 +51,25 @@ module Elasticity
           :name => aws_installation_step_name
         }
       ]
+      if Elasticity.configuration.hive_site
+        steps << {
+          :action_on_failure => 'TERMINATE_JOB_FLOW',
+          :hadoop_jar_step => {
+            :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+            :args => [
+              's3://elasticmapreduce/libs/hive/hive-script',
+              '--base-path',
+              's3://elasticmapreduce/libs/hive/',
+              '--install-hive-site',
+              "--hive-site=#{Elasticity.configuration.hive_site}",
+              '--hive-versions',
+              'latest'
+            ],
+          },
+          :name => 'Elasticity - Configure Hive via Hive Site'
+        }
+      end
+      steps
     end
 
   end
