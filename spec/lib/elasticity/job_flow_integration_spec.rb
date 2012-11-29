@@ -17,7 +17,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
 
     let(:hive_jobflow) do
       Elasticity::JobFlow.new('access', 'secret').tap do |jf|
-        jf.placement = 'us-west-1b'
+        jf.placement = 'us-west-1a'
         jf.log_uri = 's3n://slif-test/output/logs'
         jf.add_step(hive_step)
       end
@@ -45,6 +45,9 @@ describe 'Elasticity::JobFlow Integration Examples' do
                 :market => 'ON_DEMAND'
               },
           ],
+          :placement => {
+            :availability_zone => 'us-west-1a'
+          },
         },
         :steps => [
           {
@@ -99,7 +102,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
 
     let(:pig_jobflow) do
       Elasticity::JobFlow.new('access', 'secret').tap do |jf|
-        jf.placement = 'us-west-1b'
+        jf.placement = 'us-west-1c'
         jf.instance_count = 8
         jf.slave_instance_type = 'm1.xlarge'
         jf.log_uri = 's3n://slif-test/output/logs'
@@ -128,8 +131,12 @@ describe 'Elasticity::JobFlow Integration Examples' do
                 :instance_type => 'm1.xlarge',
                 :market => 'ON_DEMAND'
               },
-          ]
+          ],
+          :placement => {
+            :availability_zone => 'us-west-1c'
+          },
         },
+
         :steps => [
           {
             :action_on_failure => 'TERMINATE_JOB_FLOW',
@@ -210,7 +217,10 @@ describe 'Elasticity::JobFlow Integration Examples' do
                 :instance_type => 'm1.small',
                 :market => 'ON_DEMAND'
               },
-          ]
+          ],
+          :placement => {
+            :availability_zone => 'us-west-1b'
+          },
         },
         :steps => [
           {
