@@ -12,7 +12,7 @@ module Elasticity
     def initialize(script)
       @name = "Elasticity Pig Step (#{script})"
       @script = script
-      @variables = { }
+      @variables = {}
       @action_on_failure = 'TERMINATE_JOB_FLOW'
     end
 
@@ -37,20 +37,26 @@ module Elasticity
       true
     end
 
-    def self.aws_installation_step
-      {
-        :action_on_failure => 'TERMINATE_JOB_FLOW',
-        :hadoop_jar_step => {
-          :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
-          :args => [
-            's3://elasticmapreduce/libs/pig/pig-script',
+    def self.aws_installation_step_name
+      'Elasticity - Install Pig'
+    end
+
+    def self.aws_installation_steps
+      [
+        {
+          :action_on_failure => 'TERMINATE_JOB_FLOW',
+          :hadoop_jar_step => {
+            :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+            :args => [
+              's3://elasticmapreduce/libs/pig/pig-script',
               '--base-path',
               's3://elasticmapreduce/libs/pig/',
               '--install-pig'
-          ],
-        },
-        :name => 'Elasticity - Install Pig'
-      }
+            ],
+          },
+          :name => aws_installation_step_name
+        }
+      ]
     end
 
     private

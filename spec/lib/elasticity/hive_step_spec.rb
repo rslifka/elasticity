@@ -55,10 +55,10 @@ describe Elasticity::HiveStep do
     end
   end
 
-  describe '.aws_installation_step' do
+  describe '.aws_installation_steps' do
 
-    it 'should provide a means to install Hive' do
-      Elasticity::HiveStep.aws_installation_step.should == {
+    let(:install_hive_step) do
+      {
         :action_on_failure => 'TERMINATE_JOB_FLOW',
         :hadoop_jar_step => {
           :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
@@ -73,6 +73,10 @@ describe Elasticity::HiveStep do
         },
         :name => 'Elasticity - Install Hive'
       }
+    end
+
+    it 'should specify how to install Hive' do
+      Elasticity::HiveStep.aws_installation_steps.should == [install_hive_step]
     end
 
   end

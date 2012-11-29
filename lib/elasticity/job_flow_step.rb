@@ -12,8 +12,12 @@ module Elasticity
       self.class.requires_installation?
     end
 
-    def aws_installation_step
-      self.class.aws_installation_step
+    def aws_installation_steps
+      self.class.aws_installation_steps
+    end
+
+    def aws_installation_step_name
+      self.class.aws_installation_step_name
     end
 
     module ClassMethods
@@ -22,8 +26,12 @@ module Elasticity
         false
       end
 
-      def aws_installation_step
+      def aws_installation_steps
         raise RuntimeError, '.aws_installation_step is required to be defined when a step requires installation (e.g. Pig, Hive).'
+      end
+
+      def aws_installation_step_name
+        raise RuntimeError, '.aws_installation_step_name is required to be defined when a step requires installation (e.g. Pig, Hive).'
       end
 
     end

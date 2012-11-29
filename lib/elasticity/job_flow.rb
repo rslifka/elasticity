@@ -98,7 +98,7 @@ module Elasticity
       if is_jobflow_running?
         jobflow_steps = []
         if jobflow_step.requires_installation? && !@installed_steps.include?(jobflow_step.class)
-          jobflow_steps << jobflow_step.aws_installation_step
+          jobflow_steps.concat(jobflow_step.aws_installation_steps)
         end
         jobflow_steps << jobflow_step.to_aws_step(self)
         emr.add_jobflow_steps(@jobflow_id, {:steps => jobflow_steps})
@@ -172,7 +172,7 @@ module Elasticity
       steps = []
       @jobflow_steps.each do |step|
         if step.class.send(:requires_installation?) && !@installed_steps.include?(step.class)
-          steps << step.class.send(:aws_installation_step)
+          steps.concat(step.class.send(:aws_installation_steps))
           @installed_steps << step.class
         end
         steps << step.to_aws_step(self)

@@ -12,11 +12,11 @@ module Elasticity
     def initialize(script)
       @name = "Elasticity Hive Step (#{script})"
       @script = script
-      @variables = { }
+      @variables = {}
       @action_on_failure = 'TERMINATE_JOB_FLOW'
     end
 
-    def to_aws_step(job_flow)
+    def to_aws_step(_)
       args = %w(s3://elasticmapreduce/libs/hive/hive-script --base-path s3://elasticmapreduce/libs/hive/ --hive-versions latest --run-hive-script --args)
       args.concat(['-f', @script])
       @variables.keys.sort.each do |name|
@@ -36,15 +36,21 @@ module Elasticity
       true
     end
 
-    def self.aws_installation_step
-      {
-        :action_on_failure => 'TERMINATE_JOB_FLOW',
-        :hadoop_jar_step => {
-          :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
-          :args => %w(s3://elasticmapreduce/libs/hive/hive-script --base-path s3://elasticmapreduce/libs/hive/ --install-hive --hive-versions latest)
-        },
-        :name => 'Elasticity - Install Hive'
-      }
+    def self.aws_installation_step_name
+      'Elasticity - Install Hive'
+    end
+
+    def self.aws_installation_steps
+      [
+        {
+          :action_on_failure => 'TERMINATE_JOB_FLOW',
+          :hadoop_jar_step => {
+            :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+            :args => %w(s3://elasticmapreduce/libs/hive/hive-script --base-path s3://elasticmapreduce/libs/hive/ --install-hive --hive-versions latest)
+          },
+          :name => aws_installation_step_name
+        }
+      ]
     end
 
   end

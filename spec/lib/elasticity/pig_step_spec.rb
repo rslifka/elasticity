@@ -8,7 +8,7 @@ describe Elasticity::PigStep do
 
   its(:name) { should == 'Elasticity Pig Step (script.pig)' }
   its(:script) { should == 'script.pig' }
-  its(:variables) { should == { } }
+  its(:variables) { should == {} }
   its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
 
   describe '#to_aws_step' do
@@ -20,9 +20,9 @@ describe Elasticity::PigStep do
       step[:hadoop_jar_step][:jar].should == 's3://elasticmapreduce/libs/script-runner/script-runner.jar'
       step[:hadoop_jar_step][:args].should start_with([
         's3://elasticmapreduce/libs/pig/pig-script',
-          '--run-pig-script',
-          '--args',
-          '-p'
+        '--run-pig-script',
+        '--args',
+        '-p'
       ])
       step[:hadoop_jar_step][:args][4] =~ /^E_PARALLELS=\d+$/
     end
@@ -68,9 +68,9 @@ describe Elasticity::PigStep do
         step = ps_with_variables.to_aws_step(Elasticity::JobFlow.new('access', 'secret'))
         step[:hadoop_jar_step][:args][3..9].should == [
           '-p', 'VAR1=VALUE1',
-            '-p', 'VAR2=VALUE2',
-            '-p', 'E_PARALLELS=1',
-            'script.pig'
+          '-p', 'VAR2=VALUE2',
+          '-p', 'E_PARALLELS=1',
+          'script.pig'
         ]
       end
     end
@@ -83,22 +83,26 @@ describe Elasticity::PigStep do
     end
   end
 
-  describe '.aws_installation_step' do
+  describe '.aws_installation_steps' do
+
     it 'should provide a means to install Pig' do
-      Elasticity::PigStep.aws_installation_step.should == {
-        :action_on_failure => 'TERMINATE_JOB_FLOW',
-        :hadoop_jar_step => {
-          :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
-          :args => [
-            's3://elasticmapreduce/libs/pig/pig-script',
+      Elasticity::PigStep.aws_installation_steps.should == [
+        {
+          :action_on_failure => 'TERMINATE_JOB_FLOW',
+          :hadoop_jar_step => {
+            :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+            :args => [
+              's3://elasticmapreduce/libs/pig/pig-script',
               '--base-path',
               's3://elasticmapreduce/libs/pig/',
               '--install-pig'
-          ],
-        },
-        :name => 'Elasticity - Install Pig'
-      }
+            ],
+          },
+          :name => 'Elasticity - Install Pig'
+        }
+      ]
     end
+
   end
 
 end

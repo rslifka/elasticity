@@ -161,10 +161,7 @@ describe Elasticity::JobFlow do
 
           it 'should submit the installation step and the step' do
             emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', {
-              :steps => [
-                Elasticity::HiveStep.aws_installation_step,
-                  additional_step.to_aws_step(running_jobflow)
-              ]
+              :steps => Elasticity::HiveStep.aws_installation_steps << additional_step.to_aws_step(running_jobflow)
             })
             running_jobflow.add_step(additional_step)
           end
@@ -209,12 +206,12 @@ describe Elasticity::JobFlow do
       end
       let(:aws_steps) do
         [
-          Elasticity::HiveStep.aws_installation_step,
+          Elasticity::HiveStep.aws_installation_steps,
             jobflow_steps[0].to_aws_step(jobflow_with_steps),
-            Elasticity::PigStep.aws_installation_step,
+            Elasticity::PigStep.aws_installation_steps,
             jobflow_steps[1].to_aws_step(jobflow_with_steps),
             jobflow_steps[2].to_aws_step(jobflow_with_steps),
-        ]
+        ].flatten
       end
 
       it 'should incorporate the installation and run steps into the jobflow config' do
@@ -265,8 +262,8 @@ describe Elasticity::JobFlow do
         let(:hadoop_bootstrap_actions) do
           [
             Elasticity::HadoopBootstrapAction.new('OPTION1', 'VALUE1'),
-              Elasticity::HadoopBootstrapAction.new('OPTION1', 'VALUE2'),
-              Elasticity::HadoopBootstrapAction.new('OPTION2', 'VALUE3')
+            Elasticity::HadoopBootstrapAction.new('OPTION1', 'VALUE2'),
+            Elasticity::HadoopBootstrapAction.new('OPTION2', 'VALUE3')
           ]
         end
         let(:jobflow_with_bootstrap_actions) do
@@ -306,12 +303,12 @@ describe Elasticity::JobFlow do
             :instance_type => 'm1.small',
             :market => 'ON_DEMAND',
           },
-            {
-              :instance_count => 1,
-              :instance_role => 'CORE',
-              :instance_type => 'm1.small',
-              :market => 'ON_DEMAND'
-            },
+          {
+            :instance_count => 1,
+            :instance_role => 'CORE',
+            :instance_type => 'm1.small',
+            :market => 'ON_DEMAND'
+          },
         ]
       end
 

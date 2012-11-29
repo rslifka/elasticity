@@ -33,18 +33,33 @@ describe Elasticity::JobFlowStep do
     end
   end
 
-  describe '.aws_installation_step' do
-    it 'should raise an error by default' do
-      expect {
-        FakeStep.aws_installation_step
-      }.to raise_error(RuntimeError, '.aws_installation_step is required to be defined when a step requires installation (e.g. Pig, Hive).')
+  describe '#aws_installation_step_name' do
+    it 'should delegate to the class method' do
+      FakeStep.should_receive(:aws_installation_step_name).and_return('AWS_INSTALLATION_STEP_NAME')
+      subject.aws_installation_step_name.should == 'AWS_INSTALLATION_STEP_NAME'
     end
   end
 
-  describe '#aws_installation_step' do
+  describe '.aws_installation_step_name' do
+    it 'should raise an error by default' do
+      expect {
+        FakeStep.aws_installation_step_name
+      }.to raise_error(RuntimeError, '.aws_installation_step_name is required to be defined when a step requires installation (e.g. Pig, Hive).')
+    end
+  end
+
+  describe '#aws_installation_steps' do
     it 'should delegate to the class method' do
-      FakeStep.should_receive(:aws_installation_step).and_return('AWS_INSTALLATION_STEP')
-      subject.aws_installation_step.should == 'AWS_INSTALLATION_STEP'
+      FakeStep.should_receive(:aws_installation_steps).and_return('AWS_INSTALLATION_STEPS')
+      subject.aws_installation_steps.should == 'AWS_INSTALLATION_STEPS'
+    end
+  end
+
+  describe '.aws_installation_steps' do
+    it 'should raise an error by default' do
+      expect {
+        FakeStep.aws_installation_steps
+      }.to raise_error(RuntimeError, '.aws_installation_step is required to be defined when a step requires installation (e.g. Pig, Hive).')
     end
   end
 

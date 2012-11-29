@@ -35,7 +35,7 @@ module Elasticity
 
       step_names = jobflow.steps.map(&:name)
       Elasticity::JobFlowStep.steps_requiring_installation.each do |step|
-        jobflow.installed_steps << step if step_names.include?(step.aws_installation_step[:name])
+        jobflow.installed_steps << step if step_names.include?(step.aws_installation_step_name)
       end
 
       jobflow.created_at = Time.parse(xml_element.xpath('./ExecutionStatusDetail/CreationDateTime').text.strip)
