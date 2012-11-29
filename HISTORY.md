@@ -1,7 +1,7 @@
 ## 2.5.1 - November 28, 2012
 
 + When ```JobFlow#placement``` is specified, instances are created in that availability zone.  Previously, this setting was only used to derive the EMR API endpoint to connect to (i.e. the region).
-+ Updated development depdencies.
++ Updated development dependencies.
 
 ## 2.5 - September 29, 2012
 
