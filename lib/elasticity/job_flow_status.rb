@@ -10,6 +10,7 @@ module Elasticity
     attr_accessor :started_at
     attr_accessor :ready_at
     attr_accessor :ended_at
+    attr_accessor :duration
     attr_accessor :instance_count
     attr_accessor :master_instance_type
     attr_accessor :slave_instance_type
@@ -49,6 +50,10 @@ module Elasticity
 
       ended_at = xml_element.xpath('./ExecutionStatusDetail/EndDateTime').text.strip
       jobflow.ended_at = (ended_at == '') ? (nil) : (Time.parse(ended_at))
+
+      if jobflow.ended_at
+        jobflow.duration = ((jobflow.ended_at - jobflow.started_at) / 60).to_i
+      end
 
       jobflow.instance_count = xml_element.xpath('./Instances/InstanceCount').text.strip
       jobflow.master_instance_type = xml_element.xpath('./Instances/MasterInstanceType').text.strip
