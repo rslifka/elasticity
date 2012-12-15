@@ -1,6 +1,7 @@
 ## In Progress - TBA
 
 + Added ```#ended_at``` to ```JobFlowStatus```.
++ Added ```#duration``` calculated field to ```JobFlowStatus```.
 
 ## 2.5.2 - November 29, 2012
 
