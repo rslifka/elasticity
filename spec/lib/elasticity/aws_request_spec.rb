@@ -4,6 +4,10 @@ describe Elasticity::AwsRequest do
     Timecop.freeze(Time.at(1302461096))
   end
 
+  after do
+    Timecop.return
+  end
+
   subject do
     Elasticity::AwsRequest.new('access', 'secret')
   end

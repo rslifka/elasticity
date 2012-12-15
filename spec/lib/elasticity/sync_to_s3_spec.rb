@@ -181,9 +181,10 @@ describe Elasticity::SyncToS3 do
     it 'should not write identical content' do
       sync_to_s3.send(:sync_file, full_path, remote_dir)
       last_modified = s3.directories[0].files.head(remote_path).last_modified
-      Timecop.travel(Time.now + 60)
-      sync_to_s3.send(:sync_file, full_path, remote_dir)
-      s3.directories[0].files.head(remote_path).last_modified.should == last_modified
+      Timecop.freeze(Time.now + 60) do
+        sync_to_s3.send(:sync_file, full_path, remote_dir)
+        s3.directories[0].files.head(remote_path).last_modified.should == last_modified
+      end
     end
 
     context 'when remote dir is a corner case value' do
