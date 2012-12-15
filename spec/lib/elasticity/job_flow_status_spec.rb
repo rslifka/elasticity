@@ -51,6 +51,9 @@ describe Elasticity::JobFlowStatus do
                 <ReadyDateTime>
                    2011-10-04T21:49:18Z
                 </ReadyDateTime>
+                <EndDateTime>
+                   2011-11-04T21:49:18Z
+                </EndDateTime>
                 <State>TERMINATED</State>
               </ExecutionStatusDetail>
               <Steps>
@@ -153,6 +156,7 @@ describe Elasticity::JobFlowStatus do
       single_jobflow.created_at.should == Time.parse('2011-10-04T21:49:16Z')
       single_jobflow.started_at.should == Time.parse('2011-10-04T21:49:17Z')
       single_jobflow.ready_at.should == Time.parse('2011-10-04T21:49:18Z')
+      single_jobflow.ended_at.should == Time.parse('2011-11-04T21:49:18Z')
       single_jobflow.master_instance_type.should == 'm1.small'
       single_jobflow.slave_instance_type.should == 'm1.small'
       single_jobflow.instance_count.should == '4'
@@ -169,6 +173,7 @@ describe Elasticity::JobFlowStatus do
       multiple_jobflows.map(&:created_at).should == [Time.parse('2011-10-04T21:49:16Z'), Time.parse('2011-10-04T22:49:16Z')]
       multiple_jobflows.map(&:started_at).should == [Time.parse('2011-10-04T21:49:17Z'), nil]
       multiple_jobflows.map(&:ready_at).should == [Time.parse('2011-10-04T21:49:18Z'), nil]
+      multiple_jobflows.map(&:ended_at).should == [Time.parse('2011-11-04T21:49:18Z'), nil]
       multiple_jobflows.map(&:master_instance_type).should == %w(m1.small c1.medium)
       multiple_jobflows.map(&:slave_instance_type).should == %w(m1.small c1.medium)
       multiple_jobflows.map(&:instance_count).should == %w(4 2)

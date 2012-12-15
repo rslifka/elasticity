@@ -1,3 +1,7 @@
+## In Progress - TBA
+
++ Added ```#ended_at``` to ```JobFlowStatus```.
+
 ## 2.5.2 - November 29, 2012
 
 + Configuration of Hive installations via ```hive_site``` is now supported.  See the README.md for details.
