@@ -51,7 +51,7 @@ module Elasticity
       ended_at = xml_element.xpath('./ExecutionStatusDetail/EndDateTime').text.strip
       jobflow.ended_at = (ended_at == '') ? (nil) : (Time.parse(ended_at))
 
-      if jobflow.ended_at
+      if jobflow.ended_at && jobflow.started_at
         jobflow.duration = ((jobflow.ended_at - jobflow.started_at) / 60).to_i
       end
 

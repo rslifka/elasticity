@@ -26,6 +26,14 @@ describe Elasticity::JobFlowStatus do
     XML
   end
 
+  let(:started_at) do
+    <<-XML
+      <StartDateTime>
+        2011-10-04T21:49:17Z
+      </StartDateTime>
+    XML
+  end
+
   let(:setup_config) do
     hive_setup_config
   end
@@ -45,9 +53,7 @@ describe Elasticity::JobFlowStatus do
                 <LastStateChangeReason>
                    Steps completed with errors
                 </LastStateChangeReason>
-                <StartDateTime>
-                   2011-10-04T21:49:17Z
-                </StartDateTime>
+                #{started_at}
                 <ReadyDateTime>
                    2011-10-04T21:49:18Z
                 </ReadyDateTime>
@@ -97,12 +103,6 @@ describe Elasticity::JobFlowStatus do
                 <CreationDateTime>
                    2011-10-04T22:49:16Z
                 </CreationDateTime>
-                <StartDateTime>
-
-                </StartDateTime>
-                <ReadyDateTime>
-
-                </ReadyDateTime>
                 <State>
                   TERMINATED
                 </State>
@@ -163,6 +163,14 @@ describe Elasticity::JobFlowStatus do
       single_jobflow.instance_count.should == '4'
       single_jobflow.last_state_change_reason.should == 'Steps completed with errors'
       single_jobflow.master_public_dns_name.should == 'ec2-107-22-77-99.compute-1.amazonaws.com'
+    end
+
+    context 'when the jobflow never started' do
+      let(:started_at) {}
+      it 'should have a nil duration' do
+        single_jobflow.started_at.should == nil
+        single_jobflow.duration.should == nil
+      end
     end
   end
 
