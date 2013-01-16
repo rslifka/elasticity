@@ -28,6 +28,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :name => 'Elasticity Job Flow',
         :log_uri => 's3n://slif-test/output/logs',
         :ami_version => 'latest',
+        :visible_to_all_users => false,
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
           :hadoop_version => '1.0.3',
@@ -115,6 +116,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :name => 'Elasticity Job Flow',
         :log_uri => 's3n://slif-test/output/logs',
         :ami_version => 'latest',
+        :visible_to_all_users => false,
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
           :hadoop_version => '1.0.3',
@@ -201,6 +203,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
         :name => 'Elasticity Job Flow',
         :log_uri => 's3n://slif-test/output/logs',
         :ami_version => 'latest',
+        :visible_to_all_users => false,
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
           :hadoop_version => '1.0.3',

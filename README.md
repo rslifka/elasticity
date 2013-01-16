@@ -106,6 +106,7 @@ jobflow.log_uri                           = nil
 
 jobflow.ec2_key_name                      = nil
 jobflow.ec2_subnet_id                     = nil
+jobflow.visible_to_all_users              = false
 jobflow.placement                         = 'us-east-1a'
 jobflow.instance_count                    = 2
 jobflow.master_instance_type              = 'm1.small'

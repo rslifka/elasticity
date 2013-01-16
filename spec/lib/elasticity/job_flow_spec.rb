@@ -18,6 +18,7 @@ describe Elasticity::JobFlow do
   its(:ami_version) { should == 'latest' }
   its(:keep_job_flow_alive_when_no_steps) { should == false }
   its(:placement) { should == 'us-east-1a' }
+  its(:visible_to_all_users) { should == false }
 
   describe '.initialize' do
     it 'should set the access and secret keys to nil by default' do
@@ -350,6 +351,7 @@ describe Elasticity::JobFlow do
       {
         :name => 'Elasticity Job Flow',
         :ami_version => 'latest',
+        :visible_to_all_users => false,
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
           :hadoop_version => '1.0.3',
@@ -380,6 +382,13 @@ describe Elasticity::JobFlow do
       it 'should include it in the preamble' do
         subject.ec2_subnet_id = 'subnet-118b9d79'
         subject.send(:jobflow_preamble).should be_a_hash_including({:ec2_subnet_id => 'subnet-118b9d79'})
+      end
+    end
+
+    context 'when jobflow visibility is modified' do
+      it 'should be reflected in the jobflow settings' do
+        subject.visible_to_all_users = true
+        subject.send(:jobflow_preamble).should be_a_hash_including({:visible_to_all_users => true})
       end
     end
 

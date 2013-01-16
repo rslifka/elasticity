@@ -1,5 +1,6 @@
-## In Progress - TBA
+## 2.5.3 - January 16, 2013
 
++ Added ```#visible_to_all_users``` to ```JobFlow```.  Thanks to [dstumm](https://github.com/dstumm) for the contribution!
 + Added ```#ended_at``` to ```JobFlowStatus```.
 + Added ```#duration``` calculated field to ```JobFlowStatus```.
 

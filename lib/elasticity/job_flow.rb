@@ -18,6 +18,7 @@ module Elasticity
     attr_accessor :keep_job_flow_alive_when_no_steps
     attr_accessor :ec2_subnet_id
     attr_accessor :placement
+    attr_accessor :visible_to_all_users
 
     attr_reader :access_key
     attr_reader :secret_key
@@ -32,6 +33,7 @@ module Elasticity
 
       @access_key = access
       @secret_key = secret
+      @visible_to_all_users = false
 
       @bootstrap_actions = []
       @jobflow_steps = []
@@ -154,6 +156,7 @@ module Elasticity
       preamble = {
         :name => @name,
         :ami_version => @ami_version,
+        :visible_to_all_users => @visible_to_all_users,
         :instances => {
           :keep_job_flow_alive_when_no_steps => @keep_job_flow_alive_when_no_steps,
           :hadoop_version => @hadoop_version,
