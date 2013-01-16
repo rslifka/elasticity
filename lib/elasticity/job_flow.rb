@@ -148,6 +148,7 @@ module Elasticity
       config = jobflow_preamble
       config[:steps] = jobflow_steps
       config[:log_uri] = @log_uri if @log_uri
+      config[:visible_to_all_users] = @visible_to_all_users if @visible_to_all_users
       config[:bootstrap_actions] = @bootstrap_actions.map{|a| a.to_aws_bootstrap_action} unless @bootstrap_actions.empty?
       config
     end
