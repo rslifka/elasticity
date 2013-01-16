@@ -356,8 +356,7 @@ Unfortunately, the documentation is sometimes incorrect and sometimes missing.  
 
 * AWS signing was used from [RightScale's](http://www.rightscale.com/) amazing [right_aws gem](https://github.com/rightscale/right_aws) which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.
 * <code>camelize</code> was used from ActiveSupport to assist in converting parmeters to AWS request format.
-* Thanks to the following people who have contributed patches or helpful suggestions: [Ryan Weald](https://github.com/rweald), [Aram Price](https://github.com/aramprice/), [Wouter Broekhof](https://github.com/wouter/), [Menno van der Sman](https://github.com/menno), [Michael Tibben](https://github.com/mtibben) and [Alexander Dean](https://github.com/alexanderdean).
-
+* Thanks to [Ryan Weald](https://github.com/rweald) and [Alexander Dean](https://github.com/alexanderdean) for their constant barrage of excellent suggestions :)
 
 # License
 
