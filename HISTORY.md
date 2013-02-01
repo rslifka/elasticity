@@ -1,3 +1,7 @@
+## 2.5.4 - February 1, 2013
+
++ Pull request from [Aaron Olson](https://github.com/airolson), adding ```JobFlowStatus#normalized_instance_hours```.
+
 ## 2.5.3 - January 16, 2013
 
 + Added ```#visible_to_all_users``` to ```JobFlow```.  Thanks to [dstumm](https://github.com/dstumm) for the contribution!

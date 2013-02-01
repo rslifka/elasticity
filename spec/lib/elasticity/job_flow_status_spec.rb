@@ -77,6 +77,9 @@ describe Elasticity::JobFlowStatus do
                  <MasterPublicDnsName>
                    ec2-107-22-77-99.compute-1.amazonaws.com
                  </MasterPublicDnsName>
+                 <NormalizedInstanceHours>
+                   0
+                 </NormalizedInstanceHours>
                  <Placement>
                     <AvailabilityZone>
                       eu-west-1a
@@ -111,6 +114,9 @@ describe Elasticity::JobFlowStatus do
                 </LastStateChangeReason>
               </ExecutionStatusDetail>
               <Instances>
+                 <NormalizedInstanceHours>
+                   4
+                 </NormalizedInstanceHours>
                  <Placement>
                     <AvailabilityZone>
                       eu-west-1b
@@ -142,53 +148,55 @@ describe Elasticity::JobFlowStatus do
     describe_jobflows_document.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member')
   end
 
-  let(:single_jobflow) { Elasticity::JobFlowStatus.from_member_element(members_nodeset[0]) }
+  let(:single_jobflow_status) { Elasticity::JobFlowStatus.from_member_element(members_nodeset[0]) }
 
-  let(:multiple_jobflows) { Elasticity::JobFlowStatus.from_members_nodeset(members_nodeset) }
+  let(:multiple_jobflow_statuses) { Elasticity::JobFlowStatus.from_members_nodeset(members_nodeset) }
 
   describe '.from_xml' do
-    it 'should return a JobFlow with the appropriate fields initialized' do
-      single_jobflow.name.should == 'Hive Job 1'
-      single_jobflow.jobflow_id.should == 'j-p'
-      single_jobflow.state.should == 'TERMINATED'
-      single_jobflow.steps.map(&:name).should == ['Elasticity - Install Hive', 'Run Hive Script']
-      single_jobflow.steps.map(&:state).should == %w(FAILED PENDING)
-      single_jobflow.created_at.should == Time.parse('2011-10-04T21:49:16Z')
-      single_jobflow.started_at.should == Time.parse('2011-10-04T21:49:17Z')
-      single_jobflow.ready_at.should == Time.parse('2011-10-04T21:49:18Z')
-      single_jobflow.ended_at.should == Time.parse('2011-10-05T21:49:18Z')
-      single_jobflow.duration.should == 1440
-      single_jobflow.master_instance_type.should == 'm1.small'
-      single_jobflow.slave_instance_type.should == 'm1.small'
-      single_jobflow.instance_count.should == '4'
-      single_jobflow.last_state_change_reason.should == 'Steps completed with errors'
-      single_jobflow.master_public_dns_name.should == 'ec2-107-22-77-99.compute-1.amazonaws.com'
+    it 'should return a JobFlowStatus with the appropriate fields initialized' do
+      single_jobflow_status.name.should == 'Hive Job 1'
+      single_jobflow_status.jobflow_id.should == 'j-p'
+      single_jobflow_status.state.should == 'TERMINATED'
+      single_jobflow_status.steps.map(&:name).should == ['Elasticity - Install Hive', 'Run Hive Script']
+      single_jobflow_status.steps.map(&:state).should == %w(FAILED PENDING)
+      single_jobflow_status.created_at.should == Time.parse('2011-10-04T21:49:16Z')
+      single_jobflow_status.started_at.should == Time.parse('2011-10-04T21:49:17Z')
+      single_jobflow_status.ready_at.should == Time.parse('2011-10-04T21:49:18Z')
+      single_jobflow_status.ended_at.should == Time.parse('2011-10-05T21:49:18Z')
+      single_jobflow_status.duration.should == 1440
+      single_jobflow_status.master_instance_type.should == 'm1.small'
+      single_jobflow_status.slave_instance_type.should == 'm1.small'
+      single_jobflow_status.instance_count.should == '4'
+      single_jobflow_status.last_state_change_reason.should == 'Steps completed with errors'
+      single_jobflow_status.master_public_dns_name.should == 'ec2-107-22-77-99.compute-1.amazonaws.com'
+      single_jobflow_status.normalized_instance_hours.should == '0'
     end
 
     context 'when the jobflow never started' do
       let(:started_at) {}
       it 'should have a nil duration' do
-        single_jobflow.started_at.should == nil
-        single_jobflow.duration.should == nil
+        single_jobflow_status.started_at.should == nil
+        single_jobflow_status.duration.should == nil
       end
     end
   end
 
-  describe '.from_jobflows_nodeset' do
-    it 'should return JobFlows with the appropriate fields initialized' do
-      multiple_jobflows.map(&:name).should == ['Hive Job 1', 'Hive Job 2']
-      multiple_jobflows.map(&:jobflow_id).should == %w(j-p j-h)
-      multiple_jobflows.map(&:state).should == %w(TERMINATED TERMINATED)
-      multiple_jobflows.map(&:created_at).should == [Time.parse('2011-10-04T21:49:16Z'), Time.parse('2011-10-04T22:49:16Z')]
-      multiple_jobflows.map(&:started_at).should == [Time.parse('2011-10-04T21:49:17Z'), nil]
-      multiple_jobflows.map(&:ready_at).should == [Time.parse('2011-10-04T21:49:18Z'), nil]
-      multiple_jobflows.map(&:ended_at).should == [Time.parse('2011-10-05T21:49:18Z'), nil]
-      multiple_jobflows.map(&:duration).should == [1440, nil]
-      multiple_jobflows.map(&:master_instance_type).should == %w(m1.small c1.medium)
-      multiple_jobflows.map(&:slave_instance_type).should == %w(m1.small c1.medium)
-      multiple_jobflows.map(&:instance_count).should == %w(4 2)
-      multiple_jobflows.map(&:last_state_change_reason).should == ['Steps completed with errors', 'Steps completed']
-      multiple_jobflows.map(&:master_public_dns_name).should == ['ec2-107-22-77-99.compute-1.amazonaws.com', nil]
+  describe '.from_jobflow_statuses_nodeset' do
+    it 'should return JobFlowStatuses with the appropriate fields initialized' do
+      multiple_jobflow_statuses.map(&:name).should == ['Hive Job 1', 'Hive Job 2']
+      multiple_jobflow_statuses.map(&:jobflow_id).should == %w(j-p j-h)
+      multiple_jobflow_statuses.map(&:state).should == %w(TERMINATED TERMINATED)
+      multiple_jobflow_statuses.map(&:created_at).should == [Time.parse('2011-10-04T21:49:16Z'), Time.parse('2011-10-04T22:49:16Z')]
+      multiple_jobflow_statuses.map(&:started_at).should == [Time.parse('2011-10-04T21:49:17Z'), nil]
+      multiple_jobflow_statuses.map(&:ready_at).should == [Time.parse('2011-10-04T21:49:18Z'), nil]
+      multiple_jobflow_statuses.map(&:ended_at).should == [Time.parse('2011-10-05T21:49:18Z'), nil]
+      multiple_jobflow_statuses.map(&:duration).should == [1440, nil]
+      multiple_jobflow_statuses.map(&:master_instance_type).should == %w(m1.small c1.medium)
+      multiple_jobflow_statuses.map(&:slave_instance_type).should == %w(m1.small c1.medium)
+      multiple_jobflow_statuses.map(&:instance_count).should == %w(4 2)
+      multiple_jobflow_statuses.map(&:last_state_change_reason).should == ['Steps completed with errors', 'Steps completed']
+      multiple_jobflow_statuses.map(&:master_public_dns_name).should == ['ec2-107-22-77-99.compute-1.amazonaws.com', nil]
+      multiple_jobflow_statuses.map(&:normalized_instance_hours).should == %w(0 4)
     end
   end
 
@@ -197,28 +205,28 @@ describe Elasticity::JobFlowStatus do
     context 'when nothing has been installed' do
       let(:setup_config) { }
       it 'should be empty' do
-        single_jobflow.installed_steps.should == []
+        single_jobflow_status.installed_steps.should == []
       end
     end
 
     context 'when Hive has been installed by Elasticity' do
       let(:setup_config) { hive_setup_config }
       it 'should include HiveStep' do
-        single_jobflow.installed_steps.should == [Elasticity::HiveStep]
+        single_jobflow_status.installed_steps.should == [Elasticity::HiveStep]
       end
     end
 
     context 'when Pig has been installed by Elasticity' do
       let(:setup_config) { pig_setup_config }
       it 'should include PigStep' do
-        single_jobflow.installed_steps.should == [Elasticity::PigStep]
+        single_jobflow_status.installed_steps.should == [Elasticity::PigStep]
       end
     end
 
     context 'when more than one step has been installed by Elasticity' do
       let(:setup_config) { hive_setup_config + pig_setup_config }
       it 'should include all of them' do
-        single_jobflow.installed_steps.should =~ [Elasticity::HiveStep, Elasticity::PigStep]
+        single_jobflow_status.installed_steps.should =~ [Elasticity::HiveStep, Elasticity::PigStep]
       end
     end
   end
