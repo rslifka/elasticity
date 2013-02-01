@@ -17,6 +17,7 @@ module Elasticity
     attr_accessor :last_state_change_reason
     attr_accessor :installed_steps
     attr_accessor :master_public_dns_name
+    attr_accessor :normalized_instance_hours
 
     def initialize
       @steps = []
@@ -61,6 +62,8 @@ module Elasticity
 
       master_public_dns_name = xml_element.xpath('./Instances/MasterPublicDnsName').text.strip
       jobflow.master_public_dns_name = (master_public_dns_name == '') ? (nil) : (master_public_dns_name)
+
+      jobflow.normalized_instance_hours = xml_element.xpath('./Instances/NormalizedInstanceHours').text.strip
 
       jobflow
     end
