@@ -1,6 +1,6 @@
 [![Gem Version](https://badge.fury.io/rb/elasticity.png)](http://badge.fury.io/rb/elasticity)
 
-**(January 16, 2013)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
+**(February 3, 2013)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
 
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently abstract away the complex EMR REST API and make working with job flows more productive and more enjoyable.
 
@@ -260,8 +260,11 @@ jobflow.add_step(hive_step)
 ### Adding a Streaming Step
 
 ```ruby
-# Input bucket, output bucket, mapper and reducer scripts
+# Input bucket, output bucket, mapper script,reducer script
 streaming_step = Elasticity::StreamingStep.new('s3n://elasticmapreduce/samples/wordcount/input', 's3n://elasticityoutput/wordcount/output/2012-07-23', 's3n://elasticmapreduce/samples/wordcount/wordSplitter.py', 'aggregate')
+
+# Optionally, include additional *arguments
+# streaming_step = Elasticity::StreamingStep.new('s3n://elasticmapreduce/samples/wordcount/input', 's3n://elasticityoutput/wordcount/output/2012-07-23', 's3n://elasticmapreduce/samples/wordcount/wordSplitter.py', 'aggregate', '-arg1', 'value1')
 
 jobflow.add_step(streaming_step)
 ```
@@ -337,7 +340,7 @@ Elasticity.configure do |config|
 
   # If using Hive, it will be configured via the directives here
   config.hive_site = 's3://bucket/hive-site.xml'
-  
+
 end
 ```
 
