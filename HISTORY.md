@@ -1,7 +1,7 @@
 ## 2.5.6 - February 9, 2013
 
 + Pull request from [Aaron Olson](https://github.com/airolson), removing requirement that a ```JobFlow``` has steps before running.
-
++ Updating development to ruby-1.9.3-p385.
 
 ## 2.5.5 - February 3, 2013
 
