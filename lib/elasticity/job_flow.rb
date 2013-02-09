@@ -110,9 +110,6 @@ module Elasticity
     end
 
     def run
-      if @jobflow_steps.empty?
-        raise JobFlowMissingStepsError, 'Cannot run a job flow without adding steps.  Please use #add_step.'
-      end
       if is_jobflow_running?
         raise JobFlowRunningError, 'Cannot run a job flow multiple times.  To do more with this job flow, please use #add_step.'
       end
