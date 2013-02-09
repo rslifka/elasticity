@@ -440,6 +440,15 @@ describe Elasticity::JobFlow do
 
     end
 
+    context 'when there are no steps added' do
+      let(:jobflow_with_no_steps) { Elasticity::JobFlow.new('_', '_') }
+      it 'should raise an error' do
+        expect {
+          jobflow_with_no_steps.run
+        }.to raise_error(Elasticity::JobFlowMissingStepsError, 'Cannot run a job flow without adding steps.  Please use #add_step.')
+      end
+    end
+
   end
 
   describe '#status' do
