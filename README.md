@@ -61,7 +61,7 @@ Job flows are the center of the EMR universe.  The general order of operations i
   1. Specify options.
   1. (optional) Configure instance groups.
   1. (optional) Add bootstrap actions.
-  1. Add steps.
+  1. (optional) Add steps.
   1. (optional) Upload assets.
   1. Run the job flow.
   1. (optional) Add additional steps.
@@ -197,9 +197,9 @@ action = Elasticity::HadoopFileBootstrapAction.new('s3n://my-bucket/job-config.x
 jobflow.add_bootstrap_action(action)
 ```
 
-## 5 - Add Steps
+## 5 - Add Steps (optional)
 
-Each type of step has ```#name``` and ```#action_on_failure``` fields that can be overridden.  Apart from that, steps are configured differently - exhaustively described below.
+Each type of step has ```#name``` and ```#action_on_failure``` fields that can be specified.  Apart from that, steps are configured differently - exhaustively described below.
 
 ### Adding a Pig Step
 
