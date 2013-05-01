@@ -3,15 +3,13 @@ module Elasticity
   class BootstrapAction
 
     attr_accessor :name
-    attr_accessor :option
-    attr_accessor :value
     attr_accessor :script
+    attr_accessor :arguments
 
-    def initialize(script, option, value)
+    def initialize(script, *args)
       @name = 'Elasticity Bootstrap Action'
-      @option = option
-      @value = value
       @script = script
+      @arguments = args
     end
 
     def to_aws_bootstrap_action
@@ -19,7 +17,7 @@ module Elasticity
         :name => @name,
         :script_bootstrap_action => {
           :path => @script,
-          :args => [@option, @value]
+          :args => @arguments
         }
       }
     end
