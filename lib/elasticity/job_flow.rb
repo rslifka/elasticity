@@ -29,7 +29,7 @@ module Elasticity
       @name = 'Elasticity Job Flow'
       @ami_version = 'latest'
       @keep_job_flow_alive_when_no_steps = false
-      @placement = 'us-east-1a'
+      @placement = nil
 
       @access_key = access
       @secret_key = secret
@@ -133,7 +133,7 @@ module Elasticity
     private
 
     def emr
-      @region ||= @placement.match(/(\w+-\w+-\d+)/)[0]
+      @region ||= (@placement && @placement.match(/(\w+-\w+-\d+)/)[0]) || 'us-east-1'
       @emr ||= Elasticity::EMR.new(@access_key, @secret_key, :region => @region)
     end
 
@@ -157,12 +157,10 @@ module Elasticity
         :instances => {
           :keep_job_flow_alive_when_no_steps => @keep_job_flow_alive_when_no_steps,
           :hadoop_version => @hadoop_version,
-          :instance_groups => jobflow_instance_groups,
-          :placement => {
-            :availability_zone => @placement
-          }
+          :instance_groups => jobflow_instance_groups
         }
       }
+      preamble[:placement] = {:availability_zone => @placement} if(@placement)
       preamble.merge!(:ec2_subnet_id => @ec2_subnet_id) if @ec2_subnet_id
       preamble[:instances].merge!(:ec2_key_name => @ec2_key_name) if @ec2_key_name
       preamble
