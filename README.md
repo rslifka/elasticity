@@ -1,10 +1,8 @@
 [![Gem Version](https://badge.fury.io/rb/elasticity.png)](http://badge.fury.io/rb/elasticity)
 
-**(January 16, 2013)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
+**(February 3, 2013)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
 
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently abstract away the complex EMR REST API and make working with job flows more productive and more enjoyable.
-
-**Travis has been flaky, failing builds before they start.  "Trust me", it's green :)**
 
 [![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) REE, 1.8.7, 1.9.2, 1.9.3
 
@@ -63,7 +61,7 @@ Job flows are the center of the EMR universe.  The general order of operations i
   1. Specify options.
   1. (optional) Configure instance groups.
   1. (optional) Add bootstrap actions.
-  1. Add steps.
+  1. (optional) Add steps.
   1. (optional) Upload assets.
   1. Run the job flow.
   1. (optional) Add additional steps.
@@ -199,9 +197,9 @@ action = Elasticity::HadoopFileBootstrapAction.new('s3n://my-bucket/job-config.x
 jobflow.add_bootstrap_action(action)
 ```
 
-## 5 - Add Steps
+## 5 - Add Steps (optional)
 
-Each type of step has ```#name``` and ```#action_on_failure``` fields that can be overridden.  Apart from that, steps are configured differently - exhaustively described below.
+Each type of step has ```#name``` and ```#action_on_failure``` fields that can be specified.  Apart from that, steps are configured differently - exhaustively described below.
 
 ### Adding a Pig Step
 
@@ -260,8 +258,11 @@ jobflow.add_step(hive_step)
 ### Adding a Streaming Step
 
 ```ruby
-# Input bucket, output bucket, mapper and reducer scripts
+# Input bucket, output bucket, mapper script,reducer script
 streaming_step = Elasticity::StreamingStep.new('s3n://elasticmapreduce/samples/wordcount/input', 's3n://elasticityoutput/wordcount/output/2012-07-23', 's3n://elasticmapreduce/samples/wordcount/wordSplitter.py', 'aggregate')
+
+# Optionally, include additional *arguments
+# streaming_step = Elasticity::StreamingStep.new('s3n://elasticmapreduce/samples/wordcount/input', 's3n://elasticityoutput/wordcount/output/2012-07-23', 's3n://elasticmapreduce/samples/wordcount/wordSplitter.py', 'aggregate', '-arg1', 'value1')
 
 jobflow.add_step(streaming_step)
 ```
@@ -337,7 +338,7 @@ Elasticity.configure do |config|
 
   # If using Hive, it will be configured via the directives here
   config.hive_site = 's3://bucket/hive-site.xml'
-  
+
 end
 ```
 
