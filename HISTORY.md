@@ -1,3 +1,10 @@
+## 2.6 - August 13, 2013
+
++ Added support for Ruby 2.0.
++ Removed support for REE and 1.8.7 as these are now unsupported versions of Ruby (and dependencies like Nokogiri now require >= 1.9.2).
++ Updating development environment to latest version of Ruby 1.9.2 (p320).
++ Updated development environment (RSpec 2.14, moved to .ruby-version and .ruby-gemset).
+
 ## 2.5.6 - February 9, 2013
 
 + Pull request from [Aaron Olson](https://github.com/airolson), removing requirement that a ```JobFlow``` has steps before running.
