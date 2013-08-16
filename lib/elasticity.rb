@@ -15,6 +15,7 @@ require 'elasticity/hadoop_bootstrap_action'
 require 'elasticity/hadoop_file_bootstrap_action'
 require 'elasticity/job_flow_step'
 
+require 'elasticity/looper'
 require 'elasticity/job_flow'
 require 'elasticity/instance_group'
 
