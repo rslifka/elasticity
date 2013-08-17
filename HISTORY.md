@@ -5,8 +5,6 @@
 + Added testing to support Ruby 2.0.
 + Removed support for REE and 1.8.7 as these are now unsupported versions of Ruby.  Common strategy in the Ruby community has been to only perform a minor version bump in this case; Elasticity is following suit.
 + Now specifying minor versions in the gemspec.  With the release of Ruby 2.0, I'm anticipating breaking changes coming to many gems, and hoping that this mitigates those effects.
-
-### Development
 + Dev update: guard-rspec added.
 + Dev update: All development dependencies now require Ruby >= 1.9.2.
 + Dev update: Latest version of Ruby 1.9.2 (p320).
