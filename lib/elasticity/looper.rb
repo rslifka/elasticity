@@ -9,10 +9,11 @@ module Elasticity
     end
 
     def go
+      start_time = Time.now
       loop do
         should_continue, *results = @on_retry_check.call
         return unless should_continue
-        @on_wait.call(*results)
+        @on_wait.call(Time.now - start_time, *results)
         sleep(@poll_interval)
       end
     end

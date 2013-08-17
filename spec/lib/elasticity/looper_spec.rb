@@ -22,12 +22,21 @@ describe Elasticity::Looper do
         l.go
       end
 
-      it 'communicates waiting occurs with all additional arguments that on_retry_check returns' do
-        client.stub(:on_retry_check).and_return([true, 'TEST1', 'TEST2'], false)
+      it 'communicates waiting occurs with elapsed wait time and arguments that on_retry_check returns' do
+        # Freeze time at the start and then 60 seconds ahead when sleep is called
+        Timecop.freeze(Time.at(1300000000))
+        Elasticity::Looper.any_instance.stub(:sleep) do
+          Timecop.freeze(Time.at(1300000060))
+        end
 
-        client.should_receive(:on_wait).with('TEST1', 'TEST2')
+        client.stub(:on_retry_check).and_return([true, 'TEST1', 'TEST2'], [true, 'TEST3'], false)
+        client.should_receive(:on_wait).with(0, 'TEST1', 'TEST2')
+        client.should_receive(:on_wait).with(60, 'TEST3')
+
         l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
         l.go
+
+        Timecop.return
       end
 
     end
