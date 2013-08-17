@@ -1,18 +1,39 @@
 describe Elasticity::Looper do
 
+  before do
+    Elasticity::Looper.any_instance.stub(:sleep)
+  end
+
   context 'when you should wait' do
+
+    let(:client) do
+      double(:client).tap do |c|
+        # Retry on the first pass through and don't retry on the second
+        c.stub(:on_retry_check).and_return(true, false)
+        c.stub(:on_wait)
+      end
+    end
+
+    it 'should wait for 60 seconds (the default)' do
+      Elasticity::Looper.any_instance.should_receive(:sleep).with(60)
+      l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
+      l.go
+    end
+
+    context 'when a custom sleep value is specified' do
+      it 'should wait for that number of seconds' do
+        Elasticity::Looper.any_instance.should_receive(:sleep).with(999)
+        l = Elasticity::Looper.new(999, client.method(:on_retry_check), client.method(:on_wait))
+        l.go
+      end
+    end
 
     context 'and then you should not wait' do
 
       it 'does not communication that waiting is about to occur' do
-        f = double(:client)
-        f.stub(:on_retry_check).and_return(true, false)
-        f.stub(:on_wait)
-
-        l = Elasticity::Looper.new(f.method(:on_retry_check), f.method(:on_wait))
+        l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
         l.go
-
-        expect(f).to have_received(:on_wait).once
+        expect(client).to have_received(:on_wait).once
       end
 
     end
