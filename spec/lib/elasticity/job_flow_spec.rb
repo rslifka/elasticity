@@ -502,6 +502,50 @@ describe Elasticity::JobFlow do
 
   end
 
+  describe '#wait_for_completion' do
+    let(:client_block) { Proc.new {} }
+    let(:fake_looper) { double(:looper, :go => nil) }
+
+    it 'should kick off a looper' do
+      Elasticity::Looper.should_receive(:new).with(subject.method(:retry_check), client_block).and_return(fake_looper)
+      fake_looper.should_receive(:go)
+      subject.wait_for_completion(&client_block)
+    end
+  end
+
+  describe '#retry_check' do
+
+    context 'when the jobflow is RUNNING' do
+      let(:jobflow_status) { double(:state => 'RUNNING') }
+      before do
+        subject.stub(:status).and_return(jobflow_status)
+      end
+      it 'returns true and the result of #status' do
+        subject.send(:retry_check).should == [true, jobflow_status]
+      end
+    end
+
+    context 'when the jobflow is STARTING' do
+      let(:jobflow_status) { double(:state => 'STARTING') }
+      before do
+        subject.stub(:status).and_return(jobflow_status)
+      end
+      it 'returns true and the result of #status' do
+        subject.send(:retry_check).should == [true, jobflow_status]
+      end
+    end
+
+    context 'when the jobflow is != RUNNING or STARTING' do
+      let(:jobflow_status) { double(:state => '_') }
+      before do
+        subject.stub(:status).and_return(jobflow_status)
+      end
+      it 'returns false and the result of #status' do
+        subject.send(:retry_check).should == [false, jobflow_status]
+      end
+    end
+  end
+
   describe '.from_jobflow_id' do
 
     before do

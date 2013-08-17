@@ -130,7 +130,17 @@ module Elasticity
       emr.describe_jobflow(@jobflow_id)
     end
 
+    def wait_for_completion(&on_wait)
+      l = Elasticity::Looper.new(method(:retry_check), on_wait)
+      l.go
+    end
+
     private
+
+    def retry_check
+      jf_status = status
+      return status.state == 'RUNNING' || status.state == 'STARTING', jf_status
+    end
 
     def emr
       @region ||= @placement.match(/(\w+-\w+-\d+)/)[0]
