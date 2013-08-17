@@ -256,6 +256,17 @@ describe Elasticity::JobFlow do
         end
       end
 
+      context 'when debugging is enabled' do
+        before do
+          jobflow_with_steps.log_uri = '_'
+          jobflow_with_steps.enable_debugging = true
+          aws_steps.insert(0, Elasticity::SetupHadoopDebuggingStep.new.to_aws_step(jobflow_with_steps))
+        end
+        it 'should incorporate the step to setup Hadoop debugging' do
+          jobflow_with_steps.send(:jobflow_config).should be_a_hash_including({:steps => aws_steps})
+        end
+      end
+
     end
 
     describe 'log URI' do

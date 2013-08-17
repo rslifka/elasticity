@@ -63,7 +63,7 @@ module Elasticity
 
     def enable_debugging=(enabled)
       if enabled
-        raise Elasticity::LogUriMissingError, 'To enable debugging, please set a #log_uri' unless @log_uri
+        raise LogUriMissingError, 'To enable debugging, please set a #log_uri' unless @log_uri
       end
       @enable_debugging = enabled
     end
@@ -163,7 +163,9 @@ module Elasticity
 
     def jobflow_config
       config = jobflow_preamble
-      config[:steps] = jobflow_steps
+      steps = jobflow_steps
+      steps.insert(0, Elasticity::SetupHadoopDebuggingStep.new.to_aws_step(self)) if @enable_debugging
+      config[:steps] = steps
       config[:log_uri] = @log_uri if @log_uri
       config[:bootstrap_actions] = @bootstrap_actions.map{|a| a.to_aws_bootstrap_action} unless @bootstrap_actions.empty?
       config
