@@ -3,6 +3,7 @@ module Elasticity
   class JobFlowRunningError < StandardError; end
   class JobFlowNotStartedError < StandardError; end
   class JobFlowMissingStepsError < StandardError; end
+  class LogUriMissingError < StandardError; end
 
   class JobFlow
 
@@ -19,6 +20,7 @@ module Elasticity
     attr_accessor :ec2_subnet_id
     attr_accessor :placement
     attr_accessor :visible_to_all_users
+    attr_accessor :enable_debugging
 
     attr_reader :access_key
     attr_reader :secret_key
@@ -30,6 +32,7 @@ module Elasticity
       @ami_version = 'latest'
       @keep_job_flow_alive_when_no_steps = false
       @placement = 'us-east-1a'
+      @enable_debugging = false
 
       @access_key = access
       @secret_key = secret
@@ -56,6 +59,13 @@ module Elasticity
         j.instance_variable_set(:@jobflow_id, jobflow_id)
         j.instance_variable_set(:@installed_steps, j.status.installed_steps)
       end
+    end
+
+    def enable_debugging=(enabled)
+      if enabled
+        raise Elasticity::LogUriMissingError, 'To enable debugging, please set a #log_uri' unless @log_uri
+      end
+      @enable_debugging = enabled
     end
 
     def instance_count=(count)

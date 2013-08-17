@@ -19,6 +19,7 @@ describe Elasticity::JobFlow do
   its(:keep_job_flow_alive_when_no_steps) { should == false }
   its(:placement) { should == 'us-east-1a' }
   its(:visible_to_all_users) { should == false }
+  its(:enable_debugging) { should == false }
 
   describe '.initialize' do
     it 'should set the access and secret keys to nil by default' do
@@ -30,6 +31,32 @@ describe Elasticity::JobFlow do
         j.secret_key.should == nil
       end
     end
+  end
+
+  describe '#enable_debugging=' do
+
+    context 'when a log_uri is present' do
+      before do
+        subject.log_uri = '_'
+      end
+      it 'should set enable_debugging' do
+        subject.enable_debugging = true
+        subject.enable_debugging.should == true
+      end
+    end
+
+    context 'when a log_uri is not present' do
+      before do
+        subject.log_uri = nil
+      end
+      it 'should raise an error' do
+        expect {
+          subject.enable_debugging = true
+        }.to raise_error(Elasticity::LogUriMissingError, 'To enable debugging, please set a #log_uri')
+        subject.enable_debugging.should == false
+      end
+    end
+
   end
 
   describe '#instance_count=' do
