@@ -23,6 +23,7 @@ require 'elasticity/job_flow_status'
 require 'elasticity/job_flow_status_step'
 
 require 'elasticity/custom_jar_step'
+require 'elasticity/setup_hadoop_debugging_step'
 require 'elasticity/hive_step'
 require 'elasticity/pig_step'
 require 'elasticity/streaming_step'
