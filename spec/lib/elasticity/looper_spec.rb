@@ -16,27 +16,41 @@ describe Elasticity::Looper do
 
     context 'and then you should not wait' do
 
-      it 'communicates that waiting occurs only once' do
-        client.should_receive(:on_wait).once
-        l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
-        l.go
-      end
+      context 'when a wait callback is provided' do
 
-      it 'communicates waiting occurs with elapsed wait time and arguments that on_retry_check returns' do
-        # Freeze time at the start and then 60 seconds ahead when sleep is called
-        Timecop.freeze(Time.at(1300000000))
-        Elasticity::Looper.any_instance.stub(:sleep) do
-          Timecop.freeze(Time.at(1300000060))
+        it 'communicates that waiting occurs only once' do
+          client.should_receive(:on_wait).once
+          l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
+          l.go
         end
 
-        client.stub(:on_retry_check).and_return([true, 'TEST1', 'TEST2'], [true, 'TEST3'], false)
-        client.should_receive(:on_wait).with(0, 'TEST1', 'TEST2')
-        client.should_receive(:on_wait).with(60, 'TEST3')
+        it 'communicates waiting occurs with elapsed wait time and arguments that on_retry_check returns' do
+          # Freeze time at the start and then 60 seconds ahead when sleep is called
+          Timecop.freeze(Time.at(1300000000))
+          Elasticity::Looper.any_instance.stub(:sleep) do
+            Timecop.freeze(Time.at(1300000060))
+          end
 
-        l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
-        l.go
+          client.stub(:on_retry_check).and_return([true, 'TEST1', 'TEST2'], [true, 'TEST3'], false)
+          client.should_receive(:on_wait).with(0, 'TEST1', 'TEST2')
+          client.should_receive(:on_wait).with(60, 'TEST3')
 
-        Timecop.return
+          l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
+          l.go
+
+          Timecop.return
+        end
+
+      end
+
+      context 'when a wait callback is not provided' do
+        it 'still works' do
+          l = Elasticity::Looper.new(client.method(:on_retry_check), nil)
+          l.go
+
+          l = Elasticity::Looper.new(client.method(:on_retry_check))
+          l.go
+        end
       end
 
     end
