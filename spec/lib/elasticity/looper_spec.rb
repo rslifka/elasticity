@@ -14,14 +14,16 @@ describe Elasticity::Looper do
       end
     end
 
-    it 'should wait for 60 seconds (the default)' do
-      Elasticity::Looper.any_instance.should_receive(:sleep).with(60)
-      l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
-      l.go
+    context 'when no poll interval is specified' do
+      it 'should poll every 60 seconds' do
+        Elasticity::Looper.any_instance.should_receive(:sleep).with(60)
+        l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
+        l.go
+      end
     end
 
-    context 'when a custom sleep value is specified' do
-      it 'should wait for that number of seconds' do
+    context 'when a custom poll interview is specified' do
+      it 'should poll at that interval' do
         Elasticity::Looper.any_instance.should_receive(:sleep).with(999)
         l = Elasticity::Looper.new(999, client.method(:on_retry_check), client.method(:on_wait))
         l.go
