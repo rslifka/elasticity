@@ -1,9 +1,9 @@
 ## 2.6 - August 13, 2013
 
-+ Added support for Ruby 2.0.
-+ Removed support for REE and 1.8.7 as these are now unsupported versions of Ruby (and dependencies like Nokogiri now require >= 1.9.2).
-+ Updating development environment to latest version of Ruby 1.9.2 (p320).
-+ Updated development environment (RSpec 2.14, moved to .ruby-version and .ruby-gemset).
++ Ruby version support changes: Added support for Ruby 2.0.  Removed support for REE and 1.8.7 as these are now unsupported versions of Ruby.
++ Dev update: All development dependencies now require Ruby >= 1.9.2.
++ Dev update: Latest version of Ruby 1.9.2 (p320).
++ Dev update: Migrated from .rvmrc => .ruby-version and .ruby-gemset.
 
 ## 2.5.6 - February 9, 2013
 

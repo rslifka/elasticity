@@ -17,8 +17,8 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency('rake', '~> 0.9')
   s.add_development_dependency('rspec', '~> 2.14.0')
-  s.add_development_dependency('timecop', '~> 0.5')
-  s.add_development_dependency('fakefs', '~> 0.4')
+  s.add_development_dependency('timecop', '~> 0.6.0')
+  s.add_development_dependency('fakefs', '~> 0.4.0')
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {spec,features}/*`.split("\n")
