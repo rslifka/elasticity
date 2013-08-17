@@ -1,6 +1,7 @@
 ## 2.6 - August 13, 2013
 
 + Ruby version support changes: Added support for Ruby 2.0.  Removed support for REE and 1.8.7 as these are now unsupported versions of Ruby.
++ Now specifing dependency major versions in the gemspec.  With the release of Ruby 2.0, I'm anticipating breaking changes coming to many gems.  Fortunately there are few dependencies :)
 + Dev update: All development dependencies now require Ruby >= 1.9.2.
 + Dev update: Latest version of Ruby 1.9.2 (p320).
 + Dev update: Migrated from .rvmrc => .ruby-version and .ruby-gemset.
