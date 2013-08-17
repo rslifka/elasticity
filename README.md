@@ -1,6 +1,6 @@
 [![Gem Version](https://badge.fury.io/rb/elasticity.png)](http://badge.fury.io/rb/elasticity)
 
-**(August 16, 2013)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
+**(August 17, 2013)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
 
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently abstract away the complex EMR REST API and make working with job flows more productive and more enjoyable.
 
@@ -20,7 +20,7 @@ gem install elasticity
 or in your Gemfile
 
 ```
-gem 'elasticity', '~> 2.5'
+gem 'elasticity', '~> 2.6'
 ```
 
 This will ensure that you protect yourself from API changes, which will only be made in major revisions.
@@ -65,6 +65,7 @@ Job flows are the center of the EMR universe.  The general order of operations i
   1. (optional) Upload assets.
   1. Run the job flow.
   1. (optional) Add additional steps.
+  1. (optional) Wait for the job flow to complete.
   1. (optional) Shutdown the job flow.
 
 ## 1 - Create a Job Flow
@@ -315,7 +316,25 @@ jobflow_id = jobflow.run
 
 Steps can be added to a running jobflow just by calling ```#add_step``` on the job flow exactly how you add them prior to submitting the job.
 
-## 9 - Shut Down the Job Flow (optional)
+## 9 - Wait For the Job Flow to Complete (optional)
+
+Elasticity has the ability to block until the status of a job flow is not STARTING or RUNNING.  There are two flavours.  Without a status callback:
+
+```ruby
+# Blocks until status changes
+jobflow.wait_for_completion
+```
+
+And with a status callback, providing the elapsed time and an instance of ```Elasticity::JobFlowStatus``` so you can inspect the progress of the job.
+
+```ruby
+# Blocks until status changes, calling back every 60 seconds
+jobflow.wait_for_completion do |elapsed_time, job_flow_status|
+  puts "Waiting for #{seconds}, jobflow status: #{status.state}"
+end
+```
+
+## 10 - Shut Down the Job Flow (optional)
 
 By default, job flows are set to terminate when there are no more running steps.  You can tell the job flow to stay alive when it has nothing left to do:
 
