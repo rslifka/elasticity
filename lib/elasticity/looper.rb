@@ -10,9 +10,9 @@ module Elasticity
 
     def go
       loop do
-        should_continue = @on_retry_check.call
+        should_continue, *results = @on_retry_check.call
         return unless should_continue
-        @on_wait.call
+        @on_wait.call(*results)
         sleep(@poll_interval)
       end
     end

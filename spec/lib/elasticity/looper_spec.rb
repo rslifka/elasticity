@@ -15,11 +15,21 @@ describe Elasticity::Looper do
     end
 
     context 'and then you should not wait' do
-      it 'does not communication that waiting is about to occur' do
+
+      it 'communicates that waiting occurs only once' do
         client.should_receive(:on_wait).once
         l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
         l.go
       end
+
+      it 'communicates waiting occurs with all additional arguments that on_retry_check returns' do
+        client.stub(:on_retry_check).and_return([true, 'TEST1', 'TEST2'], false)
+
+        client.should_receive(:on_wait).with('TEST1', 'TEST2')
+        l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
+        l.go
+      end
+
     end
 
     context 'when no poll interval is specified' do
