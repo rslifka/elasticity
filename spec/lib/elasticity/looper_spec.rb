@@ -52,7 +52,7 @@ describe Elasticity::Looper do
     context 'when a custom poll interview is specified' do
       it 'should poll at that interval' do
         Elasticity::Looper.any_instance.should_receive(:sleep).with(999)
-        l = Elasticity::Looper.new(999, client.method(:on_retry_check), client.method(:on_wait))
+        l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait), 999)
         l.go
       end
     end

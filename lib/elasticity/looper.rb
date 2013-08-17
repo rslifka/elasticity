@@ -2,7 +2,7 @@ module Elasticity
 
   class Looper
 
-    def initialize(poll_interval = 60, on_retry_check, on_wait)
+    def initialize(on_retry_check, on_wait, poll_interval = 60)
       @on_retry_check = on_retry_check
       @on_wait = on_wait
       @poll_interval = poll_interval
