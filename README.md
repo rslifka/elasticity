@@ -331,7 +331,7 @@ And with a status callback, providing the elapsed time and an instance of ```Ela
 ```ruby
 # Blocks until status changes, calling back every 60 seconds
 jobflow.wait_for_completion do |elapsed_time, job_flow_status|
-  puts "Waiting for #{seconds}, jobflow status: #{status.state}"
+  puts "Waiting for #{elapsed_time}, jobflow status: #{job_flow_status.state}"
 end
 ```
 
