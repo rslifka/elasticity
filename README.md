@@ -287,7 +287,7 @@ This isn't part of ```JobFlow```; more of an aside.  Elasticity provides a very 
 
 ```ruby
 # Specify the bucket name, AWS credentials and region
-s3 = Elasticity::SyncToS3('my-bucket', 'access', 'secret', 'region')
+s3 = Elasticity::SyncToS3.new('my-bucket', 'access', 'secret', 'region')
 
 # Alternatively, specify nothing :)
 # - Use the standard environment variables (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY)
