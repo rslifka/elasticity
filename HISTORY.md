@@ -1,3 +1,8 @@
+## Unreleased
+
+- No longer using `guard-rspec` since I aim to support 1.9.2 and it relies on `listen` which requires 1.9.3.
+- `Elasticity::EMR` can now autodetect AWS credentials.
+
 ## 2.6 - August 17, 2013
 
 + Added debugging support via `JobFlow#enable_debugging`.  Note that this requires `JobFlow#log_uri` to be set.
