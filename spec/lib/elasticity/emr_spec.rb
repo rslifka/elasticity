@@ -4,7 +4,24 @@ describe Elasticity::EMR do
     Elasticity::EMR.new('ACCESS', 'SECRET')
   end
 
-  its(:aws_request) { should == Elasticity::AwsRequest.new('ACCESS', 'SECRET', {}) }
+  describe '.new' do
+
+    context 'when arguments are provided' do
+      its(:aws_request) { should == Elasticity::AwsRequest.new('ACCESS', 'SECRET', {}) }
+    end
+
+    context 'when arguments are not provided' do
+      before do
+        ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('ENV_ACCESS')
+        ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('ENV_SECRET')
+      end
+      it 'should use environment variables' do
+        emr = Elasticity::EMR.new
+        emr.aws_request.should == Elasticity::AwsRequest.new('ENV_ACCESS', 'ENV_SECRET', {})
+      end
+    end
+
+  end
 
   describe '#add_instance_groups' do
 

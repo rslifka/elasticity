@@ -4,7 +4,7 @@ module Elasticity
 
     attr_reader :aws_request
 
-    def initialize(aws_access_key_id, aws_secret_access_key, options = {})
+    def initialize(aws_access_key_id=nil, aws_secret_access_key=nil, options = {})
       @aws_request = Elasticity::AwsRequest.new(aws_access_key_id, aws_secret_access_key, options)
     end
 
