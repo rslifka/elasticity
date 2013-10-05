@@ -16,7 +16,6 @@ Gem::Specification.new do |s|
   s.add_dependency('fog', '~> 1.0')
 
   s.add_development_dependency('fakefs', '~> 0.4.0')
-  s.add_development_dependency('guard-rspec', '~> 3.0')
   s.add_development_dependency('rake', '~> 0.9')
   s.add_development_dependency('rspec', '~> 2.14.0')
   s.add_development_dependency('timecop', '~> 0.6')
