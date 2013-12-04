@@ -290,6 +290,17 @@ script_step = Elasticity::ScriptStep.new('script_location', 'arg1', 'arg2')
 jobflow.add_step(script_step)
 ```
 
+### Adding an S3DistCp Step
+
+For a complete list of supported arguments, please see the [Amazon EMR guide](http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/UsingEMR_s3distcp.html).
+
+```ruby
+# Path to your script, plus arguments (both symbols and strings are supported)
+copy_step = Elasticity::S3DistCpStep.new(:arg1 => 'value1', 'arg2' => 'value2')
+
+jobflow.add_step(copy_step)
+```
+
 ## 6 - Upload Assets (optional)
 
 This isn't part of ```JobFlow```; more of an aside.  Elasticity provides a very basic means of uploading assets to S3 so that your EMR job has access to them.  Most commonly this will be a set of resources to run the job (e.g. JAR files, streaming scripts, etc.) and a set of resources used by the job itself (e.g. a TSV file with a range of valid values, join tables, etc.).
