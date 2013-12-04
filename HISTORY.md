@@ -1,7 +1,9 @@
 ## Unreleased
 
-- No longer using `guard-rspec` since I aim to support 1.9.2 and it relies on `listen` which requires 1.9.3.
 - `Elasticity::EMR` can now autodetect AWS credentials.
+- Baseline support now is now 1.9.3-p484.  Dropped support for Ruby 1.9.2 as it was [EOL on 2013/06/01](http://bugs.ruby-lang.org/projects/ruby/wiki/ReleaseEngineering).
+- Dev update: No longer using `guard-rspec`.
+- Dev update: Added `unf` as an explicit dependency as `fog` no longer includes it since it's AWS-only.
 
 ## 2.6 - August 17, 2013
 
