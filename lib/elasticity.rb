@@ -28,6 +28,7 @@ require 'elasticity/hive_step'
 require 'elasticity/pig_step'
 require 'elasticity/streaming_step'
 require 'elasticity/script_step'
+require 'elasticity/s3distcp_step'
 
 module Elasticity
 

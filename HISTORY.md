@@ -1,5 +1,6 @@
 ## Unreleased
 
+- `Elasticity::S3DistCp` and `Elasticity::ScriptStep` added to provide easy access to remote copying and arbitrary script execution.
 - `Elasticity::EMR` can now autodetect AWS credentials.
 - Baseline support now is now 1.9.3-p484.  Dropped support for Ruby 1.9.2 as it was [EOL on 2013/06/01](http://bugs.ruby-lang.org/projects/ruby/wiki/ReleaseEngineering).
 - Dev update: No longer using `guard-rspec`.
