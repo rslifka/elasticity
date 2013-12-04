@@ -27,6 +27,7 @@ require 'elasticity/setup_hadoop_debugging_step'
 require 'elasticity/hive_step'
 require 'elasticity/pig_step'
 require 'elasticity/streaming_step'
+require 'elasticity/script_step'
 
 module Elasticity
 
