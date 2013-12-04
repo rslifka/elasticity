@@ -1,4 +1,4 @@
-## Unreleased
+## 2.7 - December 4, 2013
 
 - `Elasticity::S3DistCp` and `Elasticity::ScriptStep` added to provide easy access to remote copying and arbitrary script execution.
 - `Elasticity::EMR` can now autodetect AWS credentials.

@@ -1,6 +1,6 @@
 [![Gem Version](https://badge.fury.io/rb/elasticity.png)](http://badge.fury.io/rb/elasticity)
 
-**(August 17, 2013)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
+**(December 4, 2013)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
 
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently abstract away the complex EMR REST API and make working with job flows more productive and more enjoyable.
 
@@ -20,7 +20,7 @@ gem install elasticity
 or in your Gemfile
 
 ```
-gem 'elasticity', '~> 2.6'
+gem 'elasticity', '~> 2.7'
 ```
 
 This will ensure that you protect yourself from API changes, which will only be made in major revisions.
