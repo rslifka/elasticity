@@ -1,6 +1,6 @@
 [![Gem Version](https://badge.fury.io/rb/elasticity.png)](http://badge.fury.io/rb/elasticity)
 
-**(December 4, 2013)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
+**(August 17, 2013)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
 
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently abstract away the complex EMR REST API and make working with job flows more productive and more enjoyable.
 
@@ -20,7 +20,7 @@ gem install elasticity
 or in your Gemfile
 
 ```
-gem 'elasticity', '~> 2.7'
+gem 'elasticity', '~> 2.6'
 ```
 
 This will ensure that you protect yourself from API changes, which will only be made in major revisions.
@@ -290,16 +290,16 @@ script_step = Elasticity::ScriptStep.new('script_location', 'arg1', 'arg2')
 jobflow.add_step(script_step)
 ```
 
-### Adding an S3DistCp Step
-
-For a complete list of supported arguments, please see the [Amazon EMR guide](http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/UsingEMR_s3distcp.html).
+### Adding a S3DistCp Step
 
 ```ruby
-# Path to your script, plus arguments (both symbols and strings are supported)
-copy_step = Elasticity::S3DistCpStep.new(:arg1 => 'value1', 'arg2' => 'value2')
+# S3DistCp step with hash of arguments
+copy_step = Elasticity::S3DistCpStep.new({'arg1' => 'value1', :arg2 => 'value2'})
 
 jobflow.add_step(copy_step)
 ```
+
+For a full list of arguments see [S3DistCp Options](http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/UsingEMR_s3distcp.html#UsingEMR_s3distcp.options).
 
 ## 6 - Upload Assets (optional)
 
