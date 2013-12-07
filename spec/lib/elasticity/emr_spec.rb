@@ -203,6 +203,18 @@ describe Elasticity::EMR do
     end
   end
 
+  describe '#describe_jobflow_xml' do
+
+    before do
+      subject.should_receive(:describe_jobflow).with('JOBFLOW_ID').and_yield('XML_RESULT')
+    end
+
+    it 'should describe the specified jobflow via raw xml text' do
+      subject.describe_jobflow_xml('JOBFLOW_ID').should == 'XML_RESULT'
+    end
+
+  end
+
   describe '#modify_instance_groups' do
 
     it 'should modify the specified instance groups' do

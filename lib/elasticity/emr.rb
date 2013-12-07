@@ -24,6 +24,15 @@ module Elasticity
       JobFlowStatus.from_members_nodeset(xml_doc.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member')).first
     end
 
+    # This is primarily for debugging purposes, providing insight into how
+    # Amazon internally represents jobs.  It's used to reverse-engineer
+    # how API calls construct jobflows.
+    def describe_jobflow_xml(jobflow_id)
+      describe_jobflow(jobflow_id) do |xml|
+        return xml
+      end
+    end
+
     # Lists all jobflows in all states.
     #
     # To override this behaviour, pass additional filters as specified in the AWS
