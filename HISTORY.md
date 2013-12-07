@@ -1,3 +1,7 @@
+## Unreleased
+
+- Dev update: Added `Elasticity::EMR#describe_jobflow_xml` to assist in job flow debugging.
+
 ## 2.7 - December 4, 2013
 
 - `Elasticity::S3DistCp` and `Elasticity::ScriptStep` added to provide easy access to remote copying and arbitrary script execution.
