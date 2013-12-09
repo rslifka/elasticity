@@ -1,87 +1,41 @@
 describe Elasticity::BootstrapAction do
 
   subject do
-    Elasticity::BootstrapAction.new('script', 'option', 'value')
+    Elasticity::BootstrapAction.new('script', 'arg1', 'arg2')
   end
 
   its(:name) { should == 'Elasticity Bootstrap Action' }
   its(:script) { should == 'script' }
+  its(:arguments) { should == %w(arg1 arg2) }
 
   describe '#to_aws_bootstrap_action' do
-    it 'should create a bootstrap action' do
-      subject.to_aws_bootstrap_action.should ==
-        {
-          :name => 'Elasticity Bootstrap Action',
-          :script_bootstrap_action => {
-            :path => 'script',
-            :args => %w(option value)
-          }
+
+    let(:aws_bootstrap_step) {
+      {
+        :name => 'Elasticity Bootstrap Action',
+        :script_bootstrap_action => {
+          :path => 'script'
         }
-    end
-  end
+      }
+    }
 
-  describe 'deprecation: @option' do
-    let(:bootstrap_action) { Elasticity::BootstrapAction.new('script', 'option', 'value') }
-
-    describe '#initialize' do
-      it 'should initialize properly' do
-        expect(bootstrap_action.option).to eq('option')
-        expect(bootstrap_action.args[0]).to eq('option')
+    context 'when there are no arguments' do
+      let(:bootstrap_action) { Elasticity::BootstrapAction.new('script') }
+      it 'should create a proper bootstrap action' do
+        expect(bootstrap_action.to_aws_bootstrap_action).to eq(aws_bootstrap_step)
       end
     end
 
-    describe '#option=' do
+    context 'when there are arguments' do
+      let(:bootstrap_action) { Elasticity::BootstrapAction.new('script', 'arg1', 'arg2') }
       before do
-        bootstrap_action.stub(:warn)
+        aws_bootstrap_step[:script_bootstrap_action][:args] = %w(arg1 arg2)
       end
-
-      it 'should be deprecated' do
-        expect(bootstrap_action).to receive(:warn).with('[DEPRECATION] `@option` is deprecated, please use @args instead.')
-        bootstrap_action.option = '_'
-      end
-
-      it 'should set @option' do
-        bootstrap_action.option = 'foo'
-        expect(bootstrap_action.option).to eq('foo')
-      end
-
-      it 'should set @args[0]' do
-        bootstrap_action.option = 'foo'
-        expect(bootstrap_action.args[0]).to eq('foo')
-      end
-    end
-  end
-
-  describe 'deprecation: @value' do
-    let(:bootstrap_action) { Elasticity::BootstrapAction.new('script', 'option', 'value') }
-
-    describe '#initialize' do
-      it 'should initialize properly' do
-        expect(bootstrap_action.value).to eq('value')
-        expect(bootstrap_action.args[1]).to eq('value')
+      it 'should create a proper bootstrap action' do
+        expect(subject.to_aws_bootstrap_action).to be_a_hash_including(aws_bootstrap_step)
       end
     end
 
-    describe '#option=' do
-      before do
-        bootstrap_action.stub(:warn)
-      end
-
-      it 'should be deprecated' do
-        expect(bootstrap_action).to receive(:warn).with('[DEPRECATION] `@value` is deprecated, please use @args instead.')
-        bootstrap_action.value = '_'
-      end
-
-      it 'should set @option' do
-        bootstrap_action.value = 'foo'
-        expect(bootstrap_action.value).to eq('foo')
-      end
-
-      it 'should set @args[0]' do
-        bootstrap_action.value = 'foo'
-        expect(bootstrap_action.args[1]).to eq('foo')
-      end
-    end
   end
 
 end

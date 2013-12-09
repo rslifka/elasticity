@@ -20,7 +20,7 @@ gem install elasticity
 or in your Gemfile
 
 ```
-gem 'elasticity', '~> 2.7'
+gem 'elasticity', '~> 3.0'
 ```
 
 This will ensure that you protect yourself from API changes, which will only be made in major revisions.

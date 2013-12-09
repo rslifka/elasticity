@@ -3,10 +3,8 @@ module Elasticity
   class HadoopFileBootstrapAction < BootstrapAction
 
     def initialize(config_file)
-      @name = 'Elasticity Bootstrap Action (Configure Hadoop via File)'
-      @option = '--mapred-config-file'
-      @value = config_file
-      @script = 's3n://elasticmapreduce/bootstrap-actions/configure-hadoop'
+      super('s3n://elasticmapreduce/bootstrap-actions/configure-hadoop', '--mapred-config-file', config_file)
+      self.name = 'Elasticity Bootstrap Action (Configure Hadoop via File)'
     end
 
   end

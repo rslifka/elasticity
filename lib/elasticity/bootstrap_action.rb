@@ -3,39 +3,24 @@ module Elasticity
   class BootstrapAction
 
     attr_accessor :name
-    attr_reader   :option
-    attr_reader   :value
     attr_accessor :script
-    attr_accessor :args
+    attr_accessor :arguments
 
-    def initialize(script, option, value)
+    def initialize(script, *bootstrap_arguments)
       @name = 'Elasticity Bootstrap Action'
-      @option = option
-      @value = value
       @script = script
-      @args = [option, value]
+      @arguments = bootstrap_arguments
     end
 
     def to_aws_bootstrap_action
-      {
+      action = {
         :name => @name,
         :script_bootstrap_action => {
-          :path => @script,
-          :args => @args
+          :path => @script
         }
       }
-    end
-
-    def option=(option)
-      @option = option
-      @args[0] = option
-      warn '[DEPRECATION] `@option` is deprecated, please use @args instead.'
-    end
-
-    def value=(value)
-      @value = value
-      @args[1] = value
-      warn '[DEPRECATION] `@value` is deprecated, please use @args instead.'
+      action[:script_bootstrap_action].merge!(:args => @arguments) unless @arguments.empty?
+      action
     end
 
   end

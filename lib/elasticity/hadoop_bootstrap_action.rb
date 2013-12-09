@@ -3,10 +3,8 @@ module Elasticity
   class HadoopBootstrapAction < BootstrapAction
 
     def initialize(option, value)
-      @name = 'Elasticity Bootstrap Action (Configure Hadoop)'
-      @option = option
-      @value = value
-      @script = 's3n://elasticmapreduce/bootstrap-actions/configure-hadoop'
+      super('s3n://elasticmapreduce/bootstrap-actions/configure-hadoop', option, value)
+      self.name = 'Elasticity Bootstrap Action (Configure Hadoop)'
     end
 
   end

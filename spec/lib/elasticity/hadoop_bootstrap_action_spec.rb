@@ -7,8 +7,7 @@ describe Elasticity::HadoopBootstrapAction do
   it { should be_a Elasticity::BootstrapAction }
 
   its(:name) { should == 'Elasticity Bootstrap Action (Configure Hadoop)' }
-  its(:option) { should == 'option' }
-  its(:value) { should == 'value' }
+  its(:arguments) { should == %w(option value) }
   its(:script) { should == 's3n://elasticmapreduce/bootstrap-actions/configure-hadoop' }
 
 end

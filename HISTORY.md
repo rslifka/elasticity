@@ -1,5 +1,6 @@
-## Unreleased
+## 3.0 - UNRELEASED
 
+- Bumped to 3.0 because of breaking API changes in `Elasticity::BootstrapAction` due to [Issue #55](https://github.com/rslifka/elasticity/issues/55).  After spending some time deprecating, I realized I don't have the code bandwidth to do it in a way that I would be happy with.
 - Dev update: Added `Elasticity::EMR#describe_jobflow_xml` to assist in job flow debugging.
 
 ## 2.7 - December 4, 2013
