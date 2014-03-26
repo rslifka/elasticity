@@ -185,7 +185,10 @@ module Elasticity
           }
         }
       }
-      preamble[:instances].merge!(:ec2_subnet_id => @ec2_subnet_id) if @ec2_subnet_id
+      if @ec2_subnet_id
+        preamble[:instances].merge!(:ec2_subnet_id => @ec2_subnet_id)
+        preamble[:instances].delete(:placement)
+      end
       preamble[:instances].merge!(:ec2_key_name => @ec2_key_name) if @ec2_key_name
       preamble
     end

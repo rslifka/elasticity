@@ -417,9 +417,14 @@ describe Elasticity::JobFlow do
     end
 
     context 'when a VPC subnet ID is specified' do
-      it 'should include it in the preamble' do
+      before do
         subject.ec2_subnet_id = 'subnet-118b9d79'
+      end
+      it 'should include it in the preamble' do
         subject.send(:jobflow_preamble)[:instances].should be_a_hash_including({:ec2_subnet_id => 'subnet-118b9d79'})
+      end
+      it 'should not include the placement since a subnet implies a placement' do
+        subject.send(:jobflow_preamble)[:instances].should_not include(:placement)
       end
     end
 
