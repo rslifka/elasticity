@@ -1,10 +1,10 @@
 [![Gem Version](https://badge.fury.io/rb/elasticity.png)](http://badge.fury.io/rb/elasticity)
 
-**(February 15, 2014)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
+**(March 26, 2014)** Taking requests! I have a few ideas for what might be cool features though I'd rather work on what the community wants.  Go ahead and file an issue!
 
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently abstract away the complex EMR REST API and make working with job flows more productive and more enjoyable.
 
-[![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) 1.9.3, 2.0.0
+[![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) 1.9.3, 2.0.0, 2.1.0, 2.1.1
 
 Elasticity provides two ways to access EMR:
 
@@ -37,6 +37,11 @@ jobflow = Elasticity::JobFlow.new('AWS access key', 'AWS secret key')
 
 # Omit credentials to use the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
 # jobflow = Elasticity::JobFlow.new
+
+# NOTE: Amazon requires that all new accounts specify a VPC subnet when launching jobs.
+# If you're on an existing account, this is unnecessary however new AWS accounts require
+# subnet IDs be specified when launching jobs.
+# jobflow.ec2_subnet_id = 'YOUR_SUBNET_ID_HERE'
 
 # This is the first step in the jobflow - running a custom jar
 step = Elasticity::CustomJarStep.new('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar')
