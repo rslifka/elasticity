@@ -1,3 +1,8 @@
+## 3.0.1 - March 26, 2014
+
+- Fix for [Issue #60](https://github.com/rslifka/elasticity/issues/60), "Specifying a VPC subnet does not work".
+- Add support for Ruby 2.1.0 and 2.1.1.
+
 ## 3.0 - February 15, 2014
 
 - Major/minor bump because of breaking API changes to `Elasticity::BootstrapAction` due to [Issue #55](https://github.com/rslifka/elasticity/issues/55).  After spending some time deprecating, I realized I don't have the code bandwidth to do it in a way that I would be happy with.  Move fast and break things ;)
