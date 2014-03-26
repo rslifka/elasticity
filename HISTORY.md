@@ -1,3 +1,7 @@
+## 3.0.2 - March 26, 2014
+
+- Second go at a fix for [Issue #60](https://github.com/rslifka/elasticity/issues/60), "Specifying a VPC subnet does not work" as placement and subnet cannot both be specified.
+
 ## 3.0.1 - March 26, 2014
 
 - Fix for [Issue #60](https://github.com/rslifka/elasticity/issues/60), "Specifying a VPC subnet does not work".
