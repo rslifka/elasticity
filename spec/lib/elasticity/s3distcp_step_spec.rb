@@ -7,5 +7,6 @@ describe Elasticity::S3DistCpStep do
   its(:name) { should == 'Elasticity S3DistCp Step' }
   its(:jar) { should == '/home/hadoop/lib/emr-s3distcp-1.0.jar' }
   its(:arguments) { should == %w(--arg arg1 --arg value1 --arg arg2 --arg value2) }
+  its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
 
 end
