@@ -1,3 +1,7 @@
+## 3.0.4 - April 30, 2014
+
+- Fix for issues [#65](https://github.com/rslifka/elasticity/issues/65) and [#66](https://github.com/rslifka/elasticity/issues/66).
+
 ## 3.0.3 - April 10, 2014
 
 - Fix for issues [#63](https://github.com/rslifka/elasticity/issues/63) and [#64](https://github.com/rslifka/elasticity/issues/64).
