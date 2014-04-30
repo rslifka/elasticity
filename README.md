@@ -302,8 +302,8 @@ jobflow.add_step(script_step)
 For a complete list of supported arguments, please see the [Amazon EMR guide](http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/UsingEMR_s3distcp.html).
 
 ```ruby
-# Path to your script, plus arguments (both symbols and strings are supported)
-copy_step = Elasticity::S3DistCpStep.new(:arg1 => 'value1', 'arg2' => 'value2')
+copy_step = Elasticity::S3DistCpStep.new
+copy_step.arguments = [...]
 
 jobflow.add_step(copy_step)
 ```
