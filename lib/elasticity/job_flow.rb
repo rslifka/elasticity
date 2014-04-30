@@ -84,6 +84,11 @@ module Elasticity
       @slave_instance_type = type
     end
 
+    def ec2_subnet_id=(subnet_id)
+      @ec2_subnet_id = subnet_id
+      @placement = nil
+    end
+
     def add_bootstrap_action(bootstrap_action)
       if is_jobflow_running?
         raise JobFlowRunningError, 'To modify bootstrap actions, please create a new job flow.'

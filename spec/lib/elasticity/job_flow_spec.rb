@@ -129,6 +129,20 @@ describe Elasticity::JobFlow do
 
   end
 
+  describe '#ec2_subnet_id=' do
+    it 'should set ec2_subnet_id' do
+      subject.ec2_subnet_id = 'TEST_ID'
+      subject.ec2_subnet_id.should == 'TEST_ID'
+    end
+
+    it 'should unset placement (which has a default value) because having both set is EMR-invalid' do
+      subject.placement = 'TEST_PLACEMENT'
+
+      subject.ec2_subnet_id = '_'
+      subject.placement.should == nil
+    end
+  end
+
   describe '#add_bootstrap_action' do
 
     context 'when the jobflow is not yet started' do
