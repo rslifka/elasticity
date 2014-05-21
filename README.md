@@ -112,7 +112,6 @@ jobflow.ec2_subnet_id                     = nil
 jobflow.action_on_failure                 = 'TERMINATE_JOB_FLOW'
 jobflow.keep_job_flow_alive_when_no_steps = false
 jobflow.ami_version                       = 'latest'
-jobflow.hadoop_version                    = '1.0.3'
 jobflow.log_uri                           = nil
 jobflow.enable_debugging                  = false # Requires a log_uri to enable
 

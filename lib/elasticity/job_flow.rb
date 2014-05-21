@@ -11,7 +11,6 @@ module Elasticity
     attr_accessor :action_on_failure
     attr_accessor :ec2_key_name
     attr_accessor :name
-    attr_accessor :hadoop_version
     attr_accessor :instance_count
     attr_accessor :log_uri
     attr_accessor :master_instance_type
@@ -29,7 +28,6 @@ module Elasticity
 
     def initialize(access=nil, secret=nil)
       @action_on_failure = 'TERMINATE_JOB_FLOW'
-      @hadoop_version = '1.0.3'
       @name = 'Elasticity Job Flow'
       @ami_version = 'latest'
       @keep_job_flow_alive_when_no_steps = false
@@ -198,7 +196,6 @@ module Elasticity
         :visible_to_all_users => @visible_to_all_users,
         :instances => {
           :keep_job_flow_alive_when_no_steps => @keep_job_flow_alive_when_no_steps,
-          :hadoop_version => @hadoop_version,
           :instance_groups => jobflow_instance_groups,
           :placement => {
             :availability_zone => @placement
