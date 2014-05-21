@@ -410,7 +410,7 @@ Unfortunately, the documentation is sometimes incorrect and sometimes missing.  
 # License
 
 ```
-  Copyright 2011-2013 Robert Slifka
+  Copyright 2011-2014 Robert Slifka
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
