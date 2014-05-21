@@ -4,6 +4,7 @@ module Elasticity
   class JobFlowNotStartedError < StandardError; end
   class JobFlowMissingStepsError < StandardError; end
   class LogUriMissingError < StandardError; end
+  class UnknownPlacementError < StandardError; end
 
   class JobFlow
 
@@ -19,6 +20,7 @@ module Elasticity
     attr_accessor :keep_job_flow_alive_when_no_steps
     attr_accessor :ec2_subnet_id
     attr_accessor :placement
+    attr_accessor :region
     attr_accessor :visible_to_all_users
     attr_accessor :enable_debugging
 
@@ -31,7 +33,7 @@ module Elasticity
       @name = 'Elasticity Job Flow'
       @ami_version = 'latest'
       @keep_job_flow_alive_when_no_steps = false
-      @placement = 'us-east-1a'
+      self.placement = 'us-east-1a'
       @enable_debugging = false
 
       @access_key = access
@@ -58,6 +60,20 @@ module Elasticity
         j.instance_variable_set(:@region, region)
         j.instance_variable_set(:@jobflow_id, jobflow_id)
         j.instance_variable_set(:@installed_steps, j.status.installed_steps)
+      end
+    end
+
+    def placement=(new_placement)
+      @placement = new_placement
+      return unless @placement
+
+      # The region has to be set so we know where to launch the job flow, and it has
+      # to be in sync with the placement.  Not setting this will lead to strange, difficult to
+      # track errors, for example the job flow won't exist where you think it should, etc.
+      if @placement =~ /\w+-\w+-\d+/
+        @region = @placement.match(/(\w+-\w+-\d+)/)[0]
+      else
+        raise UnknownPlacementError, "'#{@placement}' is not a valid EMR placement"
       end
     end
 
@@ -158,7 +174,6 @@ module Elasticity
     end
 
     def emr
-      @region ||= @placement.match(/(\w+-\w+-\d+)/)[0]
       @emr ||= Elasticity::EMR.new(@access_key, @secret_key, :region => @region)
     end
 

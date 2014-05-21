@@ -20,7 +20,7 @@ gem install elasticity
 or in your Gemfile
 
 ```
-gem 'elasticity', '~> 3.0'
+gem 'elasticity', '~> 4.0'
 ```
 
 This will ensure that you protect yourself from API changes, which will only be made in major revisions.
@@ -119,6 +119,7 @@ jobflow.enable_debugging                  = false # Requires a log_uri to enable
 jobflow.ec2_key_name                      = nil
 jobflow.visible_to_all_users              = false
 jobflow.placement                         = 'us-east-1a'
+jobflow.region                            = 'us-east-1'
 jobflow.instance_count                    = 2
 jobflow.master_instance_type              = 'm1.small'
 jobflow.slave_instance_type               = 'm1.small'

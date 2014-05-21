@@ -20,6 +20,7 @@ describe Elasticity::JobFlow do
   its(:placement) { should == 'us-east-1a' }
   its(:visible_to_all_users) { should == false }
   its(:enable_debugging) { should == false }
+  its(:region) { should == 'us-east-1' }
 
   describe '.initialize' do
     it 'should set the access and secret keys to nil by default' do
@@ -31,6 +32,41 @@ describe Elasticity::JobFlow do
         j.secret_key.should == nil
       end
     end
+  end
+
+  describe '#placement=' do
+
+    context 'when the placement is set' do
+
+      context 'when the placement is valid' do
+        before do
+          subject.placement = 'us-west-1a'
+        end
+
+        it 'should set the region' do
+          subject.region.should == 'us-west-1'
+        end
+      end
+
+      context 'when the placement is not valid' do
+        it 'should set the region' do
+          expect {
+            subject.placement = 'BAD_PLACEMENT'
+          }.to raise_error(Elasticity::UnknownPlacementError, "'BAD_PLACEMENT' is not a valid EMR placement")
+        end
+      end
+
+    end
+
+    context 'when the placement is not set' do
+      before do
+        subject.placement = nil
+      end
+      it 'should not modify the region' do
+        subject.region.should == 'us-east-1'
+      end
+    end
+
   end
 
   describe '#enable_debugging=' do
@@ -136,7 +172,7 @@ describe Elasticity::JobFlow do
     end
 
     it 'should unset placement (which has a default value) because having both set is EMR-invalid' do
-      subject.placement = 'TEST_PLACEMENT'
+      subject.placement = 'us-east-1d'
 
       subject.ec2_subnet_id = '_'
       subject.placement.should == nil
