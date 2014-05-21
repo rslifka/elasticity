@@ -2,6 +2,7 @@
 
 - Fix for issue [#69](https://github.com/rslifka/elasticity/issues/69).  The AWS region was previously being derived from the placement.  With the advent of VPC/subnet IDs being set, placement is not always relevant (as the VPC subnet ID implicitly defines a placement).  Since region cannot be derived it is now available directly on `JobFlow`.
 - Fix for issue [#79](https://github.com/rslifka/elasticity/issues/70).  Removing the ability to set the now deprecated Hadoop version.  It is now set via specifying the AMI version.  See the [EMR docs](http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/emr-plan-hadoop-version.html) for more details.
+- Building against JRuby 1.8.  While I don't necessarily have the resources to optimize for JRuby compatibility (given that I know next to nothing about it :) I'll use this as a canary to tackle any low-hanging issues that may arise.
 
 ## 3.0.4 - April 30, 2014
 
