@@ -21,6 +21,14 @@ describe Elasticity::AwsRequest do
       end
     end
 
+    context 'when :region is nil' do
+      it 'should be an error' do
+        expect {
+          Elasticity::AwsRequest.new('_', '_', :region => nil)
+        }.to raise_error Elasticity::MissingRegionError, 'A valid :region is required to connect to EMR'
+      end
+    end
+
     context 'when either access or secret key is not provided or nil' do
 
       context 'when the proper environment variables are set' do

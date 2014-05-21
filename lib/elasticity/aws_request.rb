@@ -2,6 +2,8 @@ module Elasticity
 
   class MissingKeyError < StandardError;
   end
+  class MissingRegionError < StandardError;
+  end
 
   class AwsRequest
 
@@ -14,6 +16,11 @@ module Elasticity
     #  :region - AWS region (e.g. us-west-1)
     #  :secure - true or false, default true.
     def initialize(access=nil, secret=nil, options={})
+      # There is a cryptic error if this isn't set
+      if options.has_key?(:region) && options[:region] == nil
+        raise MissingRegionError, 'A valid :region is required to connect to EMR'
+      end
+
       @access_key = get_access_key(access)
       @secret_key = get_secret_key(secret)
       @host = "elasticmapreduce.#{{:region => 'us-east-1'}.merge(options)[:region]}.amazonaws.com"
