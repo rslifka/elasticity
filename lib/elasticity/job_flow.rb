@@ -22,6 +22,7 @@ module Elasticity
     attr_accessor :region
     attr_accessor :visible_to_all_users
     attr_accessor :enable_debugging
+    attr_accessor :job_flow_role
 
     attr_reader :access_key
     attr_reader :secret_key
@@ -186,6 +187,7 @@ module Elasticity
       config[:steps] = steps
       config[:log_uri] = @log_uri if @log_uri
       config[:bootstrap_actions] = @bootstrap_actions.map{|a| a.to_aws_bootstrap_action} unless @bootstrap_actions.empty?
+      config[:job_flow_role] = job_flow_role unless job_flow_role.to_s.empty?
       config
     end
 
