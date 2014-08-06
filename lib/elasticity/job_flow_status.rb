@@ -13,6 +13,7 @@ module Elasticity
     attr_accessor :duration
     attr_accessor :instance_count
     attr_accessor :master_instance_type
+    attr_accessor :master_instance_id
     attr_accessor :slave_instance_type
     attr_accessor :last_state_change_reason
     attr_accessor :installed_steps
@@ -58,6 +59,7 @@ module Elasticity
 
       jobflow_status.instance_count = xml_element.xpath('./Instances/InstanceCount').text.strip
       jobflow_status.master_instance_type = xml_element.xpath('./Instances/MasterInstanceType').text.strip
+      jobflow_status.master_instance_id = xml_element.xpath('./Instances/MasterInstanceId').text.strip
       jobflow_status.slave_instance_type = xml_element.xpath('./Instances/SlaveInstanceType').text.strip
 
       master_public_dns_name = xml_element.xpath('./Instances/MasterPublicDnsName').text.strip
