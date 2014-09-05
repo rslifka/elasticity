@@ -88,6 +88,9 @@ describe Elasticity::JobFlowStatus do
                  <SlaveInstanceType>
                     m1.small
                  </SlaveInstanceType>
+                 <MasterInstanceId>
+                    i-15a4417c
+                 </MasterInstanceId>
                  <MasterInstanceType>
                     m1.small
                  </MasterInstanceType>
@@ -164,6 +167,7 @@ describe Elasticity::JobFlowStatus do
       single_jobflow_status.ready_at.should == Time.parse('2011-10-04T21:49:18Z')
       single_jobflow_status.ended_at.should == Time.parse('2011-10-05T21:49:18Z')
       single_jobflow_status.duration.should == 1440
+      single_jobflow_status.master_instance_id.should == 'i-15a4417c'
       single_jobflow_status.master_instance_type.should == 'm1.small'
       single_jobflow_status.slave_instance_type.should == 'm1.small'
       single_jobflow_status.instance_count.should == '4'
@@ -191,6 +195,7 @@ describe Elasticity::JobFlowStatus do
       multiple_jobflow_statuses.map(&:ready_at).should == [Time.parse('2011-10-04T21:49:18Z'), nil]
       multiple_jobflow_statuses.map(&:ended_at).should == [Time.parse('2011-10-05T21:49:18Z'), nil]
       multiple_jobflow_statuses.map(&:duration).should == [1440, nil]
+      multiple_jobflow_statuses.map(&:master_instance_id).should == ['i-15a4417c', nil]
       multiple_jobflow_statuses.map(&:master_instance_type).should == %w(m1.small c1.medium)
       multiple_jobflow_statuses.map(&:slave_instance_type).should == %w(m1.small c1.medium)
       multiple_jobflow_statuses.map(&:instance_count).should == %w(4 2)

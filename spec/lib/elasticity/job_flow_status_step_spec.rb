@@ -18,6 +18,9 @@ describe Elasticity::JobFlowStatusStep do
                   </StepConfig>
                   <ExecutionStatusDetail>
                     <State>FAILED</State>
+                    <CreationDateTime>
+                      2011-10-04T21:46:16Z
+                    </CreationDateTime>
                     <StartDateTime>
                        2011-10-04T21:49:16Z
                     </StartDateTime>
@@ -32,6 +35,8 @@ describe Elasticity::JobFlowStatusStep do
                   </StepConfig>
                   <ExecutionStatusDetail>
                     <State>PENDING</State>
+                    <CreationDateTime>
+                    </CreationDateTime>
                     <StartDateTime>
                     </StartDateTime>
                     <EndDateTime>
@@ -54,6 +59,7 @@ describe Elasticity::JobFlowStatusStep do
       jobflow_step = Elasticity::JobFlowStatusStep.from_member_element(@members_nodeset[0])
       jobflow_step.name.should == "Setup Hive"
       jobflow_step.state.should == "FAILED"
+      jobflow_step.created_at.should == Time.parse("2011-10-04T21:46:16Z")
       jobflow_step.started_at.should == Time.parse("2011-10-04T21:49:16Z")
       jobflow_step.ended_at.should == Time.parse("2011-10-04T21:51:16Z")
     end
@@ -64,6 +70,7 @@ describe Elasticity::JobFlowStatusStep do
       jobflow_steps = Elasticity::JobFlowStatusStep.from_members_nodeset(@members_nodeset)
       jobflow_steps.map(&:name).should == ["Setup Hive", "Run Hive Script"]
       jobflow_steps.map(&:state).should == ["FAILED", "PENDING"]
+      jobflow_steps.map(&:created_at).should == [Time.parse("2011-10-04T21:46:16Z"), nil]
       jobflow_steps.map(&:started_at).should == [Time.parse("2011-10-04T21:49:16Z"), nil]
       jobflow_steps.map(&:ended_at).should == [Time.parse("2011-10-04T21:51:16Z"), nil]
     end
