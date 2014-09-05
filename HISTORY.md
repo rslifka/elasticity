@@ -1,3 +1,7 @@
+## 4.0.1 - September 4, 2014
+
+- Now tracking the Master Instance ID and Created At timestamp for job flows and steps, via @AuraBorea (Thanks!) [#73](https://github.com/rslifka/elasticity/issues/73).
+
 ## 4.0 - May 21, 2014
 
 - Fix for issue [#69](https://github.com/rslifka/elasticity/issues/69).  The AWS region was previously being derived from the placement.  With the advent of VPC/subnet IDs being set, placement is not always relevant (as the VPC subnet ID implicitly defines a placement).  Since region cannot be derived it is now available directly on `JobFlow`.
