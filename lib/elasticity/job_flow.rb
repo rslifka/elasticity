@@ -128,7 +128,7 @@ module Elasticity
     def add_step(jobflow_step)
       if is_jobflow_running?
         jobflow_steps = []
-        if jobflow_step.requires_installation? && !@installed_steps.include?(jobflow_step.class)
+        if jobflow_step.requires_installation? && !@installed_steps.include?(jobflow_step.step_root_class)
           jobflow_steps.concat(jobflow_step.aws_installation_steps)
         end
         jobflow_steps << jobflow_step.to_aws_step(self)
@@ -213,9 +213,9 @@ module Elasticity
     def jobflow_steps
       steps = []
       @jobflow_steps.each do |step|
-        if step.class.send(:requires_installation?) && !@installed_steps.include?(step.class)
+        if step.class.send(:requires_installation?) && !@installed_steps.include?(step.step_root_class)
           steps.concat(step.class.send(:aws_installation_steps))
-          @installed_steps << step.class
+          @installed_steps << step.step_root_class
         end
         steps << step.to_aws_step(self)
       end
