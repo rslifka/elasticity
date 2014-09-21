@@ -1,3 +1,7 @@
+## 4.0.2 - September 20, 2014
+
+- Thanks to @jshafton, now with support for Ganglia!
+
 ## 4.0.1 - September 4, 2014
 
 - Now tracking the Master Instance ID and Created At timestamp for job flows and steps, via @AuraBorea (Thanks!) [#73](https://github.com/rslifka/elasticity/issues/73).
