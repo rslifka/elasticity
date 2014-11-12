@@ -2,6 +2,9 @@ module Elasticity
 
   class JobFlowStatus
 
+    # http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html
+    ACTIVE_STATES = %w{RUNNING STARTING BOOTSTRAPPING WAITING SHUTTING_DOWN}
+
     attr_accessor :name
     attr_accessor :jobflow_id
     attr_accessor :state
@@ -23,6 +26,10 @@ module Elasticity
     def initialize
       @steps = []
       @installed_steps = []
+    end
+
+    def active?
+      ACTIVE_STATES.include? state
     end
 
     # Create a jobflow from an AWS <member> (Nokogiri::XML::Element):
