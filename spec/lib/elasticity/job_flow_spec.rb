@@ -606,33 +606,40 @@ describe Elasticity::JobFlow do
 
   describe '#retry_check' do
 
-    context 'when the jobflow is RUNNING' do
-      let(:jobflow_status) { double(:state => 'RUNNING') }
-      before do
-        subject.stub(:status).and_return(jobflow_status)
-      end
-      it 'returns true and the result of #status' do
-        subject.send(:retry_check).should == [true, jobflow_status]
+    describe 'when the jobflow is a non-terminal status' do
+      active_statuses = Elasticity::JobFlowStatus::ACTIVE_STATES
+      active_statuses.each do |status|
+        context "when the jobflow is #{status}" do
+
+          before do
+            Elasticity::JobFlowStatus.any_instance.stub(:state).and_return(status)
+            @jobflow_status = Elasticity::JobFlowStatus.new
+            subject.stub(:status).and_return(@jobflow_status)
+          end
+
+          it 'returns true and the result of #status' do
+            subject.send(:retry_check).should == [true, @jobflow_status]
+          end
+        end
       end
     end
 
-    context 'when the jobflow is STARTING' do
-      let(:jobflow_status) { double(:state => 'STARTING') }
-      before do
-        subject.stub(:status).and_return(jobflow_status)
-      end
-      it 'returns true and the result of #status' do
-        subject.send(:retry_check).should == [true, jobflow_status]
-      end
-    end
+    describe 'when the jobflow status is terminal' do
+      terminal_statuses = %w{COMPLETED TERMINATED FAILED _}
+      terminal_statuses.each do |status|
+        context "when the jobflow is #{status}" do
+          let(:jobflow_status) { double(:state => status) }
 
-    context 'when the jobflow is != RUNNING or STARTING' do
-      let(:jobflow_status) { double(:state => '_') }
-      before do
-        subject.stub(:status).and_return(jobflow_status)
-      end
-      it 'returns false and the result of #status' do
-        subject.send(:retry_check).should == [false, jobflow_status]
+          before do
+            Elasticity::JobFlowStatus.any_instance.stub(:state).and_return(status)
+            @jobflow_status = Elasticity::JobFlowStatus.new
+            subject.stub(:status).and_return(@jobflow_status)
+          end
+
+          it "returns false and the result of #{status}" do
+            subject.send(:retry_check).should == [false, @jobflow_status]
+          end
+        end
       end
     end
   end
