@@ -236,4 +236,30 @@ describe Elasticity::JobFlowStatus do
     end
   end
 
+  describe '#active?' do
+
+    context 'when the jobflow status is terminal' do
+      %w{COMPLETED TERMINATED FAILED _}.each do |status|
+        context "when the jobflow is #{status}" do
+          it 'is not active' do
+            single_jobflow_status.state = status
+            single_jobflow_status.active?.should be_false
+          end
+        end
+      end
+    end
+
+    context 'when the jobflow status is not terminal' do
+      %w{RUNNING STARTING BOOTSTRAPPING WAITING SHUTTING_DOWN}.each do |status|
+        context "when the jobflow is #{status}" do
+          it 'is active' do
+            single_jobflow_status.state = status
+            single_jobflow_status.active?.should be_true
+          end
+        end
+      end
+    end
+
+  end
+
 end

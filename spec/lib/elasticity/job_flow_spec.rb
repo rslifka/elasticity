@@ -606,8 +606,8 @@ describe Elasticity::JobFlow do
 
   describe '#retry_check' do
 
-    context 'when the jobflow is RUNNING' do
-      let(:jobflow_status) { double(:state => 'RUNNING') }
+    context 'when the jobflow is active' do
+      let(:jobflow_status) { double(:active? => true) }
       before do
         subject.stub(:status).and_return(jobflow_status)
       end
@@ -616,25 +616,16 @@ describe Elasticity::JobFlow do
       end
     end
 
-    context 'when the jobflow is STARTING' do
-      let(:jobflow_status) { double(:state => 'STARTING') }
+    context 'when the jobflow is not active' do
+      let(:jobflow_status) { double(:active? => false) }
       before do
         subject.stub(:status).and_return(jobflow_status)
       end
       it 'returns true and the result of #status' do
-        subject.send(:retry_check).should == [true, jobflow_status]
-      end
-    end
-
-    context 'when the jobflow is != RUNNING or STARTING' do
-      let(:jobflow_status) { double(:state => '_') }
-      before do
-        subject.stub(:status).and_return(jobflow_status)
-      end
-      it 'returns false and the result of #status' do
         subject.send(:retry_check).should == [false, jobflow_status]
       end
     end
+
   end
 
   describe '.from_jobflow_id' do

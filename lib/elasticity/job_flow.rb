@@ -168,7 +168,7 @@ module Elasticity
 
     def retry_check
       jf_status = status
-      return status.state == 'RUNNING' || status.state == 'STARTING', jf_status
+      return status.active?, jf_status
     end
 
     def emr

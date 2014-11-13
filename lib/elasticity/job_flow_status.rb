@@ -25,6 +25,11 @@ module Elasticity
       @installed_steps = []
     end
 
+    # http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/ProcessingCycle.html
+    def active?
+      %w{RUNNING STARTING BOOTSTRAPPING WAITING SHUTTING_DOWN}.include? state
+    end
+
     # Create a jobflow from an AWS <member> (Nokogiri::XML::Element):
     #   /DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member
     def self.from_member_element(xml_element)
