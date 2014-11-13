@@ -1,3 +1,7 @@
+## 4.0.3 - November 12, 2014
+
+- Thanks to @ilyakava, pull request [#78](https://github.com/rslifka/elasticity/pull/78) fixes a bug in the "wait for completion" feature.
+
 ## 4.0.2 - September 20, 2014
 
 - Thanks to @jshafton, now with support for Ganglia!
