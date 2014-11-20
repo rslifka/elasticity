@@ -1,3 +1,7 @@
+## 4.0.4 - November 20, 2014
+
+- Thanks to @jshafton, pull request [#79](https://github.com/rslifka/elasticity/pull/79) adds support for job flow roles.
+
 ## 4.0.3 - November 12, 2014
 
 - Thanks to @ilyakava, pull request [#78](https://github.com/rslifka/elasticity/pull/78) fixes a bug in the "wait for completion" feature.
