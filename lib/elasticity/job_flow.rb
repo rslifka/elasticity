@@ -22,6 +22,7 @@ module Elasticity
     attr_accessor :region
     attr_accessor :visible_to_all_users
     attr_accessor :enable_debugging
+    attr_accessor :job_flow_role
 
     attr_reader :access_key
     attr_reader :secret_key
@@ -185,6 +186,7 @@ module Elasticity
       steps.insert(0, Elasticity::SetupHadoopDebuggingStep.new.to_aws_step(self)) if @enable_debugging
       config[:steps] = steps
       config[:log_uri] = @log_uri if @log_uri
+      config[:job_flow_role] = @job_flow_role if @job_flow_role
       config[:bootstrap_actions] = @bootstrap_actions.map{|a| a.to_aws_bootstrap_action} unless @bootstrap_actions.empty?
       config
     end

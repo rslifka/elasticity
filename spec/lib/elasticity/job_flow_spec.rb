@@ -344,6 +344,32 @@ describe Elasticity::JobFlow do
 
     end
 
+    describe 'job flow role' do
+
+      context 'when a job flow role is specified' do
+        let(:jobflow_with_job_flow_role) do
+          Elasticity::JobFlow.new('_', '_').tap do |jf|
+            jf.job_flow_role = 'JOB_FLOW_ROLE'
+          end
+        end
+        it 'should incorporate it into the jobflow config' do
+          jobflow_with_job_flow_role.send(:jobflow_config).should be_a_hash_including({:job_flow_role => 'JOB_FLOW_ROLE'})
+        end
+      end
+
+      context 'when a log URI is not specified' do
+        let(:jobflow_with_no_job_flow_role) do
+          Elasticity::JobFlow.new('_', '_').tap do |jf|
+            jf.job_flow_role = nil
+          end
+        end
+        it 'should not make space for it in the jobflow config' do
+          jobflow_with_no_job_flow_role.send(:jobflow_config).should_not have_key(:job_flow_role)
+        end
+      end
+
+    end
+
     describe 'bootstrap actions' do
 
       context 'when bootstrap actions are specified' do
