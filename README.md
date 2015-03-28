@@ -2,7 +2,7 @@
 
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently abstract away the complex EMR REST API and make working with job flows more productive and more enjoyable.
 
-[![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) 1.9.3, 2.0.0, 2.1.0, 2.1.1, JRuby 1.9
+[![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) 2.0.x, 2.1.x, 2.2.x
 
 Elasticity provides two ways to access EMR:
 
@@ -403,14 +403,14 @@ Unfortunately, the documentation is sometimes incorrect and sometimes missing.  
 
 # Thanks!
 
+* [Alexander Dean](https://github.com/alexanderdean) has been a constant source of excellent suggestions. He's also working on [Unified Log Processing](http://www.manning.com/dean/), which you should of course purchase several copies of, post haste :)
 * AWS signing was used from [RightScale's](http://www.rightscale.com/) amazing [right_aws gem](https://github.com/rightscale/right_aws) which works extraordinarily well!  If you need access to any AWS service (EC2, S3, etc.), have a look.
 * <code>camelize</code> was used from ActiveSupport to assist in converting parmeters to AWS request format.
-* Thanks to [Ryan Weald](https://github.com/rweald) and [Alexander Dean](https://github.com/alexanderdean) for their constant barrage of excellent suggestions :)
 
 # License
 
 ```
-  Copyright 2011-2014 Robert Slifka
+  Copyright 2011-2015 Robert Slifka
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.

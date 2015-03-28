@@ -1,3 +1,10 @@
+## 5.0 - March 28, 2014
+
+- Major version bump as there are language support implications.
+- Now supporting only the latest version of the 2.x minors (e.g. 2.0.x, 2.1.x, etc.) versus specific minor-minor releases.  This was an oversight on my part in how I both configured Travis and communicated support for the 2.x line.
+- Removed support for Ruby 1.9.3 as it has been [unsupported since 2/23/2015](https://www.ruby-lang.org/en/news/2014/01/10/ruby-1-9-3-will-end-on-2015/).
+- Removed "support" for JRuby.  It was in poor form that I originally claimed to support JRuby as I do not have the time to dedicate to such an endeavor.  Compatibility is merely coincidental and it would not be responsible for me to continue communicating ongoing support when that is not my intention.  Apologies to those this may inconvenience.
+
 ## 4.0.4 - November 20, 2014
 
 - Thanks to @jshafton, pull request [#79](https://github.com/rslifka/elasticity/pull/79) adds support for job flow roles.
