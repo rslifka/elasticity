@@ -1,5 +1,3 @@
-ENV['RAILS_ENV'] ||= 'test'
-
 require 'elasticity'
 require 'timecop'
 require 'fakefs/spec_helpers'
