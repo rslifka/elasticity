@@ -1,3 +1,7 @@
+## 4.0.5 - April 9, 2015
+
+- Thanks to @alexanderdean, pull request [#79](https://github.com/rslifka/elasticity/pull/82) adds support for profile roles.
+
 ## 4.0.4 - November 20, 2014
 
 - Thanks to @jshafton, pull request [#79](https://github.com/rslifka/elasticity/pull/79) adds support for job flow roles.
