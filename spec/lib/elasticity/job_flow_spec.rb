@@ -4,22 +4,23 @@ describe Elasticity::JobFlow do
     Elasticity::JobFlow.new('access', 'secret')
   end
 
-  its(:access_key) { should == 'access' }
-  its(:secret_key) { should == 'secret' }
   its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
   its(:ec2_key_name) { should == nil }
-  its(:ec2_subnet_id) { should == nil }
+  its(:name) { should == 'Elasticity Job Flow' }
   its(:instance_count) { should == 2 }
   its(:log_uri) { should == nil }
   its(:master_instance_type) { should == 'm1.small' }
-  its(:name) { should == 'Elasticity Job Flow' }
   its(:slave_instance_type) { should == 'm1.small' }
   its(:ami_version) { should == 'latest' }
   its(:keep_job_flow_alive_when_no_steps) { should == false }
+  its(:ec2_subnet_id) { should == nil }
   its(:placement) { should == 'us-east-1a' }
+  its(:region) { should == 'us-east-1' }
   its(:visible_to_all_users) { should == false }
   its(:enable_debugging) { should == false }
-  its(:region) { should == 'us-east-1' }
+
+  its(:access_key) { should == 'access' }
+  its(:secret_key) { should == 'secret' }
 
   describe '.initialize' do
     it 'should set the access and secret keys to nil by default' do
