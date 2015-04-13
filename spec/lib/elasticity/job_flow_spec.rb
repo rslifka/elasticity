@@ -18,6 +18,7 @@ describe Elasticity::JobFlow do
   its(:region) { should == 'us-east-1' }
   its(:visible_to_all_users) { should == false }
   its(:enable_debugging) { should == false }
+  its(:job_flow_role) { should == nil }
 
   its(:access_key) { should == 'access' }
   its(:secret_key) { should == 'secret' }
