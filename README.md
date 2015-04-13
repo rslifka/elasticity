@@ -106,6 +106,8 @@ jobflow.name                              = 'Elasticity Job Flow'
 
 # For new AWS accounts, this is required to be set
 jobflow.ec2_subnet_id                     = nil
+jobflow.jobflow_role                      = nil
+jobflow.service_role                      = nil
 
 jobflow.action_on_failure                 = 'TERMINATE_JOB_FLOW'
 jobflow.keep_job_flow_alive_when_no_steps = false

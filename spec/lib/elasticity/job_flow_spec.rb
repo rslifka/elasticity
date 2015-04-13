@@ -4,22 +4,25 @@ describe Elasticity::JobFlow do
     Elasticity::JobFlow.new('access', 'secret')
   end
 
-  its(:access_key) { should == 'access' }
-  its(:secret_key) { should == 'secret' }
   its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
   its(:ec2_key_name) { should == nil }
-  its(:ec2_subnet_id) { should == nil }
+  its(:name) { should == 'Elasticity Job Flow' }
   its(:instance_count) { should == 2 }
   its(:log_uri) { should == nil }
   its(:master_instance_type) { should == 'm1.small' }
-  its(:name) { should == 'Elasticity Job Flow' }
   its(:slave_instance_type) { should == 'm1.small' }
   its(:ami_version) { should == 'latest' }
   its(:keep_job_flow_alive_when_no_steps) { should == false }
+  its(:ec2_subnet_id) { should == nil }
   its(:placement) { should == 'us-east-1a' }
+  its(:region) { should == 'us-east-1' }
   its(:visible_to_all_users) { should == false }
   its(:enable_debugging) { should == false }
-  its(:region) { should == 'us-east-1' }
+  its(:job_flow_role) { should == nil }
+  its(:service_role) { should == nil }
+
+  its(:access_key) { should == 'access' }
+  its(:secret_key) { should == 'secret' }
 
   describe '.initialize' do
     it 'should set the access and secret keys to nil by default' do
@@ -357,7 +360,7 @@ describe Elasticity::JobFlow do
         end
       end
 
-      context 'when a log URI is not specified' do
+      context 'when a job flow role is not specified' do
         let(:jobflow_with_no_job_flow_role) do
           Elasticity::JobFlow.new('_', '_').tap do |jf|
             jf.job_flow_role = nil
@@ -365,6 +368,32 @@ describe Elasticity::JobFlow do
         end
         it 'should not make space for it in the jobflow config' do
           jobflow_with_no_job_flow_role.send(:jobflow_config).should_not have_key(:job_flow_role)
+        end
+      end
+
+    end
+
+    describe 'service role' do
+
+      context 'when a service role is specified' do
+        let(:jobflow_with_service_role) do
+          Elasticity::JobFlow.new('_', '_').tap do |jf|
+            jf.service_role = 'SERVICE_ROLE'
+          end
+        end
+        it 'should incorporate it into the jobflow config' do
+          jobflow_with_service_role.send(:jobflow_config).should be_a_hash_including({:service_role => 'SERVICE_ROLE'})
+        end
+      end
+
+      context 'when a service role is not specified' do
+        let(:jobflow_with_no_service_role) do
+          Elasticity::JobFlow.new('_', '_').tap do |jf|
+            jf.service_role = nil
+          end
+        end
+        it 'should not make space for it in the jobflow config' do
+          jobflow_with_no_service_role.send(:jobflow_config).should_not have_key(:service_role)
         end
       end
 
