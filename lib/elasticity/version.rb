@@ -1,3 +1,3 @@
 module Elasticity
-  VERSION = '5.0'
+  VERSION = '4.0.5'
 end
