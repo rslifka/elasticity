@@ -5,7 +5,7 @@ require 'rest_client'
 require 'nokogiri'
 require 'fog'
 
-require 'elasticity/aws_request'
+require 'elasticity/aws_session'
 require 'elasticity/emr'
 
 require 'elasticity/sync_to_s3'

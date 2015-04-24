@@ -5,7 +5,7 @@ module Elasticity
   class MissingRegionError < StandardError;
   end
 
-  class AwsRequest
+  class AwsSession
 
     attr_reader :access_key
     attr_reader :secret_key
@@ -28,17 +28,17 @@ module Elasticity
     end
 
     def submit(ruby_params)
-      aws_params = AwsRequest.convert_ruby_to_aws(ruby_params)
+      aws_params = AwsSession.convert_ruby_to_aws(ruby_params)
       signed_params = sign_params(aws_params)
       begin
         RestClient.post("#@protocol://#@host", signed_params, :content_type => 'application/x-www-form-urlencoded; charset=utf-8')
       rescue RestClient::BadRequest => e
-        raise ArgumentError, AwsRequest.parse_error_response(e.http_body)
+        raise ArgumentError, AwsSession.parse_error_response(e.http_body)
       end
     end
 
     def ==(other)
-      return false unless other.is_a? AwsRequest
+      return false unless other.is_a? AwsSession
       return false unless @access_key == other.access_key
       return false unless @secret_key == other.secret_key
       return false unless @host == other.host
@@ -72,10 +72,10 @@ module Elasticity
         'SignatureMethod' => 'HmacSHA256'
       })
       canonical_string = service_hash.keys.sort.map do |key|
-        "#{AwsRequest.aws_escape(key)}=#{AwsRequest.aws_escape(service_hash[key])}"
+        "#{AwsSession.aws_escape(key)}=#{AwsSession.aws_escape(service_hash[key])}"
       end.join('&')
       string_to_sign = "POST\n#{@host.downcase}\n/\n#{canonical_string}"
-      signature = AwsRequest.aws_escape(Base64.encode64(OpenSSL::HMAC.digest("sha256", @secret_key, string_to_sign)).strip)
+      signature = AwsSession.aws_escape(Base64.encode64(OpenSSL::HMAC.digest("sha256", @secret_key, string_to_sign)).strip)
       "#{canonical_string}&Signature=#{signature}"
     end
 

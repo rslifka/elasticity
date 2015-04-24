@@ -1,4 +1,4 @@
-describe Elasticity::AwsRequest do
+describe Elasticity::AwsSession do
 
   before do
     Timecop.freeze(Time.at(1302461096))
@@ -9,7 +9,7 @@ describe Elasticity::AwsRequest do
   end
 
   subject do
-    Elasticity::AwsRequest.new('access', 'secret')
+    Elasticity::AwsSession.new('access', 'secret')
   end
 
   describe '#initialize' do
@@ -24,7 +24,7 @@ describe Elasticity::AwsRequest do
     context 'when :region is nil' do
       it 'should be an error' do
         expect {
-          Elasticity::AwsRequest.new('_', '_', :region => nil)
+          Elasticity::AwsSession.new('_', '_', :region => nil)
         }.to raise_error Elasticity::MissingRegionError, 'A valid :region is required to connect to EMR'
       end
     end
@@ -34,7 +34,7 @@ describe Elasticity::AwsRequest do
       context 'when the proper environment variables are set' do
 
         context 'when access and secret key are not provided' do
-          let(:default_values) { Elasticity::AwsRequest.new }
+          let(:default_values) { Elasticity::AwsSession.new }
           before do
             ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('ENV_ACCESS')
             ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('ENV_SECRET')
@@ -46,7 +46,7 @@ describe Elasticity::AwsRequest do
         end
 
         context 'when access and secret key are nil' do
-          let(:nil_values) { Elasticity::AwsRequest.new(nil, nil) }
+          let(:nil_values) { Elasticity::AwsSession.new(nil, nil) }
           before do
             ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('ENV_ACCESS')
             ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('ENV_SECRET')
@@ -60,7 +60,7 @@ describe Elasticity::AwsRequest do
       end
 
       context 'when the environment variables are not set' do
-        let(:missing_something) { Elasticity::AwsRequest.new }
+        let(:missing_something) { Elasticity::AwsSession.new }
         context 'when the access key is not set' do
           before do
             ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return(nil)
@@ -97,7 +97,7 @@ describe Elasticity::AwsRequest do
 
     context 'when the region is specified' do
       let(:request_with_region) do
-        Elasticity::AwsRequest.new('_', '_', {:region => 'us-west-1'})
+        Elasticity::AwsSession.new('_', '_', {:region => 'us-west-1'})
       end
       it 'should incorporate the region into the hostname' do
         request_with_region.host.should == 'elasticmapreduce.us-west-1.amazonaws.com'
@@ -109,7 +109,7 @@ describe Elasticity::AwsRequest do
   describe '#protocol' do
 
     context 'when :secure is not specified' do
-      let(:default_request) { Elasticity::AwsRequest.new('_', '_') }
+      let(:default_request) { Elasticity::AwsSession.new('_', '_') }
       it 'should be https by default' do
         default_request.protocol.should == 'https'
       end
@@ -118,14 +118,14 @@ describe Elasticity::AwsRequest do
     context 'when :secure is specified' do
 
       context 'when :secure is truthy' do
-        let(:secure_request) { Elasticity::AwsRequest.new('_', '_', {:secure => true}) }
+        let(:secure_request) { Elasticity::AwsSession.new('_', '_', {:secure => true}) }
         it 'should be https' do
           secure_request.protocol.should == 'https'
         end
       end
 
       context 'when :secure is falsey' do
-        let(:insecure_request) { Elasticity::AwsRequest.new('_', '_', {:secure => false}) }
+        let(:insecure_request) { Elasticity::AwsSession.new('_', '_', {:secure => false}) }
         it 'should be http' do
           insecure_request.protocol.should == 'http'
         end
@@ -145,7 +145,7 @@ describe Elasticity::AwsRequest do
   describe '#submit' do
 
     let(:request) do
-      Elasticity::AwsRequest.new('_', '_').tap do |r|
+      Elasticity::AwsSession.new('_', '_').tap do |r|
         r.instance_variable_set(:@host, 'HOSTNAME')
         r.instance_variable_set(:@protocol, 'PROTOCOL')
       end
@@ -154,7 +154,7 @@ describe Elasticity::AwsRequest do
     it 'should POST a properly assembled request' do
       ruby_params = {}
       aws_params = {}
-      Elasticity::AwsRequest.should_receive(:convert_ruby_to_aws).with(ruby_params).and_return(ruby_params)
+      Elasticity::AwsSession.should_receive(:convert_ruby_to_aws).with(ruby_params).and_return(ruby_params)
       request.should_receive(:sign_params).with(aws_params).and_return('SIGNED_PARAMS')
       RestClient.should_receive(:post).with('PROTOCOL://HOSTNAME', 'SIGNED_PARAMS', :content_type => 'application/x-www-form-urlencoded; charset=utf-8')
       request.submit(ruby_params)
@@ -191,7 +191,7 @@ describe Elasticity::AwsRequest do
 
     describe 'basic equality checks with subject' do
       let(:same_object) { subject }
-      let(:same_values) { Elasticity::AwsRequest.new('access', 'secret', {}) }
+      let(:same_values) { Elasticity::AwsSession.new('access', 'secret', {}) }
       let(:diff_type) { Object.new }
 
       it { should == same_object }
@@ -202,22 +202,22 @@ describe Elasticity::AwsRequest do
     describe 'deep comparisons' do
 
       it 'should fail on access key check' do
-        Elasticity::AwsRequest.new('access', '_').should_not == Elasticity::AwsRequest.new('_', '_')
+        Elasticity::AwsSession.new('access', '_').should_not == Elasticity::AwsSession.new('_', '_')
       end
 
       it 'should fail on secret key check' do
-        Elasticity::AwsRequest.new('_', 'secret').should_not == Elasticity::AwsRequest.new('_', '_')
+        Elasticity::AwsSession.new('_', 'secret').should_not == Elasticity::AwsSession.new('_', '_')
       end
 
       it 'should fail on host check' do
-        aws1 = Elasticity::AwsRequest.new('_', '_', :region => 'us-east-1')
-        aws2 = Elasticity::AwsRequest.new('_', '_', :region => 'us-west-1')
+        aws1 = Elasticity::AwsSession.new('_', '_', :region => 'us-east-1')
+        aws2 = Elasticity::AwsSession.new('_', '_', :region => 'us-west-1')
         aws1.should_not == aws2
       end
 
       it 'should fail on protocol check' do
-        aws1 = Elasticity::AwsRequest.new('_', '_', :secure => true)
-        aws2 = Elasticity::AwsRequest.new('_', '_', :secure => false)
+        aws1 = Elasticity::AwsSession.new('_', '_', :secure => true)
+        aws2 = Elasticity::AwsSession.new('_', '_', :secure => false)
         aws1.should_not == aws2
       end
 
@@ -267,7 +267,7 @@ describe Elasticity::AwsRequest do
         'Steps.member.2.HadoopJarStep.Args.member.2' => 'arg5',
         'Steps.member.2.HadoopJarStep.Args.member.3' => 'arg6'
       }
-      Elasticity::AwsRequest.send(:convert_ruby_to_aws, add_jobflow_steps_params).should == expected_result
+      Elasticity::AwsSession.send(:convert_ruby_to_aws, add_jobflow_steps_params).should == expected_result
     end
   end
 

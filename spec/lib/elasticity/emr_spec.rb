@@ -7,7 +7,7 @@ describe Elasticity::EMR do
   describe '.new' do
 
     context 'when arguments are provided' do
-      its(:aws_request) { should == Elasticity::AwsRequest.new('ACCESS', 'SECRET', {}) }
+      its(:aws_request) { should == Elasticity::AwsSession.new('ACCESS', 'SECRET', {}) }
     end
 
     context 'when arguments are not provided' do
@@ -17,7 +17,7 @@ describe Elasticity::EMR do
       end
       it 'should use environment variables' do
         emr = Elasticity::EMR.new
-        emr.aws_request.should == Elasticity::AwsRequest.new('ENV_ACCESS', 'ENV_SECRET', {})
+        emr.aws_request.should == Elasticity::AwsSession.new('ENV_ACCESS', 'ENV_SECRET', {})
       end
     end
 
@@ -26,7 +26,7 @@ describe Elasticity::EMR do
   describe '#add_instance_groups' do
 
     it 'should send the correct params to AWS' do
-      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
         :operation => 'AddInstanceGroups',
         :job_flow_id => 'JOBFLOW_ID',
         :instance_groups => ['INSTANCE_GROUP_CONFIGS']
@@ -51,7 +51,7 @@ describe Elasticity::EMR do
       end
 
       it 'should return an array of the new instance groups IDs' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(aws_response)
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_response)
         subject.add_instance_groups('', []).should == ['ig-1', 'ig-2', 'ig-3']
       end
     end
@@ -59,7 +59,7 @@ describe Elasticity::EMR do
     context 'when a block is given' do
       let(:result) { 'RESULT' }
       it 'should yield the submission results' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(result)
         subject.add_instance_groups('', []) do |xml|
           xml.should == 'RESULT'
         end
@@ -71,7 +71,7 @@ describe Elasticity::EMR do
   describe '#add_jobflow_steps' do
 
     it 'should add the specified steps to the job flow' do
-      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
         :operation => 'AddJobFlowSteps',
         :job_flow_id => 'JOBFLOW_ID',
         :steps => ['_']
@@ -82,7 +82,7 @@ describe Elasticity::EMR do
     context 'when a block is given' do
       let(:result) { 'RESULT' }
       it 'should yield the submission results' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(result)
         subject.add_jobflow_steps('', {}) do |xml|
           xml.should == 'RESULT'
         end
@@ -121,14 +121,14 @@ describe Elasticity::EMR do
     end
 
     it 'should return an array of properly populated JobFlowStatusES' do
-      Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(describe_jobflows_xml)
+      Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(describe_jobflows_xml)
       jobflow_statuses = subject.describe_jobflows
       jobflow_statuses.map(&:name).should == ['Pig Job', 'Hive Job']
       jobflow_statuses.map(&:class).should == [Elasticity::JobFlowStatus, Elasticity::JobFlowStatus]
     end
 
     it 'should describe all jobflows' do
-      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
         :operation => 'DescribeJobFlows'
       })
       subject.describe_jobflows
@@ -136,7 +136,7 @@ describe Elasticity::EMR do
 
     context 'when additional parameters are provided' do
       it 'should pass them through' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
           :CreatedBefore => '2011-10-04',
           :operation => 'DescribeJobFlows'
         })
@@ -147,7 +147,7 @@ describe Elasticity::EMR do
     context 'when a block is given' do
       let(:result) { 'RESULT' }
       it 'should yield the submission results' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(result)
         subject.describe_jobflows do |xml|
           xml.should == 'RESULT'
         end
@@ -178,7 +178,7 @@ describe Elasticity::EMR do
     }
 
     it 'should describe the specified jobflow' do
-      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
         :operation => 'DescribeJobFlows',
         :job_flow_ids => ['j-3UN6WX5RRO2AG']
       })
@@ -186,7 +186,7 @@ describe Elasticity::EMR do
     end
 
     it 'should return a properly populated JobFlowStatus' do
-      Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(describe_jobflows_xml)
+      Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(describe_jobflows_xml)
       jobflow_status = subject.describe_jobflow('_')
       jobflow_status.should be_a Elasticity::JobFlowStatus
       jobflow_status.jobflow_id.should == 'j-3UN6WX5RRO2AG'
@@ -195,7 +195,7 @@ describe Elasticity::EMR do
     context 'when a block is given' do
       let(:result) { 'RESULT' }
       it 'should yield the submission results' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(result)
         subject.describe_jobflow('') do |xml|
           xml.should == 'RESULT'
         end
@@ -218,7 +218,7 @@ describe Elasticity::EMR do
   describe '#modify_instance_groups' do
 
     it 'should modify the specified instance groups' do
-      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
         :operation => 'ModifyInstanceGroups',
         :instance_groups => [{
           :instance_group_id => 'ig-2T1HNUO61BG3O',
@@ -231,7 +231,7 @@ describe Elasticity::EMR do
     context 'when a block is given' do
       let(:result) { '_' }
       it 'should yield the submission results' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(result)
         subject.modify_instance_groups({}) do |xml|
           xml.should == '_'
         end
@@ -243,7 +243,7 @@ describe Elasticity::EMR do
   describe '#run_jobflow' do
 
     it 'should start the specified job flow' do
-      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
         :operation => 'RunJobFlow',
         :jobflow_params => '_'
       })
@@ -265,7 +265,7 @@ describe Elasticity::EMR do
       end
 
       it 'should return the ID of the running job flow' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(jobflow_xml_response)
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(jobflow_xml_response)
         subject.run_job_flow({}).should == 'j-G6N5HA528AD4'
       end
     end
@@ -273,7 +273,7 @@ describe Elasticity::EMR do
     context 'when a block is given' do
       let(:result) { '_' }
       it 'should yield the submission results' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(result)
         subject.run_job_flow({}) do |xml|
           xml.should == '_'
         end
@@ -285,7 +285,7 @@ describe Elasticity::EMR do
   describe '#terminate_jobflows' do
 
     it 'should terminate the specific jobflow' do
-      Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
         :operation => 'TerminateJobFlows',
         :job_flow_ids => ['j-1']
       })
@@ -295,7 +295,7 @@ describe Elasticity::EMR do
     context 'when a block is given' do
       let(:result) { '_' }
       it 'should yield the termination results' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(result)
         subject.terminate_jobflows('j-1') do |xml|
           xml.should == '_'
         end
@@ -308,7 +308,7 @@ describe Elasticity::EMR do
 
     context 'when protection is enabled' do
       it 'should enable protection on the specified jobflows' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
           :operation => 'SetTerminationProtection',
           :termination_protected => true,
           :job_flow_ids => ['jobflow1', 'jobflow2']
@@ -319,7 +319,7 @@ describe Elasticity::EMR do
 
     context 'when protection is disabled' do
       it 'should disable protection on the specified jobflows' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
           :operation => 'SetTerminationProtection',
           :termination_protected => false,
           :job_flow_ids => ['jobflow1', 'jobflow2']
@@ -330,7 +330,7 @@ describe Elasticity::EMR do
 
     context 'when protection is not specified' do
       it 'should enable protection on the specified jobflows' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).with({
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
           :operation => 'SetTerminationProtection',
           :termination_protected => true,
           :job_flow_ids => ['jobflow1', 'jobflow2']
@@ -342,7 +342,7 @@ describe Elasticity::EMR do
     context 'when a block is given' do
       let(:result) { '_' }
       it 'should yield the termination results' do
-        Elasticity::AwsRequest.any_instance.should_receive(:submit).and_return(result)
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(result)
         subject.set_termination_protection([]) do |xml|
           xml.should == '_'
         end
@@ -355,7 +355,7 @@ describe Elasticity::EMR do
     let(:params) { {:foo => 'bar'} }
 
     it 'should pass through directly to the request and return the results of the request' do
-      Elasticity::AwsRequest.any_instance.should_receive(:submit).with(params).and_return('RESULT')
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with(params).and_return('RESULT')
       subject.direct(params).should == 'RESULT'
     end
   end
