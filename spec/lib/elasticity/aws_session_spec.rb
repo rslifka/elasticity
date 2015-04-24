@@ -18,6 +18,7 @@ describe Elasticity::AwsSession do
       it 'should set them to the provided values' do
         subject.access_key.should == 'access'
         subject.secret_key.should == 'secret'
+        subject.region.should == 'us-east-1'
       end
     end
 
@@ -27,6 +28,10 @@ describe Elasticity::AwsSession do
           Elasticity::AwsSession.new('_', '_', :region => nil)
         }.to raise_error Elasticity::MissingRegionError, 'A valid :region is required to connect to EMR'
       end
+    end
+
+    context 'when :region is specified' do
+      Elasticity::AwsSession.new('_', '_', :region => 'TEST_REGION').region.should == 'TEST_REGION'
     end
 
     context 'when either access or secret key is not provided or nil' do

@@ -11,6 +11,7 @@ module Elasticity
     attr_reader :secret_key
     attr_reader :host
     attr_reader :protocol
+    attr_reader :region
 
     # Supported values for options:
     #  :region - AWS region (e.g. us-west-1)
@@ -20,10 +21,12 @@ module Elasticity
       if options.has_key?(:region) && options[:region] == nil
         raise MissingRegionError, 'A valid :region is required to connect to EMR'
       end
+      options[:region] = 'us-east-1' unless options[:region]
+      @region = options[:region]
 
       @access_key = get_access_key(access)
       @secret_key = get_secret_key(secret)
-      @host = "elasticmapreduce.#{{:region => 'us-east-1'}.merge(options)[:region]}.amazonaws.com"
+      @host = "elasticmapreduce.#@region.amazonaws.com"
       @protocol = {:secure => true}.merge(options)[:secure] ? 'https' : 'http'
     end
 
@@ -119,7 +122,7 @@ module Elasticity
 
     # (Used from Rails' ActiveSupport)
     def self.camelize(word)
-      word.to_s.gsub(/\/(.?)/) { "::" + $1.upcase }.gsub(/(^|_)(.)/) { $2.upcase }
+      word.to_s.gsub(/\/(.?)/) { '::' + $1.upcase }.gsub(/(^|_)(.)/) { $2.upcase }
     end
 
     # AWS error responses all follow the same form.  Extract the message from
@@ -127,7 +130,7 @@ module Elasticity
     def self.parse_error_response(error_xml)
       xml_doc = Nokogiri::XML(error_xml)
       xml_doc.remove_namespaces!
-      xml_doc.xpath("/ErrorResponse/Error/Message").text
+      xml_doc.xpath('/ErrorResponse/Error/Message').text
     end
 
   end
