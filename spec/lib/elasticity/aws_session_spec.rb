@@ -140,29 +140,22 @@ describe Elasticity::AwsSession do
 
   end
 
-  describe '#sign_params' do
-    it 'should sign according to AWS rules' do
-      signed_params = subject.send(:sign_params, {})
-      signed_params.should == 'AWSAccessKeyId=access&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-04-10T18%3A44%3A56.000Z&Signature=t%2BccC38VxCKyk2ROTKo9vnECsntKoU0RBAFklHWP5bE%3D'
-    end
-  end
-
   describe '#submit' do
 
-    let(:request) do
-      Elasticity::AwsSession.new('_', '_').tap do |r|
-        r.instance_variable_set(:@host, 'HOSTNAME')
-        r.instance_variable_set(:@protocol, 'PROTOCOL')
-      end
-    end
+    context 'when there is not an error with the request' do
+      before do
+        @request = Elasticity::AwsRequestV2.new(subject, {})
+        @request.should_receive(:url).and_return('TEST_URL')
+        @request.should_receive(:payload).and_return('TEST_PAYLOAD')
+        @request.should_receive(:headers).and_return('TEST_HEADERS')
 
-    it 'should POST a properly assembled request' do
-      ruby_params = {}
-      aws_params = {}
-      Elasticity::AwsSession.should_receive(:convert_ruby_to_aws).with(ruby_params).and_return(ruby_params)
-      request.should_receive(:sign_params).with(aws_params).and_return('SIGNED_PARAMS')
-      RestClient.should_receive(:post).with('PROTOCOL://HOSTNAME', 'SIGNED_PARAMS', :content_type => 'application/x-www-form-urlencoded; charset=utf-8')
-      request.submit(ruby_params)
+        Elasticity::AwsRequestV2.should_receive(:new).with(subject, {}).and_return(@request)
+        RestClient.should_receive(:post).with('TEST_URL', 'TEST_PAYLOAD', 'TEST_HEADERS')
+      end
+
+      it 'should POST a properly assembled request' do
+        subject.submit({})
+      end
     end
 
     context 'when there is an EMR error with the request' do
@@ -185,7 +178,7 @@ describe Elasticity::AwsSession do
       it 'should raise an Argument error with the body of the error' do
         RestClient.should_receive(:post).and_raise(error)
         expect {
-          request.submit({})
+          subject.submit({})
         }.to raise_error(ArgumentError, error_message)
       end
     end
@@ -228,52 +221,6 @@ describe Elasticity::AwsSession do
 
     end
 
-  end
-
-  describe '.convert_ruby_to_aws' do
-    it 'should convert the params' do
-      add_jobflow_steps_params = {
-        :job_flow_id => 'j-1',
-        :steps => [
-          {
-            :action_on_failure => 'CONTINUE',
-            :name => 'First New Job Step',
-            :hadoop_jar_step => {
-              :args => ['arg1', 'arg2', 'arg3',],
-              :jar => 'first_step.jar',
-              :main_class => 'first_class.jar'
-            }
-          },
-            {
-              :action_on_failure => 'CANCEL_AND_WAIT',
-              :name => 'Second New Job Step',
-              :hadoop_jar_step => {
-                :args => ['arg4', 'arg5', 'arg6',],
-                :jar => 'second_step.jar',
-                :main_class => 'second_class.jar'
-              }
-            }
-        ]
-      }
-      expected_result = {
-        'JobFlowId' => 'j-1',
-        'Steps.member.1.Name' => 'First New Job Step',
-        'Steps.member.1.ActionOnFailure' => 'CONTINUE',
-        'Steps.member.1.HadoopJarStep.Jar' => 'first_step.jar',
-        'Steps.member.1.HadoopJarStep.MainClass' => 'first_class.jar',
-        'Steps.member.1.HadoopJarStep.Args.member.1' => 'arg1',
-        'Steps.member.1.HadoopJarStep.Args.member.2' => 'arg2',
-        'Steps.member.1.HadoopJarStep.Args.member.3' => 'arg3',
-        'Steps.member.2.Name' => 'Second New Job Step',
-        'Steps.member.2.ActionOnFailure' => 'CANCEL_AND_WAIT',
-        'Steps.member.2.HadoopJarStep.Jar' => 'second_step.jar',
-        'Steps.member.2.HadoopJarStep.MainClass' => 'second_class.jar',
-        'Steps.member.2.HadoopJarStep.Args.member.1' => 'arg4',
-        'Steps.member.2.HadoopJarStep.Args.member.2' => 'arg5',
-        'Steps.member.2.HadoopJarStep.Args.member.3' => 'arg6'
-      }
-      Elasticity::AwsSession.send(:convert_ruby_to_aws, add_jobflow_steps_params).should == expected_result
-    end
   end
 
 end
