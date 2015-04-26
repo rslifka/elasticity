@@ -57,4 +57,10 @@ AWS4-HMAC-SHA256
     end
   end
 
+  describe '.aws_v4_signature' do
+    it 'should create the proper signature' do
+      subject.send(:aws_v4_signature).should == '4ec46bd474c2bb4b47ee8cf6edc8c7d829fe96f5ac98742535c86a4a86a35d52'
+    end
+  end
+
 end

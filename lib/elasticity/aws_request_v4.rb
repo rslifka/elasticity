@@ -59,6 +59,15 @@ AWS4-HMAC-SHA256
       STRING_TO_SIGN
     end
 
+    # Task 3: Calculate the AWS Signature Version 4
+    #   http://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
+    def aws_v4_signature
+      date = OpenSSL::HMAC.digest('sha256', 'AWS4' + @aws_session.secret_key, @timestamp.strftime('%Y%m%d'))
+      region  = OpenSSL::HMAC.digest('sha256', date, @aws_session.region)
+      service = OpenSSL::HMAC.digest('sha256', region, 'elb')
+      OpenSSL::HMAC.hexdigest('sha256', service, 'aws4_request')
+    end
+
   end
 
 end
