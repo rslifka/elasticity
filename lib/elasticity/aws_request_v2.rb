@@ -8,7 +8,7 @@ module Elasticity
     end
 
     def url
-      "#{@aws_session.protocol}://elasticmapreduce.#{@aws_session.region}.amazonaws.com"
+      "https://elasticmapreduce.#{@aws_session.region}.amazonaws.com"
     end
 
     def headers

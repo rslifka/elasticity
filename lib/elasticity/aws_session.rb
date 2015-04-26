@@ -10,7 +10,6 @@ module Elasticity
     attr_reader :access_key
     attr_reader :secret_key
     attr_reader :host
-    attr_reader :protocol
     attr_reader :region
 
     # Supported values for options:
@@ -27,7 +26,6 @@ module Elasticity
       @access_key = get_access_key(access)
       @secret_key = get_secret_key(secret)
       @host = "elasticmapreduce.#@region.amazonaws.com"
-      @protocol = {:secure => true}.merge(options)[:secure] ? 'https' : 'http'
     end
 
     def submit(ruby_service_hash)
@@ -44,7 +42,6 @@ module Elasticity
       return false unless @access_key == other.access_key
       return false unless @secret_key == other.secret_key
       return false unless @host == other.host
-      return false unless @protocol == other.protocol
       true
     end
 

@@ -111,35 +111,6 @@ describe Elasticity::AwsSession do
 
   end
 
-  describe '#protocol' do
-
-    context 'when :secure is not specified' do
-      let(:default_request) { Elasticity::AwsSession.new('_', '_') }
-      it 'should be https by default' do
-        default_request.protocol.should == 'https'
-      end
-    end
-
-    context 'when :secure is specified' do
-
-      context 'when :secure is truthy' do
-        let(:secure_request) { Elasticity::AwsSession.new('_', '_', {:secure => true}) }
-        it 'should be https' do
-          secure_request.protocol.should == 'https'
-        end
-      end
-
-      context 'when :secure is falsey' do
-        let(:insecure_request) { Elasticity::AwsSession.new('_', '_', {:secure => false}) }
-        it 'should be http' do
-          insecure_request.protocol.should == 'http'
-        end
-      end
-
-    end
-
-  end
-
   describe '#submit' do
 
     context 'when there is not an error with the request' do
@@ -210,12 +181,6 @@ describe Elasticity::AwsSession do
       it 'should fail on host check' do
         aws1 = Elasticity::AwsSession.new('_', '_', :region => 'us-east-1')
         aws2 = Elasticity::AwsSession.new('_', '_', :region => 'us-west-1')
-        aws1.should_not == aws2
-      end
-
-      it 'should fail on protocol check' do
-        aws1 = Elasticity::AwsSession.new('_', '_', :secure => true)
-        aws2 = Elasticity::AwsSession.new('_', '_', :secure => false)
         aws1.should_not == aws2
       end
 

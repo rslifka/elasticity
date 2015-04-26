@@ -17,7 +17,7 @@ module Elasticity
     end
 
     def url
-      "#{@aws_session.protocol}://#{host}"
+      "https://#{host}"
     end
 
     private
