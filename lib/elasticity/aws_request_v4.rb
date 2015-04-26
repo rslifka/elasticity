@@ -48,6 +48,17 @@ content-type;host
       CANONICAL_REQUEST
     end
 
+    # Task 2: Create a String to Sign for Signature Version 4
+    #   http://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html
+    def string_to_sign
+      <<-STRING_TO_SIGN
+AWS4-HMAC-SHA256
+#{@timestamp.strftime('%Y%m%dT%H%M%SZ')}
+#{@timestamp.strftime('%Y%m%d')}/#{@aws_session.region}/elb/aws4_request
+#{Digest::SHA256.hexdigest(canonical_request)}
+      STRING_TO_SIGN
+    end
+
   end
 
 end

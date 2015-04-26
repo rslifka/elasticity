@@ -45,4 +45,16 @@ a428ce5f6e2eb121a9136c5a9b59910b4e49b7629bcbc9763bd401cfb14d6e31
     end
   end
 
+  describe '.string_to_sign' do
+    it 'should create the proper string to sign' do
+      subject.send(:string_to_sign).should ==
+        <<-STRING_TO_SIGN
+AWS4-HMAC-SHA256
+20110909T233600Z
+20110909/us-east-1/elb/aws4_request
+5ecca45fcd443b7a1f2c24fa322a6daf160f2b6aa0d57916f3a0507a61d4f5b7
+      STRING_TO_SIGN
+    end
+  end
+
 end
