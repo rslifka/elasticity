@@ -36,27 +36,23 @@ module Elasticity
     # Task 1: Create a Canonical Request For Signature Version 4
     #   http://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
     def canonical_request
-      <<-CANONICAL_REQUEST
-POST
-/
-
-content-type:application/x-www-form-urlencoded; charset=utf8
-host:#{host}
-
-content-type;host
-#{Digest::SHA256.hexdigest(raw_payload)}
-      CANONICAL_REQUEST
+      "POST\n" \
+      "/\n" \
+      "\n" \
+      "content-type:application/x-www-form-urlencoded; charset=utf8\n" \
+      "host:#{host}\n" \
+      "\n" \
+      "content-type;host\n" \
+      "#{Digest::SHA256.hexdigest(raw_payload)}"
     end
 
     # Task 2: Create a String to Sign for Signature Version 4
     #   http://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html
     def string_to_sign
-      <<-STRING_TO_SIGN
-AWS4-HMAC-SHA256
-#{@timestamp.strftime('%Y%m%dT%H%M%SZ')}
-#{@timestamp.strftime('%Y%m%d')}/#{@aws_session.region}/elb/aws4_request
-#{Digest::SHA256.hexdigest(canonical_request)}
-      STRING_TO_SIGN
+      "AWS4-HMAC-SHA256\n" \
+      "#{@timestamp.strftime('%Y%m%dT%H%M%SZ')}\n" \
+      "#{@timestamp.strftime('%Y%m%d')}/#{@aws_session.region}/elb/aws4_request\n" \
+      "#{Digest::SHA256.hexdigest(canonical_request)}"
     end
 
     # Task 3: Calculate the AWS Signature Version 4
