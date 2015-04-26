@@ -8,6 +8,7 @@ require 'fog'
 require 'elasticity/aws_utils'
 require 'elasticity/aws_session'
 require 'elasticity/aws_request_v2'
+require 'elasticity/aws_request_v4'
 require 'elasticity/emr'
 
 require 'elasticity/sync_to_s3'
