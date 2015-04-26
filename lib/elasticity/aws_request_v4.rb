@@ -16,21 +16,32 @@ module Elasticity
       @timestamp = Time.now.utc
     end
 
+    def headers
+      {
+        :content_type => 'application/x-www-form-urlencoded; charset=utf-8',
+        :Authorization =>
+          'AWS4-HMAC-SHA256 ' \
+          "Credential=#{@aws_session.access_key}/#{@timestamp.strftime('%Y%m%d')}/#{@aws_session.region}/elb/aws4_request, " \
+          'SignedHeaders=content-type;host, '\
+          "Signature=#{aws_v4_signature}"
+      }
+    end
+
     def url
       "https://#{host}"
+    end
+
+    def payload
+      request_body = AwsUtils.convert_ruby_to_aws(@ruby_service_hash)
+      request_body.keys.sort.map do |key|
+        "#{AwsUtils.aws_escape(key)}=#{AwsUtils.aws_escape(request_body[key])}"
+      end.join('&')
     end
 
     private
 
     def host
       "elasticmapreduce.#{@aws_session.region}.amazonaws.com"
-    end
-
-    def raw_payload
-      request_body = AwsUtils.convert_ruby_to_aws(@ruby_service_hash)
-      request_body.keys.sort.map do |key|
-        "#{AwsUtils.aws_escape(key)}=#{AwsUtils.aws_escape(request_body[key])}"
-      end.join('&')
     end
 
     # Task 1: Create a Canonical Request For Signature Version 4
@@ -43,7 +54,7 @@ module Elasticity
       "host:#{host}\n" \
       "\n" \
       "content-type;host\n" \
-      "#{Digest::SHA256.hexdigest(raw_payload)}"
+      "#{Digest::SHA256.hexdigest(payload)}"
     end
 
     # Task 2: Create a String to Sign for Signature Version 4

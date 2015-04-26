@@ -22,7 +22,12 @@ describe Elasticity::AwsRequestV4 do
   end
 
   describe '#headers' do
-    xit 'should create the proper headers'
+    it 'should create the proper headers' do
+      subject.headers.should == {
+        :content_type => 'application/x-www-form-urlencoded; charset=utf-8',
+        :Authorization => 'AWS4-HMAC-SHA256 Credential=access/20110909/us-east-1/elb/aws4_request, SignedHeaders=content-type;host, Signature=4ec46bd474c2bb4b47ee8cf6edc8c7d829fe96f5ac98742535c86a4a86a35d52'
+      }
+    end
   end
 
   describe '#payload' do
