@@ -24,8 +24,8 @@ describe Elasticity::AwsRequestV4 do
   describe '#headers' do
     it 'should create the proper headers' do
       subject.headers.should == {
-        :content_type => 'application/x-www-form-urlencoded; charset=utf-8',
-        :Authorization => 'AWS4-HMAC-SHA256 Credential=access/20110909/us-east-1/emr/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=a3140af16db43dfe3ac5553928680728be70d67c47c4b9e6b1d2cab00c6a0dea',
+        'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
+        'Authorization' => 'AWS4-HMAC-SHA256 Credential=access/20110909/us-east-1/emr/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=a3140af16db43dfe3ac5553928680728be70d67c47c4b9e6b1d2cab00c6a0dea',
         'X-Amz-Date' => '20110909T233600Z'
       }
     end

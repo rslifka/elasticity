@@ -18,12 +18,8 @@ module Elasticity
 
     def headers
       {
-        :content_type => 'application/x-www-form-urlencoded; charset=utf-8',
-        :Authorization =>
-          'AWS4-HMAC-SHA256 ' \
-          "Credential=#{@aws_session.access_key}/#{credential_scope}, " \
-          'SignedHeaders=content-type;host;x-amz-date, '\
-          "Signature=#{aws_v4_signature}",
+        'Authorization' => "AWS4-HMAC-SHA256 Credential=#{@aws_session.access_key}/#{credential_scope}, SignedHeaders=content-type;host;x-amz-date, Signature=#{aws_v4_signature}",
+        'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
         'X-Amz-Date' => @timestamp.strftime('%Y%m%dT%H%M%SZ')
       }
     end
