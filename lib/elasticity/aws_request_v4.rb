@@ -19,6 +19,7 @@ module Elasticity
     def headers
       {
         :content_type => 'application/x-www-form-urlencoded; charset=utf-8',
+        'X-Amz-Date' => @timestamp.strftime('%Y%m%dT%H%M%SZ'),
         :Authorization =>
           'AWS4-HMAC-SHA256 ' \
           "Credential=#{@aws_session.access_key}/#{@timestamp.strftime('%Y%m%d')}/#{@aws_session.region}/elb/aws4_request, " \
