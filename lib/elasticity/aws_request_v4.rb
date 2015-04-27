@@ -78,7 +78,9 @@ module Elasticity
       date = OpenSSL::HMAC.digest('sha256', 'AWS4' + @aws_session.secret_key, @timestamp.strftime('%Y%m%d'))
       region = OpenSSL::HMAC.digest('sha256', date, @aws_session.region)
       service = OpenSSL::HMAC.digest('sha256', region, 'emr')
-      OpenSSL::HMAC.hexdigest('sha256', service, 'aws4_request')
+      signing_key = OpenSSL::HMAC.digest('sha256', service, 'aws4_request')
+
+      OpenSSL::HMAC.hexdigest('sha256', signing_key, string_to_sign)
     end
 
   end
