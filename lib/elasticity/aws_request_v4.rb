@@ -21,8 +21,8 @@ module Elasticity
         :content_type => 'application/x-www-form-urlencoded; charset=utf-8',
         :Authorization =>
           'AWS4-HMAC-SHA256 ' \
-          "Credential=#{@aws_session.access_key}/#{@timestamp.strftime('%Y%m%d')}/#{@aws_session.region}/elb/aws4_request, " \
-          'SignedHeaders=content-type;host, '\
+          "Credential=#{@aws_session.access_key}/#{credential_scope}, " \
+          'SignedHeaders=content-type;host;x-amz-date, '\
           "Signature=#{aws_v4_signature}",
         'X-Amz-Date' => @timestamp.strftime('%Y%m%dT%H%M%SZ')
       }
@@ -45,6 +45,10 @@ module Elasticity
       "elasticmapreduce.#{@aws_session.region}.amazonaws.com"
     end
 
+    def credential_scope
+      "#{@timestamp.strftime('%Y%m%d')}/#{@aws_session.region}/emr/aws4_request"
+    end
+
     # Task 1: Create a Canonical Request For Signature Version 4
     #   http://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
     def canonical_request
@@ -55,7 +59,7 @@ module Elasticity
       "host:#{host}\n" \
       "x-amz-date:#{@timestamp.strftime('%Y%m%dT%H%M%SZ')}\n" \
       "\n" \
-      "content-type;host\n" \
+      "content-type;host;x-amz-date\n" \
       "#{Digest::SHA256.hexdigest(payload)}"
     end
 
@@ -64,7 +68,7 @@ module Elasticity
     def string_to_sign
       "AWS4-HMAC-SHA256\n" \
       "#{@timestamp.strftime('%Y%m%dT%H%M%SZ')}\n" \
-      "#{@timestamp.strftime('%Y%m%d')}/#{@aws_session.region}/elb/aws4_request\n" \
+      "#{credential_scope}\n" \
       "#{Digest::SHA256.hexdigest(canonical_request)}"
     end
 
@@ -73,7 +77,7 @@ module Elasticity
     def aws_v4_signature
       date = OpenSSL::HMAC.digest('sha256', 'AWS4' + @aws_session.secret_key, @timestamp.strftime('%Y%m%d'))
       region = OpenSSL::HMAC.digest('sha256', date, @aws_session.region)
-      service = OpenSSL::HMAC.digest('sha256', region, 'elb')
+      service = OpenSSL::HMAC.digest('sha256', region, 'emr')
       OpenSSL::HMAC.hexdigest('sha256', service, 'aws4_request')
     end
 
