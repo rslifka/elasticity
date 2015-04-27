@@ -19,12 +19,12 @@ module Elasticity
     def headers
       {
         :content_type => 'application/x-www-form-urlencoded; charset=utf-8',
-        'X-Amz-Date' => @timestamp.strftime('%Y%m%dT%H%M%SZ'),
         :Authorization =>
           'AWS4-HMAC-SHA256 ' \
           "Credential=#{@aws_session.access_key}/#{@timestamp.strftime('%Y%m%d')}/#{@aws_session.region}/elb/aws4_request, " \
           'SignedHeaders=content-type;host, '\
-          "Signature=#{aws_v4_signature}"
+          "Signature=#{aws_v4_signature}",
+        'X-Amz-Date' => @timestamp.strftime('%Y%m%dT%H%M%SZ')
       }
     end
 
@@ -71,7 +71,7 @@ module Elasticity
     #   http://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
     def aws_v4_signature
       date = OpenSSL::HMAC.digest('sha256', 'AWS4' + @aws_session.secret_key, @timestamp.strftime('%Y%m%d'))
-      region  = OpenSSL::HMAC.digest('sha256', date, @aws_session.region)
+      region = OpenSSL::HMAC.digest('sha256', date, @aws_session.region)
       service = OpenSSL::HMAC.digest('sha256', region, 'elb')
       OpenSSL::HMAC.hexdigest('sha256', service, 'aws4_request')
     end
