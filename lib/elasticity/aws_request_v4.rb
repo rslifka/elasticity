@@ -53,6 +53,7 @@ module Elasticity
       "\n" \
       "content-type:application/x-www-form-urlencoded; charset=utf8\n" \
       "host:#{host}\n" \
+      "x-amz-date:#{@timestamp.strftime('%Y%m%dT%H%M%SZ')}\n" \
       "\n" \
       "content-type;host\n" \
       "#{Digest::SHA256.hexdigest(payload)}"

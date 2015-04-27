@@ -43,6 +43,7 @@ describe Elasticity::AwsRequestV4 do
       "\n" \
       "content-type:application/x-www-form-urlencoded; charset=utf8\n" \
       "host:elasticmapreduce.us-east-1.amazonaws.com\n" \
+      "x-amz-date:20110909T233600Z\n" \
       "\n" \
       "content-type;host\n" \
       "a428ce5f6e2eb121a9136c5a9b59910b4e49b7629bcbc9763bd401cfb14d6e31"
@@ -55,7 +56,7 @@ describe Elasticity::AwsRequestV4 do
       "AWS4-HMAC-SHA256\n" \
       "20110909T233600Z\n" \
       "20110909/us-east-1/elb/aws4_request\n" \
-      '0aad1f9a074a9f4ddfd939297b3173ae461acd15bccc9195849b51d706512b79'
+      '4f96fddcc78f60c7dd36294b209661b4eb711893c3d696550a03ef5a1bebf04d'
     end
   end
 
