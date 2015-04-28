@@ -115,12 +115,12 @@ describe Elasticity::AwsSession do
 
     context 'when there is not an error with the request' do
       before do
-        @request = Elasticity::AwsRequestV2.new(subject, {})
+        @request = Elasticity::AwsRequestV4.new(subject, {})
         @request.should_receive(:url).and_return('TEST_URL')
         @request.should_receive(:payload).and_return('TEST_PAYLOAD')
         @request.should_receive(:headers).and_return('TEST_HEADERS')
 
-        Elasticity::AwsRequestV2.should_receive(:new).with(subject, {}).and_return(@request)
+        Elasticity::AwsRequestV4.should_receive(:new).with(subject, {}).and_return(@request)
         RestClient.should_receive(:post).with('TEST_URL', 'TEST_PAYLOAD', 'TEST_HEADERS')
       end
 
