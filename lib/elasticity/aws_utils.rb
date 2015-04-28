@@ -10,6 +10,23 @@ module Elasticity
       end
     end
 
+    # With the advent of v4 signing, we can skip the complex translation from v2
+    # and ship the JSON over with nearly the same structure.
+    def self.convert_ruby_to_aws_v4(value)
+      case value
+        when Array
+          return value.map{|v| convert_ruby_to_aws_v4(v)}
+        when Hash
+          result = {}
+          value.each do |k,v|
+            result[camelize(k.to_s)] = convert_ruby_to_aws_v4(v)
+          end
+          return result
+        else
+          return value
+      end
+    end
+
     # Since we use the same structure as AWS, we can generate AWS param names
     # from the Ruby versions of those names (and the param nesting).
     def self.convert_ruby_to_aws(params)
