@@ -10,17 +10,27 @@ module Elasticity
   # the most applicable.
   class AwsRequestV4
 
+    SERVICE_NAME = 'elasticmapreduce'
+
     def initialize(aws_session, ruby_service_hash)
       @aws_session = aws_session
+
       @ruby_service_hash = ruby_service_hash
+      @operation = @ruby_service_hash[:operation]
+      @ruby_service_hash.delete(:operation)
+
       @timestamp = Time.now.utc
     end
 
     def headers
       {
-        'Authorization' => "AWS4-HMAC-SHA256 Credential=#{@aws_session.access_key}/#{credential_scope}, SignedHeaders=content-type;host;x-amz-date, Signature=#{aws_v4_signature}",
-        'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
-        'X-Amz-Date' => @timestamp.strftime('%Y%m%dT%H%M%SZ')
+        'Authorization' => "AWS4-HMAC-SHA256 Credential=#{@aws_session.access_key}/#{credential_scope}, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date;x-amz-target, Signature=#{aws_v4_signature}",
+        'Content-Type' => 'application/x-amz-json-1.1',
+        'Host' => host,
+        'User-Agent' => "elasticity/#{Elasticity::VERSION}",
+        'X-Amz-Content-SHA256' => Digest::SHA256.hexdigest(payload),
+        'X-Amz-Date' => @timestamp.strftime('%Y%m%dT%H%M%SZ'),
+        'X-Amz-Target' => "ElasticMapReduce.#{@operation}",
       }
     end
 
@@ -29,10 +39,7 @@ module Elasticity
     end
 
     def payload
-      request_body = AwsUtils.convert_ruby_to_aws(@ruby_service_hash)
-      request_body.keys.sort.map do |key|
-        "#{AwsUtils.aws_escape(key)}=#{AwsUtils.aws_escape(request_body[key])}"
-      end.join('&')
+      AwsUtils.convert_ruby_to_aws_v4(@ruby_service_hash).to_json
     end
 
     private
@@ -42,30 +49,37 @@ module Elasticity
     end
 
     def credential_scope
-      "#{@timestamp.strftime('%Y%m%d')}/#{@aws_session.region}/emr/aws4_request"
+      "#{@timestamp.strftime('%Y%m%d')}/#{@aws_session.region}/#{SERVICE_NAME}/aws4_request"
     end
 
     # Task 1: Create a Canonical Request For Signature Version 4
     #   http://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
     def canonical_request
-      "POST\n" \
-      "/\n" \
-      "\n" \
-      "content-type:application/x-www-form-urlencoded; charset=utf8\n" \
-      "host:#{host}\n" \
-      "x-amz-date:#{@timestamp.strftime('%Y%m%dT%H%M%SZ')}\n" \
-      "\n" \
-      "content-type;host;x-amz-date\n" \
-      "#{Digest::SHA256.hexdigest(payload)}"
+      [
+        'POST',
+        '/',
+        '',
+        'content-type:application/x-amz-json-1.1',
+        "host:#{host}",
+        "user-agent:elasticity/#{Elasticity::VERSION}",
+        "x-amz-content-sha256:#{Digest::SHA256.hexdigest(payload)}",
+        "x-amz-date:#{@timestamp.strftime('%Y%m%dT%H%M%SZ')}",
+        "x-amz-target:ElasticMapReduce.#{@operation}",
+        '',
+        'content-type;host;user-agent;x-amz-content-sha256;x-amz-date;x-amz-target',
+        Digest::SHA256.hexdigest(payload)
+      ].join("\n")
     end
 
     # Task 2: Create a String to Sign for Signature Version 4
     #   http://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html
     def string_to_sign
-      "AWS4-HMAC-SHA256\n" \
-      "#{@timestamp.strftime('%Y%m%dT%H%M%SZ')}\n" \
-      "#{credential_scope}\n" \
-      "#{Digest::SHA256.hexdigest(canonical_request)}"
+      [
+        'AWS4-HMAC-SHA256',
+        @timestamp.strftime('%Y%m%dT%H%M%SZ'),
+        credential_scope,
+        Digest::SHA256.hexdigest(canonical_request)
+      ].join("\n")
     end
 
     # Task 3: Calculate the AWS Signature Version 4
@@ -73,7 +87,7 @@ module Elasticity
     def aws_v4_signature
       date = OpenSSL::HMAC.digest('sha256', 'AWS4' + @aws_session.secret_key, @timestamp.strftime('%Y%m%d'))
       region = OpenSSL::HMAC.digest('sha256', date, @aws_session.region)
-      service = OpenSSL::HMAC.digest('sha256', region, 'emr')
+      service = OpenSSL::HMAC.digest('sha256', region, SERVICE_NAME)
       signing_key = OpenSSL::HMAC.digest('sha256', service, 'aws4_request')
 
       OpenSSL::HMAC.hexdigest('sha256', signing_key, string_to_sign)

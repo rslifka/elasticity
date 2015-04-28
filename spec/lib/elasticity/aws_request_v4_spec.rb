@@ -11,7 +11,7 @@ describe Elasticity::AwsRequestV4 do
   subject do
     Elasticity::AwsRequestV4.new(
       Elasticity::AwsSession.new('access', 'secret'),
-      {:operation => 'RunJobFlow', :name => 'Elasticity Job Flow'}
+      {:operation => 'DescribeJobFlows', :job_flow_ids => ['TEST_JOBFLOW_ID']}
     )
   end
 
@@ -24,45 +24,56 @@ describe Elasticity::AwsRequestV4 do
   describe '#headers' do
     it 'should create the proper headers' do
       subject.headers.should == {
-        'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
-        'Authorization' => 'AWS4-HMAC-SHA256 Credential=access/20110909/us-east-1/emr/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=a3140af16db43dfe3ac5553928680728be70d67c47c4b9e6b1d2cab00c6a0dea',
-        'X-Amz-Date' => '20110909T233600Z'
+        'Authorization' => "AWS4-HMAC-SHA256 Credential=access/20110909/us-east-1/elasticmapreduce/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date;x-amz-target, Signature=#{subject.send(:aws_v4_signature)}",
+        'Content-Type' => 'application/x-amz-json-1.1',
+        'Host' => 'elasticmapreduce.us-east-1.amazonaws.com',
+        'User-Agent' => "elasticity/#{Elasticity::VERSION}",
+        'X-Amz-Content-SHA256' => Digest::SHA256.hexdigest(subject.payload),
+        'X-Amz-Date' => '20110909T233600Z',
+        'X-Amz-Target' => 'ElasticMapReduce.DescribeJobFlows',
       }
     end
   end
 
   describe '#payload' do
-    xit 'should create the proper payload'
+    it 'should create the proper payload' do
+      subject.payload.should == '{"JobFlowIds":["TEST_JOBFLOW_ID"]}'
+    end
   end
 
   describe '.canonical_request' do
     it 'should create the proper canonical request' do
-      subject.send(:canonical_request).should == '' \
-      "POST\n" \
-      "/\n" \
-      "\n" \
-      "content-type:application/x-www-form-urlencoded; charset=utf8\n" \
-      "host:elasticmapreduce.us-east-1.amazonaws.com\n" \
-      "x-amz-date:20110909T233600Z\n" \
-      "\n" \
-      "content-type;host;x-amz-date\n" \
-      "a428ce5f6e2eb121a9136c5a9b59910b4e49b7629bcbc9763bd401cfb14d6e31"
+      subject.send(:canonical_request).should == [
+        'POST',
+        '/',
+        '',
+        'content-type:application/x-amz-json-1.1',
+        'host:elasticmapreduce.us-east-1.amazonaws.com',
+        "user-agent:elasticity/#{Elasticity::VERSION}",
+        "x-amz-content-sha256:#{Digest::SHA256.hexdigest(subject.payload)}",
+        'x-amz-date:20110909T233600Z',
+        'x-amz-target:ElasticMapReduce.DescribeJobFlows',
+        '',
+        'content-type;host;user-agent;x-amz-content-sha256;x-amz-date;x-amz-target',
+        "#{Digest::SHA256.hexdigest(subject.payload)}"
+      ].join("\n")
     end
   end
 
   describe '.string_to_sign' do
     it 'should create the proper string to sign' do
-      subject.send(:string_to_sign).should == '' \
-      "AWS4-HMAC-SHA256\n" \
-      "20110909T233600Z\n" \
-      "20110909/us-east-1/emr/aws4_request\n" \
-      '6b713b1663621815b852ee7880d320b65325e4972116290e3ab28288c5c7d76f'
+      subject.send(:string_to_sign).should == [
+        'AWS4-HMAC-SHA256',
+        '20110909T233600Z',
+        '20110909/us-east-1/elasticmapreduce/aws4_request',
+        "#{Digest::SHA256.hexdigest(subject.send(:canonical_request))}"
+      ].join("\n")
     end
   end
 
   describe '.aws_v4_signature' do
     it 'should create the proper signature' do
-      subject.send(:aws_v4_signature).should == 'a3140af16db43dfe3ac5553928680728be70d67c47c4b9e6b1d2cab00c6a0dea'
+      subject.send(:aws_v4_signature).should == '3e88b95410e6828f80b4ec476bcf7e23ab8dd380b22ffcb1d5f7e86390346f68'
     end
   end
 
