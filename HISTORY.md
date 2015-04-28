@@ -1,3 +1,8 @@
+## 5.0.2 - April 27, 2015
+
+- Fix for issue [#83](https://github.com/rslifka/elasticity/issues/83), `elasticity` has now transitioned to the AWS [Signature Version 4 Signing Process](http://docs.aws.amazon.com/general/latest/gr/signature-version-4.html).
+- Removed the ability to create insecure (HTTP) connections to the EMR endpoints.
+
 ## 5.0.1 - April 12, 2015
 
 - Bear with me here :)  Backmerged into 4.0.4 to add [IAM Service Role support](http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/emr-iam-roles-creatingroles.html) per @alexanderdean.  As part of the forward merge, bumping the version to trigger an update.
