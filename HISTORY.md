@@ -1,3 +1,7 @@
+## 5.0.3 - July 8, 2015
+
+- Fix for issue [#86](https://github.com/rslifka/elasticity/issues/86).
+
 ## 5.0.2 - April 27, 2015
 
 - Fix for issue [#83](https://github.com/rslifka/elasticity/issues/83), `elasticity` has now transitioned to the AWS [Signature Version 4 Signing Process](http://docs.aws.amazon.com/general/latest/gr/signature-version-4.html).
