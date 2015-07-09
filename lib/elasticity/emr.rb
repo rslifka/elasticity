@@ -190,9 +190,7 @@ module Elasticity
       }.merge!(job_flow_config)
       aws_result = @aws_request.submit(params)
       yield aws_result if block_given?
-      xml_doc = Nokogiri::XML(aws_result)
-      xml_doc.remove_namespaces!
-      xml_doc.xpath('/RunJobFlowResponse/RunJobFlowResult/JobFlowId').text
+      JSON.parse(aws_result)['JobFlowId']
     end
 
     # Enabled or disable "termination protection" on the specified job flows.

@@ -242,40 +242,32 @@ describe Elasticity::EMR do
 
   describe '#run_jobflow' do
 
+    let(:json_response) {
+      <<-JSON
+        {"JobFlowId" : "TEST_JOBFLOW_ID"}
+      JSON
+    }
+
     it 'should start the specified job flow' do
       Elasticity::AwsSession.any_instance.should_receive(:submit).with({
         :operation => 'RunJobFlow',
         :jobflow_params => '_'
-      })
+      }).and_return(json_response)
       subject.run_job_flow({:jobflow_params => '_'})
     end
 
     describe 'jobflow response handling' do
-      let(:jobflow_xml_response) do
-        <<-XML
-          <RunJobFlowResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-            <RunJobFlowResult>
-              <JobFlowId>j-G6N5HA528AD4</JobFlowId>
-            </RunJobFlowResult>
-            <ResponseMetadata>
-              <RequestId>b22f4aea-6a4b-11e0-9ddc-a168e244afdb</RequestId>
-            </ResponseMetadata>
-          </RunJobFlowResponse>
-        XML
-      end
-
       it 'should return the ID of the running job flow' do
-        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(jobflow_xml_response)
-        subject.run_job_flow({}).should == 'j-G6N5HA528AD4'
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(json_response)
+        subject.run_job_flow({}).should == 'TEST_JOBFLOW_ID'
       end
     end
 
     context 'when a block is given' do
-      let(:result) { '_' }
       it 'should yield the submission results' do
-        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(result)
-        subject.run_job_flow({}) do |xml|
-          xml.should == '_'
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(json_response)
+        subject.run_job_flow({}) do |response|
+          response.should == json_response
         end
       end
     end
