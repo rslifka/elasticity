@@ -131,18 +131,15 @@ describe Elasticity::AwsSession do
 
     context 'when there is an EMR error with the request' do
       let(:error_message) { 'ERROR_MESSAGE' }
-      let(:error_xml) do
-        <<-XML
-          <ErrorResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-            <Error>
-              <Message>#{error_message}</Message>
-            </Error>
-          </ErrorResponse>
-        XML
+      let(:error_type) { 'ERROR_TYPE' }
+      let(:error_json) do
+        <<-JSON
+          { "__type" : "#{error_type}", "message" : "#{error_message}" }
+        JSON
       end
       let(:error) do
         RestClient::BadRequest.new.tap do |error|
-          error.stub(:http_body => error_xml)
+          error.stub(:http_body => error_json)
         end
       end
 
@@ -150,7 +147,7 @@ describe Elasticity::AwsSession do
         RestClient.should_receive(:post).and_raise(error)
         expect {
           subject.submit({})
-        }.to raise_error(ArgumentError, error_message)
+        }.to raise_error(ArgumentError, "AWS EMR API Error (#{error_type}): #{error_message}")
       end
     end
 
