@@ -243,7 +243,7 @@ describe Elasticity::JobFlowStatus do
         context "when the jobflow is #{status}" do
           it 'is not active' do
             single_jobflow_status.state = status
-            single_jobflow_status.active?.should be_false
+            expect(single_jobflow_status.active?).to be false
           end
         end
       end
@@ -254,7 +254,7 @@ describe Elasticity::JobFlowStatus do
         context "when the jobflow is #{status}" do
           it 'is active' do
             single_jobflow_status.state = status
-            single_jobflow_status.active?.should be_true
+            expect(single_jobflow_status.active?).to be true
           end
         end
       end

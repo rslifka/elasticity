@@ -29,7 +29,7 @@ describe Elasticity::JobFlowStep do
 
   describe '.requires_installation?' do
     it 'should be false by default' do
-      FakeStep.requires_installation?.should be_false
+      expect(FakeStep.requires_installation?).to be false
     end
   end
 
