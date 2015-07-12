@@ -5,9 +5,11 @@ describe Elasticity::BootstrapAction do
   end
 
   describe '.initialize' do
-    expect(subject.name).to eq('Elasticity Bootstrap Action')
-    expect(subject.script).to eq('script')
-    expect(subject.arguments).to eq(%w(arg1 arg2))
+    it 'should set the fields appropriately' do
+      expect(subject.name).to eql('Elasticity Bootstrap Action')
+      expect(subject.script).to eql('script')
+      expect(subject.arguments).to eql(%w(arg1 arg2))
+    end
   end
 
   describe '#to_aws_bootstrap_action' do

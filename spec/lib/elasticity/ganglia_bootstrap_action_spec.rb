@@ -6,8 +6,13 @@ describe Elasticity::GangliaBootstrapAction do
 
   it { should be_a Elasticity::BootstrapAction }
 
-  # its(:name) { should == 'Elasticity Bootstrap Action (Install Ganglia)' }
-  # its(:arguments) { should == [] }
-  # its(:script) { should == 's3://elasticmapreduce/bootstrap-actions/install-ganglia' }
+  describe '.intialize' do
+    it 'should set the fields appropriately' do
+      expect(subject.name).to eql('Elasticity Bootstrap Action (Install Ganglia)')
+      expect(subject.arguments).to eql([])
+      expect(subject.script).to eql('s3://elasticmapreduce/bootstrap-actions/install-ganglia')
+    end
+  end
+
 
 end

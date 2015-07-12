@@ -6,10 +6,13 @@ describe Elasticity::CustomJarStep do
 
   it { should be_a Elasticity::JobFlowStep }
 
-  # its(:name) { should == 'Elasticity Custom Jar Step' }
-  # its(:jar) { should == 'jar' }
-  # its(:arguments) { should == [] }
-  # its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
+  describe '.initialize' do
+    it 'should set the fields appropriately' do
+      expect(subject.name).to eql('Elasticity Custom Jar Step')
+      expect(subject.jar).to eql('jar')
+      expect(subject.arguments).to eql([])
+    end
+  end
 
   describe '#to_aws_step' do
 
