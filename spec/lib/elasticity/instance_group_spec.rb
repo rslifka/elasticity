@@ -1,10 +1,14 @@
 describe Elasticity::InstanceGroup do
 
-  # its(:bid_price) { should == nil }
-  # its(:count) { should == 1 }
-  # its(:type) { should == 'm1.small' }
-  # its(:market) { should == 'ON_DEMAND' }
-  # its(:role) { should == 'CORE' }
+  describe '.initialize' do
+    it 'should set the fields appropriately' do
+      expect(subject.bid_price).to eql(nil)
+      expect(subject.count).to eql(1)
+      expect(subject.type).to eql('m1.small')
+      expect(subject.market).to eql('ON_DEMAND')
+      expect(subject.role).to eql('CORE')
+    end
+  end
 
   describe '#count=' do
 

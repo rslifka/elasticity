@@ -6,10 +6,14 @@ describe Elasticity::HiveStep do
 
   it { should be_a Elasticity::JobFlowStep }
 
-  # its(:name) { should == 'Elasticity Hive Step (script.hql)' }
-  # its(:script) { should == 'script.hql' }
-  # its(:variables) { should == {} }
-  # its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
+  describe '.initialize' do
+    it 'should set the fields appropriately' do
+      expect(subject.name).to eql('Elasticity Hive Step (script.hql)')
+      expect(subject.script).to eql('script.hql')
+      expect(subject.variables).to eql({})
+      expect(subject.action_on_failure).to eql('TERMINATE_JOB_FLOW')
+    end
+  end
 
   describe '#to_aws_step' do
 
@@ -19,16 +23,16 @@ describe Elasticity::HiveStep do
       step[:action_on_failure].should == 'TERMINATE_JOB_FLOW'
       step[:hadoop_jar_step][:jar].should == 's3://elasticmapreduce/libs/script-runner/script-runner.jar'
       step[:hadoop_jar_step][:args].should start_with([
-        's3://elasticmapreduce/libs/hive/hive-script',
-        '--base-path',
-        's3://elasticmapreduce/libs/hive/',
-        '--hive-versions',
-        'latest',
-        '--run-hive-script',
-        '--args',
-        '-f',
-        'script.hql'
-      ])
+            's3://elasticmapreduce/libs/hive/hive-script',
+            '--base-path',
+            's3://elasticmapreduce/libs/hive/',
+            '--hive-versions',
+            'latest',
+            '--run-hive-script',
+            '--args',
+            '-f',
+            'script.hql'
+          ])
     end
 
     context 'when variables are provided' do

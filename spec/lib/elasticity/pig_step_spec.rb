@@ -6,10 +6,14 @@ describe Elasticity::PigStep do
 
   it { should be_a Elasticity::JobFlowStep }
 
-  # its(:name) { should == 'Elasticity Pig Step (script.pig)' }
-  # its(:script) { should == 'script.pig' }
-  # its(:variables) { should == {} }
-  # its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
+  describe '.initialize' do
+    it 'should set the fields appropriately' do
+      expect(subject.name).to eql('Elasticity Pig Step (script.pig)')
+      expect(subject.script).to eql('script.pig')
+      expect(subject.variables).to eql({})
+      expect(subject.action_on_failure).to eql('TERMINATE_JOB_FLOW')
+    end
+  end
 
   describe '#to_aws_step' do
 

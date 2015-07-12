@@ -4,25 +4,28 @@ describe Elasticity::JobFlow do
     Elasticity::JobFlow.new('access', 'secret')
   end
 
-  # its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
-  # its(:ec2_key_name) { should == nil }
-  # its(:name) { should == 'Elasticity Job Flow' }
-  # its(:instance_count) { should == 2 }
-  # its(:log_uri) { should == nil }
-  # its(:master_instance_type) { should == 'm1.small' }
-  # its(:slave_instance_type) { should == 'm1.small' }
-  # its(:ami_version) { should == 'latest' }
-  # its(:keep_job_flow_alive_when_no_steps) { should == false }
-  # its(:ec2_subnet_id) { should == nil }
-  # its(:placement) { should == 'us-east-1a' }
-  # its(:region) { should == 'us-east-1' }
-  # its(:visible_to_all_users) { should == false }
-  # its(:enable_debugging) { should == false }
-  # its(:job_flow_role) { should == nil }
-  # its(:service_role) { should == nil }
-
-  # its(:access_key) { should == 'access' }
-  # its(:secret_key) { should == 'secret' }
+  describe '.initialize' do
+    it 'should set the fields appropriately' do
+      expect(subject.action_on_failure).to eql('TERMINATE_JOB_FLOW')
+      expect(subject.ec2_key_name).to eql(nil)
+      expect(subject.name).to eql('Elasticity Job Flow')
+      expect(subject.instance_count).to eql(2)
+      expect(subject.log_uri).to eql(nil)
+      expect(subject.master_instance_type).to eql('m1.small')
+      expect(subject.slave_instance_type).to eql('m1.small')
+      expect(subject.ami_version).to eql('latest')
+      expect(subject.keep_job_flow_alive_when_no_steps).to eql(false)
+      expect(subject.ec2_subnet_id).to eql(nil)
+      expect(subject.placement).to eql('us-east-1a')
+      expect(subject.region).to eql('us-east-1')
+      expect(subject.visible_to_all_users).to eql(false)
+      expect(subject.enable_debugging).to eql(false)
+      expect(subject.job_flow_role).to eql(nil)
+      expect(subject.service_role).to eql(nil)
+      expect(subject.access_key).to eql('access')
+      expect(subject.secret_key).to eql('secret')
+    end
+  end
 
   describe '.initialize' do
     it 'should set the access and secret keys to nil by default' do
@@ -230,8 +233,8 @@ describe Elasticity::JobFlow do
 
           it 'should submit the step' do
             emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', {
-              :steps => [additional_step.to_aws_step(running_jobflow)]
-            })
+                :steps => [additional_step.to_aws_step(running_jobflow)]
+              })
             running_jobflow.add_step(additional_step)
           end
         end
@@ -241,8 +244,8 @@ describe Elasticity::JobFlow do
 
           it 'should submit the installation step and the step' do
             emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', {
-              :steps => Elasticity::HiveStep.aws_installation_steps << additional_step.to_aws_step(running_jobflow)
-            })
+                :steps => Elasticity::HiveStep.aws_installation_steps << additional_step.to_aws_step(running_jobflow)
+              })
             running_jobflow.add_step(additional_step)
           end
         end
@@ -255,8 +258,8 @@ describe Elasticity::JobFlow do
 
         it 'should submit the step' do
           emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', {
-            :steps => [additional_step.to_aws_step(running_jobflow)]
-          })
+              :steps => [additional_step.to_aws_step(running_jobflow)]
+            })
           running_jobflow.add_step(additional_step)
         end
 
@@ -287,10 +290,10 @@ describe Elasticity::JobFlow do
       let(:aws_steps) do
         [
           Elasticity::HiveStep.aws_installation_steps,
-            jobflow_steps[0].to_aws_step(jobflow_with_steps),
-            Elasticity::PigStep.aws_installation_steps,
-            jobflow_steps[1].to_aws_step(jobflow_with_steps),
-            jobflow_steps[2].to_aws_step(jobflow_with_steps),
+          jobflow_steps[0].to_aws_step(jobflow_with_steps),
+          Elasticity::PigStep.aws_installation_steps,
+          jobflow_steps[1].to_aws_step(jobflow_with_steps),
+          jobflow_steps[2].to_aws_step(jobflow_with_steps),
         ].flatten
       end
 
@@ -419,8 +422,8 @@ describe Elasticity::JobFlow do
         it 'should include them in the jobflow config' do
           bootstrap_actions = hadoop_bootstrap_actions.map { |a| a.to_aws_bootstrap_action }
           jobflow_with_bootstrap_actions.send(:jobflow_config).should be_a_hash_including({
-            :bootstrap_actions => bootstrap_actions
-          })
+                :bootstrap_actions => bootstrap_actions
+              })
         end
       end
 

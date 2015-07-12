@@ -6,8 +6,13 @@ describe Elasticity::HadoopBootstrapAction do
 
   it { should be_a Elasticity::BootstrapAction }
 
-  # its(:name) { should == 'Elasticity Bootstrap Action (Configure Hadoop)' }
-  # its(:arguments) { should == %w(option value) }
-  # its(:script) { should == 's3n://elasticmapreduce/bootstrap-actions/configure-hadoop' }
+  describe '.initialize' do
+    it 'should set the fields appropriately' do
+      expect(subject.name).to eql('Elasticity Bootstrap Action (Configure Hadoop)')
+      expect(subject.arguments).to eql(%w(option value))
+      expect(subject.script).to eql('s3n://elasticmapreduce/bootstrap-actions/configure-hadoop')
+    end
+  end
+
 
 end

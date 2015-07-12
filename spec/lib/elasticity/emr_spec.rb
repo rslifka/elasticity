@@ -4,10 +4,12 @@ describe Elasticity::EMR do
     Elasticity::EMR.new('ACCESS', 'SECRET')
   end
 
-  describe '.new' do
+  describe '.initialize' do
 
     context 'when arguments are provided' do
-      # its(:aws_request) { should == Elasticity::AwsSession.new('ACCESS', 'SECRET', {}) }
+      it 'should use the provided arguments' do
+        expect(subject.aws_request).to eq(Elasticity::AwsSession.new('ACCESS', 'SECRET', {}))
+      end
     end
 
     context 'when arguments are not provided' do

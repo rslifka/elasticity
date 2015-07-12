@@ -6,13 +6,17 @@ describe Elasticity::StreamingStep do
 
   it { should be_a Elasticity::JobFlowStep }
 
-  # its(:name) { should == 'Elasticity Streaming Step' }
-  # its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
-  # its(:input_bucket) { should == 'INPUT_BUCKET' }
-  # its(:output_bucket) { should == 'OUTPUT_BUCKET' }
-  # its(:mapper) { should == 'MAPPER' }
-  # its(:reducer) { should == 'REDUCER' }
-  # its(:arguments) { should == %w(-ARG1 VALUE1) }
+  describe '.initialize' do
+    it 'should set the fields appropriately' do
+      expect(subject.name).to eql('Elasticity Streaming Step')
+      expect(subject.action_on_failure).to eql('TERMINATE_JOB_FLOW')
+      expect(subject.input_bucket).to eql('INPUT_BUCKET')
+      expect(subject.output_bucket).to eql('OUTPUT_BUCKET')
+      expect(subject.mapper).to eql('MAPPER')
+      expect(subject.reducer).to eql('REDUCER')
+      expect(subject.arguments).to eql(%w(-ARG1 VALUE1))
+    end
+  end
 
   describe '#to_aws_step' do
 
