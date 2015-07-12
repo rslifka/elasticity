@@ -1,10 +1,12 @@
 describe Elasticity::S3DistCpStep do
 
-  it { should be_a Elasticity::CustomJarStep }
+  it 'should be a CustomJarStep' do
+    expect(subject).to be_a(Elasticity::CustomJarStep)
+  end
 
-  # its(:name) { should == 'Elasticity S3DistCp Step' }
-  # its(:jar) { should == '/home/hadoop/lib/emr-s3distcp-1.0.jar' }
-  # its(:arguments) { should == [] }
-  # its(:action_on_failure) { should == 'TERMINATE_JOB_FLOW' }
+  it 'should set the appropriate default fields' do
+    expect(subject.name).to eql('Elasticity S3DistCp Step')
+    expect(subject.jar).to eql('/home/hadoop/lib/emr-s3distcp-1.0.jar')
+  end
 
 end
