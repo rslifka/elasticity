@@ -97,7 +97,9 @@ describe Elasticity::AwsSession do
   describe '#host' do
 
     context 'when the region is not specified' do
-      its(:host) { should == 'elasticmapreduce.us-east-1.amazonaws.com' }
+      it 'should use the default value' do
+        expect(subject.host).to eq('elasticmapreduce.us-east-1.amazonaws.com')
+      end
     end
 
     context 'when the region is specified' do

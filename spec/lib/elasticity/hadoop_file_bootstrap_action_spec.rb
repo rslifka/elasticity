@@ -6,8 +6,8 @@ describe Elasticity::HadoopFileBootstrapAction do
 
   it { should be_a Elasticity::BootstrapAction }
 
-  its(:name) { should == 'Elasticity Bootstrap Action (Configure Hadoop via File)' }
-  its(:arguments) { should == %w(--mapred-config-file config_file) }
-  its(:script) { should == 's3n://elasticmapreduce/bootstrap-actions/configure-hadoop' }
+  # its(:name) { should == 'Elasticity Bootstrap Action (Configure Hadoop via File)' }
+  # its(:arguments) { should == %w(--mapred-config-file config_file) }
+  # its(:script) { should == 's3n://elasticmapreduce/bootstrap-actions/configure-hadoop' }
 
 end

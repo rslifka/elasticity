@@ -4,9 +4,11 @@ describe Elasticity::BootstrapAction do
     Elasticity::BootstrapAction.new('script', 'arg1', 'arg2')
   end
 
-  its(:name) { should == 'Elasticity Bootstrap Action' }
-  its(:script) { should == 'script' }
-  its(:arguments) { should == %w(arg1 arg2) }
+  describe '.initialize' do
+    expect(subject.name).to eq('Elasticity Bootstrap Action')
+    expect(subject.script).to eq('script')
+    expect(subject.arguments).to eq(%w(arg1 arg2))
+  end
 
   describe '#to_aws_bootstrap_action' do
 

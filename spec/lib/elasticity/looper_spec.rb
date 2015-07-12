@@ -77,7 +77,7 @@ describe Elasticity::Looper do
 
     it 'does not communicate that waiting is about to occur' do
       client = double(:client, on_retry_check: false, on_wait: nil)
-      client.should_not receive(:on_wait)
+      client.should_not_receive(:on_wait)
       l = Elasticity::Looper.new(client.method(:on_retry_check), client.method(:on_wait))
       l.go
     end
