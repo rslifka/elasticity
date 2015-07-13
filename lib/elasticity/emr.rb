@@ -94,6 +94,22 @@ module Elasticity
       JSON.parse(aws_result)
     end
 
+    # Provides details about the specified step within an existing jobflow
+    #
+    #   emr.describe_step('j-123', 'step-456')
+    #
+    # http://docs.aws.amazon.com/ElasticMapReduce/latest/API/API_DescribeStep.html
+    def describe_step(jobflow_id, step_id)
+      params = {
+        :operation => 'DescribeStep',
+        :cluster_id => jobflow_id,
+        :step_id => step_id
+      }
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
+      JSON.parse(aws_result)
+    end
+
     # List the instance groups in the specified jobflow
     #
     #   emr.list_instance_groups('j-123')

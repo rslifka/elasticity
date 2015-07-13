@@ -143,6 +143,34 @@ describe Elasticity::EMR do
 
   end
 
+  describe '#describe_step' do
+
+    let(:aws_result) {
+      <<-JSON
+        {"Key" : "Value"}
+      JSON
+    }
+
+    it 'should describe the specified step within the specified jobflow' do
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+          :operation => 'DescribeStep',
+          :cluster_id => 'CLUSTER_ID',
+          :step_id => 'STEP_ID'
+        }).and_return(aws_result)
+      expect(subject.describe_step('CLUSTER_ID', 'STEP_ID')).to eql(JSON.parse(aws_result))
+    end
+
+    context 'when a block is given' do
+      it 'should yield the submission results' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_result)
+        subject.describe_step('', '') do |result|
+          result.should == aws_result
+        end
+      end
+    end
+
+  end
+
   describe '#list_instance_groups' do
 
     let(:aws_result) {

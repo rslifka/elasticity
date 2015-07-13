@@ -11,6 +11,7 @@ They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given th
 - [#94](https://github.com/rslifka/elasticity/issues/94) - Add support for `ListInstanceGroups`.
 - [#96](https://github.com/rslifka/elasticity/issues/96) - Add support for `ListBootstrapActions`.
 - [#97](https://github.com/rslifka/elasticity/issues/97) - Add support for `DescribeCluster`.
+- [#98](https://github.com/rslifka/elasticity/issues/98) - Add support for `DescribeStep`.
 - [#101](https://github.com/rslifka/elasticity/issues/101) - Fix plurality of `TerminateJobFlows`; now requires an array of IDs to terminate.
 - [#102](https://github.com/rslifka/elasticity/issues/102) - Simplify interface to `AddJobFlowSteps`; no longer require extraneous `:steps => []`.
 
