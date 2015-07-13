@@ -79,6 +79,21 @@ module Elasticity
       yield aws_result if block_given?
     end
 
+    # List the instance groups in the specified jobflow
+    #
+    #   emr.list_instance_groups('j-123')
+    #
+    # http://docs.aws.amazon.com/ElasticMapReduce/latest/API/API_ListInstanceGroups.html
+    def list_instance_groups(jobflow_id)
+      params = {
+        :operation => 'ListInstanceGroups',
+        :cluster_id => jobflow_id,
+      }
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
+      JSON.parse(aws_result)
+    end
+
     # Set the number of instances in the specified instance groups to the
     # specified counts.  Note that this modifies the *request* count, which
     # is not the same as the *running* count.  I.e. you request instances

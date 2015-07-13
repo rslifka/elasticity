@@ -116,6 +116,33 @@ describe Elasticity::EMR do
 
   end
 
+  describe '#list_instance_groups' do
+
+    let(:aws_result) {
+      <<-JSON
+        {"Key" : "Value"}
+      JSON
+    }
+
+    it 'should list the instance groups in the specified jobflow' do
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+          :operation => 'ListInstanceGroups',
+          :cluster_id => 'CLUSTER_ID'
+        }).and_return(aws_result)
+      expect(subject.list_instance_groups('CLUSTER_ID')).to eql(JSON.parse(aws_result))
+    end
+
+    context 'when a block is given' do
+      it 'should yield the submission results' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_result)
+        subject.list_instance_groups({}) do |result|
+          result.should == aws_result
+        end
+      end
+    end
+
+  end
+
   describe '#modify_instance_groups' do
 
     it 'should modify the specified instance groups' do
@@ -324,7 +351,6 @@ describe Elasticity::EMR do
     end
 
   end
-
 
   describe '#direct' do
     let(:params) { {:foo => 'bar'} }
