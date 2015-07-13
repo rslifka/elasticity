@@ -1,3 +1,11 @@
+## 6.0 - July XX, 2015 (IN DEVELOPMENT)
+
+On July 10th, it was brought to my attention that Amazon has been slowly changing the EMR APIs from XML-based to JSON-based.  Additionally they've moved from a "flat JSON" (my odd naming, not theirs :) format, where parameters were normalized for URL inclusion to a traditional JSON format.
+
+They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given the sweeping set of changes, a major release was deemed appropriate.
+
+- [#88](https://github.com/rslifka/elasticity/issues/88) - Removed support for deprecated `DescribeJobFlows`.
+
 ## 5.0.3 - July 8, 2015
 
 - Fix for issue [#86](https://github.com/rslifka/elasticity/issues/86).

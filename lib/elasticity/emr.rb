@@ -8,47 +8,6 @@ module Elasticity
       @aws_request = Elasticity::AwsSession.new(aws_access_key_id, aws_secret_access_key, options)
     end
 
-    # Describe a specific jobflow.
-    #
-    #   describe_jobflow("j-3UN6WX5RRO2AG")
-    #
-    # Raises ArgumentError if the specified jobflow does not exist.
-    def describe_jobflow(jobflow_id)
-      aws_result = @aws_request.submit({
-        :operation => 'DescribeJobFlows',
-        :job_flow_ids => [jobflow_id]
-      })
-      xml_doc = Nokogiri::XML(aws_result)
-      xml_doc.remove_namespaces!
-      yield aws_result if block_given?
-      JobFlowStatus.from_members_nodeset(xml_doc.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member')).first
-    end
-
-    # This is primarily for debugging purposes, providing insight into how
-    # Amazon internally represents jobs.  It's used to reverse-engineer
-    # how API calls construct jobflows.
-    def describe_jobflow_xml(jobflow_id)
-      describe_jobflow(jobflow_id) do |xml|
-        return xml
-      end
-    end
-
-    # Lists all jobflows in all states.
-    #
-    # To override this behaviour, pass additional filters as specified in the AWS
-    # documentation - http://docs.amazonwebservices.com/ElasticMapReduce/latest/API/index.html?API_DescribeJobFlows.html.
-    #
-    #   describe_jobflows(:CreatedBefore => "2011-10-04")
-    def describe_jobflows(params = {})
-      aws_result = @aws_request.submit(
-        params.merge({:operation => 'DescribeJobFlows'})
-      )
-      xml_doc = Nokogiri::XML(aws_result)
-      xml_doc.remove_namespaces!
-      yield aws_result if block_given?
-      JobFlowStatus.from_members_nodeset(xml_doc.xpath('/DescribeJobFlowsResponse/DescribeJobFlowsResult/JobFlows/member'))
-    end
-
     # Adds a new group of instances to the specified jobflow.  Elasticity maps a
     # more Ruby-like syntax to the Amazon options.  An exhaustive hash follows although
     # not all of these options are required (or valid!) at once.  Please see the
