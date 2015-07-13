@@ -64,6 +64,21 @@ module Elasticity
       yield aws_result if block_given?
     end
 
+    # Sets the specified tags on all instances in the specified jobflow
+    #
+    #   emr.add_tags('j-123', [{:key => 'key1', :value => 'value1'}, {:key => 'key_only2'}])
+    #
+    # See http://docs.aws.amazon.com/ElasticMapReduce/latest/API/API_AddTags.html
+    def add_tags(jobflow_id, tags)
+      params = {
+        :operation => 'AddTags',
+        :resource_id => jobflow_id,
+        :tags => tags
+      }
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
+    end
+
     # Set the number of instances in the specified instance groups to the
     # specified counts.  Note that this modifies the *request* count, which
     # is not the same as the *running* count.  I.e. you request instances

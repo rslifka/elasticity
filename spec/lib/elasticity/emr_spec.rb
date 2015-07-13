@@ -86,6 +86,36 @@ describe Elasticity::EMR do
 
   end
 
+  describe '#add_tags' do
+
+    it 'should modify the jobflow tags' do
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+          :operation => 'AddTags',
+          :resource_id => 'JOBFLOW_ID',
+          :tags => [
+            {
+              :key => 'TEST_KEY',
+              :value => 'TEST_VALUE'
+            },
+            {
+              :key => 'TEST_KEY_ONLY'
+            }
+          ]
+        })
+      subject.add_tags('JOBFLOW_ID', [{:key => 'TEST_KEY', :value => 'TEST_VALUE'}, {:key => 'TEST_KEY_ONLY'}])
+    end
+
+    context 'when a block is given' do
+      it 'should yield the submission results' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return('RESULT')
+        subject.add_tags('', {}) do |result|
+          result.should == 'RESULT'
+        end
+      end
+    end
+
+  end
+
   describe '#modify_instance_groups' do
 
     it 'should modify the specified instance groups' do
