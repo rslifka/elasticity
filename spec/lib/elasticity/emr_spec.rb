@@ -225,6 +225,87 @@ describe Elasticity::EMR do
 
   end
 
+  describe '#list_clusers' do
+
+    before do
+      Timecop.freeze(Time.at(1302461096))
+    end
+
+    after do
+      Timecop.return
+    end
+
+    let(:aws_result) {
+      <<-JSON
+        {"Key" : "Value"}
+      JSON
+    }
+
+    context 'when no arguments are supplied' do
+      it 'should list all clusters' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListClusters'
+          }).and_return(aws_result)
+        expect(subject.list_clusters).to eql(JSON.parse(aws_result))
+      end
+    end
+
+      # "CreatedAfter":{"shape":"Date"},
+      # "CreatedBefore":{"shape":"Date"},
+      # "ClusterStates":{"shape":"ClusterStateList"},
+      # "Marker":{"shape":"Marker"}
+
+    context 'when statuses are given' do
+      it 'should list clusters with the specified status' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListClusters',
+            :cluster_states => ['STATE1', 'STATE2']
+          }).and_return(aws_result)
+        expect(subject.list_clusters({:states => ['STATE1', 'STATE2']})).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when a before date is given' do
+      it 'should list clusters created before that date' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListClusters',
+            :created_before => 1302461096
+          }).and_return(aws_result)
+        expect(subject.list_clusters({:created_before => Time.now})).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when an after date is given' do
+      it 'should list clusters created after that date' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListClusters',
+            :created_after => 1302461096
+          }).and_return(aws_result)
+        expect(subject.list_clusters({:created_after => Time.now})).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when a pagination token is specified' do
+      it 'should supply the appropriate page' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListClusters',
+            :marker => 'MARKER'
+          }).and_return(aws_result)
+        expect(subject.list_clusters({:marker => 'MARKER'})).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when a block is given' do
+      it 'should yield the submission results' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_result)
+        subject.list_bootstrap_actions({}) do |result|
+          result.should == aws_result
+        end
+      end
+    end
+
+  end
+
   describe '#modify_instance_groups' do
 
     it 'should modify the specified instance groups' do

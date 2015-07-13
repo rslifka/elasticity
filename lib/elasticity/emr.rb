@@ -110,6 +110,29 @@ module Elasticity
       JSON.parse(aws_result)
     end
 
+    # List the clusters given specified filtering
+    #
+    #   emr.list_clusters({
+    #     :states => ['status1', 'status2', ...],
+    #     :created_before => Time,                # Amazon times are in UTC
+    #     :created_after => Time,                 # Amazon times are in UTC
+    #     :marker => 'marker'                     # Retrieve from a prior call to list_clusters
+    #   })
+    #
+    # http://docs.aws.amazon.com/ElasticMapReduce/latest/API/API_ListClusters.html
+    def list_clusters(options={})
+      params = {
+        :operation => 'ListClusters'
+      }
+      params.merge!(:cluster_states => options[:states]) if options[:states]
+      params.merge!(:created_before => options[:created_before].to_i) if options[:created_before]
+      params.merge!(:created_after => options[:created_after].to_i) if options[:created_after]
+      params.merge!(:marker => options[:marker]) if options[:marker]
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
+      JSON.parse(aws_result)
+    end
+
     # List the instance groups in the specified jobflow
     #
     #   emr.list_instance_groups('j-123')
