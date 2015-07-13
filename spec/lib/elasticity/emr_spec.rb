@@ -170,6 +170,33 @@ describe Elasticity::EMR do
 
   end
 
+  describe '#list_bootstrap_actions' do
+
+    let(:aws_result) {
+      <<-JSON
+        {"Key" : "Value"}
+      JSON
+    }
+
+    it 'should list the bootstrap actions in the specified jobflow' do
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+          :operation => 'ListBootstrapActions',
+          :cluster_id => 'CLUSTER_ID'
+        }).and_return(aws_result)
+      expect(subject.list_bootstrap_actions('CLUSTER_ID')).to eql(JSON.parse(aws_result))
+    end
+
+    context 'when a block is given' do
+      it 'should yield the submission results' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_result)
+        subject.list_bootstrap_actions({}) do |result|
+          result.should == aws_result
+        end
+      end
+    end
+
+  end
+
   describe '#modify_instance_groups' do
 
     it 'should modify the specified instance groups' do

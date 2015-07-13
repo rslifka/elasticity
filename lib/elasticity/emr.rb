@@ -109,6 +109,21 @@ module Elasticity
       JSON.parse(aws_result)
     end
 
+    # List the bootstrap actions in the specified jobflow
+    #
+    #   emr.list_bootstrap_actions('j-123')
+    #
+    # http://docs.aws.amazon.com/ElasticMapReduce/latest/API/API_ListBootstrapActions.html
+    def list_bootstrap_actions(jobflow_id)
+      params = {
+        :operation => 'ListBootstrapActions',
+        :cluster_id => jobflow_id,
+      }
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
+      JSON.parse(aws_result)
+    end
+
     # Set the number of instances in the specified instance groups to the
     # specified counts.  Note that this modifies the *request* count, which
     # is not the same as the *running* count.  I.e. you request instances
