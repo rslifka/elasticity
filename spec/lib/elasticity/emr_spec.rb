@@ -65,21 +65,26 @@ describe Elasticity::EMR do
 
   describe '#add_jobflow_steps' do
 
+    let(:aws_result) {
+      <<-JSON
+        {"Key" : "Value"}
+      JSON
+    }
+
     it 'should add the specified steps to the job flow' do
       Elasticity::AwsSession.any_instance.should_receive(:submit).with({
         :operation => 'AddJobFlowSteps',
         :job_flow_id => 'JOBFLOW_ID',
         :steps => ['_']
-      })
-      subject.add_jobflow_steps('JOBFLOW_ID', ['_'])
+      }).and_return(aws_result)
+      expect(subject.add_jobflow_steps('JOBFLOW_ID', ['_'])).to eql(JSON.parse(aws_result))
     end
 
     context 'when a block is given' do
-      let(:result) { 'RESULT' }
       it 'should yield the submission results' do
-        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(result)
-        subject.add_jobflow_steps('', {}) do |xml|
-          xml.should == 'RESULT'
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_result)
+        subject.add_jobflow_steps('', []) do |result|
+          result.should == aws_result
         end
       end
     end

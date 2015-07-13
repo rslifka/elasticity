@@ -62,6 +62,7 @@ module Elasticity
       }
       aws_result = @aws_request.submit(params)
       yield aws_result if block_given?
+      JSON.parse(aws_result)
     end
 
     # Sets the specified tags on all instances in the specified jobflow
