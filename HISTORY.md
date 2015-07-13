@@ -1,6 +1,8 @@
 ## 6.0 - July XX, 2015 (IN DEVELOPMENT)
 
-On July 10th, it was brought to my attention that Amazon has been slowly changing the EMR APIs from XML-based to JSON-based.  Additionally they've moved from a "flat JSON" (my odd naming, not theirs :) format, where parameters were normalized for URL inclusion to a traditional JSON format.
+Amazon is in the process of transitioning from the notion of "Job Flows" to "Clusters" and is updating their APIs as such.  You've already seen this in the EMR web UI as all mentions of "job flows" are gone and now you create "Clusters".
+
+On the API side, all of the newer commands take `cluster_id` rather than `job_flow_id`.  On the API submission side, they are transitioning from a 'flat' structure to a nested JSON structure requiring no transformation. Finally, XML is all gone and commands return JSON.  
 
 They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given the sweeping set of changes, a major release was deemed appropriate.
 
