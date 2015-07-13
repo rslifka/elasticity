@@ -39,28 +39,27 @@ module Elasticity
 
     # Add a step (or steps) to the specified job flow.
     #
-    #   emr.add_jobflow_step("j-123", {
-    #     :steps => [
-    #       {
-    #         :action_on_failure => "TERMINATE_JOB_FLOW",
-    #         :hadoop_jar_step => {
-    #           :args => [
-    #             "s3://elasticmapreduce/libs/pig/pig-script",
-    #               "--base-path",
-    #               "s3://elasticmapreduce/libs/pig/",
-    #               "--install-pig"
-    #           ],
-    #           :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
-    #         },
-    #         :name => "Setup Pig"
-    #       }
-    #     ]
-    #   })
+    #   emr.add_jobflow_step("j-123", [
+    #     {
+    #       :action_on_failure => "TERMINATE_JOB_FLOW",
+    #       :hadoop_jar_step => {
+    #         :args => [
+    #           "s3://elasticmapreduce/libs/pig/pig-script",
+    #             "--base-path",
+    #             "s3://elasticmapreduce/libs/pig/",
+    #             "--install-pig"
+    #         ],
+    #         :jar => "s3://elasticmapreduce/libs/script-runner/script-runner.jar"
+    #       },
+    #       :name => "Setup Pig"
+    #     }
+    #   ])
     def add_jobflow_steps(jobflow_id, steps_config)
       params = {
         :operation => 'AddJobFlowSteps',
-        :job_flow_id => jobflow_id
-      }.merge!(steps_config)
+        :job_flow_id => jobflow_id,
+        :steps => steps_config
+      }
       aws_result = @aws_request.submit(params)
       yield aws_result if block_given?
     end

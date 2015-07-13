@@ -71,7 +71,7 @@ describe Elasticity::EMR do
         :job_flow_id => 'JOBFLOW_ID',
         :steps => ['_']
       })
-      subject.add_jobflow_steps('JOBFLOW_ID', {:steps => ['_']})
+      subject.add_jobflow_steps('JOBFLOW_ID', ['_'])
     end
 
     context 'when a block is given' do
