@@ -170,14 +170,16 @@ module Elasticity
       yield aws_result if block_given?
     end
 
-    # Terminate the specified jobflow.  Amazon does not define a return value
-    # for this operation, so you'll need to poll #describe_jobflows to see
-    # the state of the jobflow.  Raises ArgumentError if the specified job
-    # flow does not exist.
-    def terminate_jobflows(jobflow_id)
+    # Terminate the specified jobflows.  Amazon does not define a return value
+    # for this operation, so you'll need to poll to see the state of the jobflow.
+    #
+    # Takes an [] of job flow IDs.
+    #
+    #   ["j-1B4D1XP0C0A35", "j-1YG2MYL0HVYS5", ...]
+    def terminate_jobflows(jobflow_ids)
       params = {
         :operation => 'TerminateJobFlows',
-        :job_flow_ids => [jobflow_id]
+        :job_flow_ids => jobflow_ids
       }
       aws_result = @aws_request.submit(params)
       yield aws_result if block_given?

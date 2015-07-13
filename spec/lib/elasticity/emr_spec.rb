@@ -154,12 +154,24 @@ describe Elasticity::EMR do
 
   describe '#terminate_jobflows' do
 
-    it 'should terminate the specific jobflow' do
-      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
-        :operation => 'TerminateJobFlows',
-        :job_flow_ids => ['j-1']
-      })
-      subject.terminate_jobflows('j-1')
+    context 'when one jobflow is specified' do
+      it 'should terminate the jobflow' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'TerminateJobFlows',
+            :job_flow_ids => ['j-1']
+          })
+        subject.terminate_jobflows(['j-1'])
+      end
+    end
+
+    context 'when more then one jobflow is specified' do
+      it 'should terminate all of the jobflows' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'TerminateJobFlows',
+            :job_flow_ids => ['j-1', 'j-2']
+          })
+        subject.terminate_jobflows(['j-1', 'j-2'])
+      end
     end
 
     context 'when a block is given' do
