@@ -368,6 +368,68 @@ describe Elasticity::EMR do
 
   end
 
+  describe '#list_steps' do
+
+    let(:aws_result) {
+      <<-JSON
+        {"Key" : "Value"}
+      JSON
+    }
+
+    context 'when no arguments are supplied' do
+      it 'should list all steps in the cluster' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListSteps',
+            :cluster_id => 'CLUSTER_ID'
+          }).and_return(aws_result)
+        expect(subject.list_steps('CLUSTER_ID')).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when step IDs are specified' do
+      it 'should list the instances in that group' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListSteps',
+            :cluster_id => 'CLUSTER_ID',
+            :step_ids => ['S-1', 'S-2']
+          }).and_return(aws_result)
+        expect(subject.list_steps('CLUSTER_ID', {:step_ids => ['S-1', 'S-2']})).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when step states are specified' do
+      it 'should list the steps in that state' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListSteps',
+            :cluster_id => 'CLUSTER_ID',
+            :step_states => ['STATE1', 'STATE2']
+          }).and_return(aws_result)
+        expect(subject.list_steps('CLUSTER_ID', {:step_states => ['STATE1', 'STATE2']})).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when a pagination token is specified' do
+      it 'should supply the appropriate page' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListSteps',
+            :cluster_id => 'CLUSTER_ID',
+            :marker => 'MARKER'
+          }).and_return(aws_result)
+        expect(subject.list_steps('CLUSTER_ID', {:marker => 'MARKER'})).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when a block is given' do
+      it 'should yield the submission results' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_result)
+        subject.list_steps({}) do |result|
+          result.should == aws_result
+        end
+      end
+    end
+
+  end
+
   describe '#modify_instance_groups' do
 
     it 'should modify the specified instance groups' do

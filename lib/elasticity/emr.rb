@@ -185,6 +185,29 @@ module Elasticity
       JSON.parse(aws_result)
     end
 
+    # List the steps in a job flow given specified filtering
+    #
+    #   emr.list_steps('j-123', {
+    #     :types => ['MASTER', 'CORE', 'TASK'],
+    #     :step_ids => ['ID-1', 'ID-2']
+    #     :step_states => ['PENDING', 'RUNNING', ...]
+    #     :marker => 'marker'                         # Retrieve from a prior call to list_steps
+    #   })
+    #
+    # http://docs.aws.amazon.com/ElasticMapReduce/latest/API/API_ListSteps.html
+    def list_steps(jobflow_id, options={})
+      params = {
+        :operation => 'ListSteps',
+        :cluster_id => jobflow_id,
+      }
+      params.merge!(:step_ids => options[:step_ids]) if options[:step_ids]
+      params.merge!(:step_states => options[:step_states]) if options[:step_states]
+      params.merge!(:marker => options[:marker]) if options[:marker]
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
+      JSON.parse(aws_result)
+    end
+
     # Set the number of instances in the specified instance groups to the
     # specified counts.  Note that this modifies the *request* count, which
     # is not the same as the *running* count.  I.e. you request instances

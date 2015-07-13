@@ -8,6 +8,7 @@ They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given th
 - [#89](https://github.com/rslifka/elasticity/issues/89) - Add support for `AddTags`.
 - [#90](https://github.com/rslifka/elasticity/issues/90) - Add support for `RemoveTags`.
 - [#91](https://github.com/rslifka/elasticity/issues/91) - Add support for `SetVisibleToAllUsers`.
+- [#92](https://github.com/rslifka/elasticity/issues/92) - Add support for `ListSteps`.
 - [#93](https://github.com/rslifka/elasticity/issues/93) - Add support for `ListInstances`.
 - [#94](https://github.com/rslifka/elasticity/issues/94) - Add support for `ListInstanceGroups`.
 - [#95](https://github.com/rslifka/elasticity/issues/95) - Add support for `ListClusters`.
