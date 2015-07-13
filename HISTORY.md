@@ -5,8 +5,9 @@ On July 10th, it was brought to my attention that Amazon has been slowly changin
 They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given the sweeping set of changes, a major release was deemed appropriate.
 
 - [#88](https://github.com/rslifka/elasticity/issues/88) - Removed support for deprecated `DescribeJobFlows`.
-- [#89](https://github.com/rslifka/elasticity/issues/90) - Add support for `AddTags`.
+- [#89](https://github.com/rslifka/elasticity/issues/89) - Add support for `AddTags`.
 - [#90](https://github.com/rslifka/elasticity/issues/90) - Add support for `RemoveTags`.
+- [#91](https://github.com/rslifka/elasticity/issues/91) - Add support for `SetVisibleToAllUsers`.
 - [#101](https://github.com/rslifka/elasticity/issues/101) - Fix plurality of `TerminateJobFlows`; now requires an array of IDs to terminate.
 - [#102](https://github.com/rslifka/elasticity/issues/102) - Simplify interface to `AddJobFlowSteps`; no longer require extraneous `:steps => []`.
 

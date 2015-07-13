@@ -278,6 +278,54 @@ describe Elasticity::EMR do
 
   end
 
+  describe '#set_visible_to_all_users' do
+
+    context 'when visibility is enabled' do
+      it 'should enable visibility on the specified jobflows' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'SetVisibleToAllUsers',
+            :visible_to_all_users => true,
+            :job_flow_ids => ['jobflow1', 'jobflow2']
+          })
+        subject.set_visible_to_all_users(['jobflow1', 'jobflow2'], true)
+      end
+    end
+
+    context 'when visibility is disabled' do
+      it 'should disable protection on the specified jobflows' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'SetVisibleToAllUsers',
+            :visible_to_all_users => false,
+            :job_flow_ids => ['jobflow1', 'jobflow2']
+          })
+        subject.set_visible_to_all_users(['jobflow1', 'jobflow2'], false)
+      end
+    end
+
+    context 'when visibility is not specified' do
+      it 'should enable protection on the specified jobflows' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'SetVisibleToAllUsers',
+            :visible_to_all_users => true,
+            :job_flow_ids => ['jobflow1', 'jobflow2']
+          })
+        subject.set_visible_to_all_users(['jobflow1', 'jobflow2'])
+      end
+    end
+
+    context 'when a block is given' do
+      let(:aws_response) { '_' }
+      it 'should yield the termination results' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_response)
+        subject.set_visible_to_all_users([]) do |result|
+          result.should == '_'
+        end
+      end
+    end
+
+  end
+
+
   describe '#direct' do
     let(:params) { {:foo => 'bar'} }
 

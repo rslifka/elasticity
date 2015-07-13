@@ -193,6 +193,23 @@ module Elasticity
       yield aws_result if block_given?
     end
 
+    # Whether or not all IAM users in this account can access the job flows.
+    #
+    # Takes an [] of job flow IDs.
+    #
+    #   ["j-1B4D1XP0C0A35", "j-1YG2MYL0HVYS5", ...]
+    #
+    # http://docs.aws.amazon.com/ElasticMapReduce/latest/API/API_SetVisibleToAllUsers.html
+    def set_visible_to_all_users(jobflow_ids, visible=true)
+      params = {
+        :operation => 'SetVisibleToAllUsers',
+        :visible_to_all_users => visible,
+        :job_flow_ids => jobflow_ids
+      }
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
+    end
+
     # Terminate the specified jobflows.  Amazon does not define a return value
     # for this operation, so you'll need to poll to see the state of the jobflow.
     #
