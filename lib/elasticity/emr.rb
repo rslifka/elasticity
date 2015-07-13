@@ -79,6 +79,21 @@ module Elasticity
       yield aws_result if block_given?
     end
 
+    # Provides details about the specified jobflow
+    #
+    #   emr.describe_cluster('j-123')
+    #
+    # http://docs.aws.amazon.com/ElasticMapReduce/latest/API/API_DescribeCluster.html
+    def describe_cluster(jobflow_id)
+      params = {
+        :operation => 'DescribeCluster',
+        :cluster_id => jobflow_id,
+      }
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
+      JSON.parse(aws_result)
+    end
+
     # List the instance groups in the specified jobflow
     #
     #   emr.list_instance_groups('j-123')
