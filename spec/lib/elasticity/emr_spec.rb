@@ -225,7 +225,7 @@ describe Elasticity::EMR do
 
   end
 
-  describe '#list_clusers' do
+  describe '#list_clusters' do
 
     before do
       Timecop.freeze(Time.at(1302461096))
@@ -249,11 +249,6 @@ describe Elasticity::EMR do
         expect(subject.list_clusters).to eql(JSON.parse(aws_result))
       end
     end
-
-      # "CreatedAfter":{"shape":"Date"},
-      # "CreatedBefore":{"shape":"Date"},
-      # "ClusterStates":{"shape":"ClusterStateList"},
-      # "Marker":{"shape":"Marker"}
 
     context 'when statuses are given' do
       it 'should list clusters with the specified status' do
@@ -299,6 +294,68 @@ describe Elasticity::EMR do
       it 'should yield the submission results' do
         Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_result)
         subject.list_bootstrap_actions({}) do |result|
+          result.should == aws_result
+        end
+      end
+    end
+
+  end
+
+  describe '#list_instances' do
+
+    let(:aws_result) {
+      <<-JSON
+        {"Key" : "Value"}
+      JSON
+    }
+
+    context 'when no arguments are supplied' do
+      it 'should list all instances in the cluster' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListInstances',
+            :cluster_id => 'CLUSTER_ID'
+          }).and_return(aws_result)
+        expect(subject.list_instances('CLUSTER_ID')).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when an instance group is specified' do
+      it 'should list the instances in that group' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListInstances',
+            :cluster_id => 'CLUSTER_ID',
+            :instance_group_id => 'INSTANCE_GROUP_ID'
+          }).and_return(aws_result)
+        expect(subject.list_instances('CLUSTER_ID', {:instance_group_id => 'INSTANCE_GROUP_ID'})).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when instance types are specified' do
+      it 'should list the instances of that type' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListInstances',
+            :cluster_id => 'CLUSTER_ID',
+            :instance_group_types => ['TYPE1', 'TYPE2']
+          }).and_return(aws_result)
+        expect(subject.list_instances('CLUSTER_ID', {:instance_group_types => ['TYPE1', 'TYPE2']})).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when a pagination token is specified' do
+      it 'should supply the appropriate page' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+            :operation => 'ListInstances',
+            :cluster_id => 'CLUSTER_ID',
+            :marker => 'MARKER'
+          }).and_return(aws_result)
+        expect(subject.list_instances('CLUSTER_ID', {:marker => 'MARKER'})).to eql(JSON.parse(aws_result))
+      end
+    end
+
+    context 'when a block is given' do
+      it 'should yield the submission results' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_result)
+        subject.list_instances({}) do |result|
           result.should == aws_result
         end
       end
