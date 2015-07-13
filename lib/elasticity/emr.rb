@@ -96,6 +96,21 @@ module Elasticity
       yield aws_result if block_given?
     end
 
+    # Remove the specified tags on all instances in the specified jobflow
+    #
+    #   emr.remove_tags('j-123', ['key1','key_only2'])
+    #
+    # See http://docs.aws.amazon.com/ElasticMapReduce/latest/API/API_RemoveTags.html
+    def remove_tags(jobflow_id, keys)
+      params = {
+        :operation => 'RemoveTags',
+        :resource_id => jobflow_id,
+        :tag_keys => keys
+      }
+      aws_result = @aws_request.submit(params)
+      yield aws_result if block_given?
+    end
+
     # Start a job flow with the specified configuration.  This is a very thin
     # wrapper around the AWS API, so in order to use it directly you'll need
     # to have the PDF API reference handy, which can be found here:

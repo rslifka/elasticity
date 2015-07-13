@@ -6,6 +6,7 @@ They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given th
 
 - [#88](https://github.com/rslifka/elasticity/issues/88) - Removed support for deprecated `DescribeJobFlows`.
 - [#89](https://github.com/rslifka/elasticity/issues/90) - Add support for `AddTags`.
+- [#90](https://github.com/rslifka/elasticity/issues/90) - Add support for `RemoveTags`.
 - [#101](https://github.com/rslifka/elasticity/issues/101) - Fix plurality of `TerminateJobFlows`; now requires an array of IDs to terminate.
 - [#102](https://github.com/rslifka/elasticity/issues/102) - Simplify interface to `AddJobFlowSteps`; no longer require extraneous `:steps => []`.
 

@@ -209,6 +209,28 @@ describe Elasticity::EMR do
 
   end
 
+  describe '#remove_tags' do
+
+    it 'should remove the jobflow tags' do
+      Elasticity::AwsSession.any_instance.should_receive(:submit).with({
+          :operation => 'RemoveTags',
+          :resource_id => 'JOBFLOW_ID',
+          :tag_keys => ['TEST_KEY', 'TEST_KEY_ONLY']
+        })
+      subject.remove_tags('JOBFLOW_ID', ['TEST_KEY', 'TEST_KEY_ONLY'])
+    end
+
+    context 'when a block is given' do
+      it 'should yield the submission results' do
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return('RESULT')
+        subject.remove_tags('', {}) do |result|
+          result.should == 'RESULT'
+        end
+      end
+    end
+
+  end
+
   describe '#set_termination_protection' do
 
     context 'when protection is enabled' do
