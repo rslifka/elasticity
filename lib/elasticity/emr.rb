@@ -15,11 +15,11 @@ module Elasticity
     #
     #   instance_group_config = {
     #     :bid_price => 5,
+    #     :market => "SPOT",
+    #     :name => "Go Canucks Go!",
     #     :instance_count => 1,
     #     :instance_role => "TASK",
-    #     :market => "SPOT",
-    #     :name => "Go Canucks Go!"
-    #     :type => "m1.small",
+    #     :instance_type => "m1.small"
     #   }
     #
     # add_instance_groups takes an array of {}.  Returns an array of the instance IDs
@@ -33,14 +33,8 @@ module Elasticity
         :instance_groups => instance_group_configs
       }
       aws_result = @aws_request.submit(params)
-      xml_doc = Nokogiri::XML(aws_result)
-      xml_doc.remove_namespaces!
-      instance_group_ids = []
-      xml_doc.xpath('/AddInstanceGroupsResponse/AddInstanceGroupsResult/InstanceGroupIds/member').each do |member|
-        instance_group_ids << member.text
-      end
       yield aws_result if block_given?
-      instance_group_ids
+      JSON.parse(aws_result)['InstanceGroupIds']
     end
 
     # Add a step (or steps) to the specified job flow.

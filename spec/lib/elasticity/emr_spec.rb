@@ -27,31 +27,25 @@ describe Elasticity::EMR do
 
   describe '#add_instance_groups' do
 
+    let(:aws_response) do
+      <<-JSON
+          {
+              "InstanceGroupIds": ["ig-1", "ig-2", "ig-3"],
+              "JobFlowId": "j-3U7TSX5GZFD8Y"
+          }
+      JSON
+    end
+
     it 'should send the correct params to AWS' do
       Elasticity::AwsSession.any_instance.should_receive(:submit).with({
         :operation => 'AddInstanceGroups',
         :job_flow_id => 'JOBFLOW_ID',
         :instance_groups => ['INSTANCE_GROUP_CONFIGS']
-      })
+      }).and_return(aws_response)
       subject.add_instance_groups('JOBFLOW_ID', ['INSTANCE_GROUP_CONFIGS'])
     end
 
     describe 'return values' do
-      let(:aws_response) do
-        <<-XML
-          <AddInstanceGroupsResponse xmlns="http://elasticmapreduce.amazonaws.com/doc/2009-03-31">
-            <AddInstanceGroupsResult>
-              <JobFlowId>j-OALI7TZTQMHX</JobFlowId>
-              <InstanceGroupIds>
-                <member>ig-1</member>
-                <member>ig-2</member>
-                <member>ig-3</member>
-              </InstanceGroupIds>
-            </AddInstanceGroupsResult>
-          </AddInstanceGroupsResponse>
-        XML
-      end
-
       it 'should return an array of the new instance groups IDs' do
         Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_response)
         subject.add_instance_groups('', []).should == ['ig-1', 'ig-2', 'ig-3']
@@ -59,11 +53,10 @@ describe Elasticity::EMR do
     end
 
     context 'when a block is given' do
-      let(:result) { 'RESULT' }
       it 'should yield the submission results' do
-        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(result)
-        subject.add_instance_groups('', []) do |xml|
-          xml.should == 'RESULT'
+        Elasticity::AwsSession.any_instance.should_receive(:submit).and_return(aws_response)
+        subject.add_instance_groups('', []) do |result|
+          result.should == aws_response
         end
       end
     end
