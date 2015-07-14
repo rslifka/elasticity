@@ -24,6 +24,7 @@ require 'elasticity/looper'
 require 'elasticity/job_flow'
 require 'elasticity/instance_group'
 
+require 'elasticity/cluster_status'
 require 'elasticity/job_flow_status'
 require 'elasticity/job_flow_status_step'
 
