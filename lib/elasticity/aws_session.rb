@@ -9,6 +9,7 @@ module Elasticity
 
     attr_reader :access_key
     attr_reader :secret_key
+    attr_reader :security_token
     attr_reader :host
     attr_reader :region
 
@@ -25,6 +26,7 @@ module Elasticity
 
       @access_key = get_access_key(access)
       @secret_key = get_secret_key(secret)
+      @security_token = get_security_token
       @host = "elasticmapreduce.#@region.amazonaws.com"
     end
 
@@ -57,6 +59,11 @@ module Elasticity
       return secret if secret
       return ENV['AWS_SECRET_ACCESS_KEY'] if ENV['AWS_SECRET_ACCESS_KEY']
       raise MissingKeyError, 'Please provide a secret key or set AWS_SECRET_ACCESS_KEY.'
+    end
+
+    # TODO refactor the entry point to API to incude security_token
+    def get_security_token
+      ENV['AWS_SECURITY_TOKEN']
     end
 
     # AWS error responses all follow the same form.  Extract the message from
