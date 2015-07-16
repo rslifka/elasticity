@@ -16,6 +16,7 @@ describe Elasticity::EMR do
       before do
         ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('ENV_ACCESS')
         ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('ENV_SECRET')
+        ENV.stub(:[]).with('AWS_SECURITY_TOKEN')
       end
       it 'should use environment variables' do
         emr = Elasticity::EMR.new
