@@ -64,4 +64,17 @@ describe Elasticity::ClusterStepStatus do
     end
   end
 
+  describe '.installed_steps' do
+    let(:installed_cluster_step_statuses) do
+      step_names = Elasticity::JobFlowStep.steps_requiring_installation.map { |s| s.aws_installation_step_name }
+      step_names.map { |name| build(:cluster_step_status, :name => name) }
+    end
+
+    it 'should return a list of steps that are installed' do
+      expect(Elasticity::ClusterStepStatus.installed_steps(installed_cluster_step_statuses)).to match_array([
+            Elasticity::PigStep, Elasticity::HiveStep
+          ])
+    end
+  end
+
 end

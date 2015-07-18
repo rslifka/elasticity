@@ -37,6 +37,15 @@ module Elasticity
       end
     end
 
+    def self.installed_steps(cluster_step_statuses)
+      step_names = cluster_step_statuses.map(&:name)
+      installed_steps = []
+      Elasticity::JobFlowStep.steps_requiring_installation.each do |step|
+        installed_steps << step if step_names.include?(step.aws_installation_step_name)
+      end
+      installed_steps
+    end
+
   end
 
 end
