@@ -18,7 +18,7 @@ gem install elasticity
 or in your Gemfile
 
 ```
-gem 'elasticity', '~> 5.0'
+gem 'elasticity', '~> 6.0'
 ```
 
 This will ensure that you protect yourself from API changes, which will only be made in major revisions.
@@ -87,21 +87,13 @@ end
 ## 2 - Create a Job Flow
 
 ```ruby
-# Manually specify AWS credentials
-jobflow = Elasticity::JobFlow.new('AWS access key', 'AWS secret key')
-
-# Use the standard environment variables (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY)
 jobflow = Elasticity::JobFlow.new
 ```
 
 If you want to access a job flow that's already running:
 
 ```ruby
-# Manually specify AWS credentials
-jobflow = Elasticity::JobFlow.from_jobflow_id('AWS access key', 'AWS secret key', 'jobflow ID', 'region')
-
-# Use the standard environment variables (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY)
-jobflow = Elasticity::JobFlow.from_jobflow_id(nil, nil, 'jobflow ID', 'region')
+jobflow = Elasticity::JobFlow.from_jobflow_id('jobflow ID', 'region')
 ```
 
 This is useful if you'd like to attach to a running job flow and add more steps, etc.  The ```region``` parameter is necessary because job flows are only accessible from the the API when you connect to the same endpoint that created them (e.g. us-west-1).  If you don't specify the ```region``` parameter, us-east-1 is assumed.
