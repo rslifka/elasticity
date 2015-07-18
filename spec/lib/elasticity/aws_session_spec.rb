@@ -43,10 +43,11 @@ describe Elasticity::AwsSession do
           before do
             ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('ENV_ACCESS')
             ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('ENV_SECRET')
+            ENV.stub(:[]).with('AWS_SECURITY_TOKEN')
           end
           it 'should set access and secret keys' do
-            default_values.access_key.should == 'ENV_ACCESS'
-            default_values.secret_key.should == 'ENV_SECRET'
+            expect(default_values.access_key).to eq('ENV_ACCESS')
+            expect(default_values.secret_key).to eq('ENV_SECRET')
           end
         end
 
@@ -55,10 +56,23 @@ describe Elasticity::AwsSession do
           before do
             ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('ENV_ACCESS')
             ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('ENV_SECRET')
+            ENV.stub(:[]).with('AWS_SECURITY_TOKEN')
           end
           it 'should set access and secret keys' do
-            nil_values.access_key.should == 'ENV_ACCESS'
-            nil_values.secret_key.should == 'ENV_SECRET'
+            expect(nil_values.access_key).to eq('ENV_ACCESS')
+            expect(nil_values.secret_key).to eq('ENV_SECRET')
+          end
+        end
+
+        context 'when security key set' do
+          let(:nil_values) { Elasticity::AwsSession.new(nil, nil) }
+          before do
+            ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('ENV_ACCESS')
+            ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('ENV_SECRET')
+            ENV.stub(:[]).with('AWS_SECURITY_TOKEN').and_return('ENV_SECURITY_TOKEN')
+          end
+          it 'should set security token' do
+            expect(nil_values.security_token).to eq('ENV_SECURITY_TOKEN')
           end
         end
 
@@ -70,6 +84,7 @@ describe Elasticity::AwsSession do
           before do
             ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return(nil)
             ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('_')
+            ENV.stub(:[]).with('AWS_SECURITY_TOKEN')
           end
           it 'should raise an error' do
             expect {
@@ -81,6 +96,7 @@ describe Elasticity::AwsSession do
           before do
             ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('_')
             ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return(nil)
+            ENV.stub(:[]).with('AWS_SECURITY_TOKEN')
           end
           it 'should raise an error' do
             expect {
@@ -88,8 +104,17 @@ describe Elasticity::AwsSession do
             }.to raise_error(Elasticity::MissingKeyError, 'Please provide a secret key or set AWS_SECRET_ACCESS_KEY.')
           end
         end
+        context 'when the security token is not set' do
+          before do
+            ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('_')
+            ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('_')
+            ENV.stub(:[]).with('AWS_SECURITY_TOKEN')
+          end
+          it 'should return nothing' do
+            expect(missing_something.security_token).not_to be
+          end
+        end
       end
-
     end
 
   end

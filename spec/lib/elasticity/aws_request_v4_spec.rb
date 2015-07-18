@@ -33,6 +33,13 @@ describe Elasticity::AwsRequestV4 do
         'X-Amz-Target' => 'ElasticMapReduce.DescribeJobFlows',
       }
     end
+
+    context 'when security token exists' do
+      it 'adds X-Amz-Security-Token header' do
+        ENV.stub(:[]).with('AWS_SECURITY_TOKEN').and_return('ENV_SECURITY_TOKEN')
+        expect(subject.headers['X-Amz-Security-Token']).to eq('ENV_SECURITY_TOKEN')
+      end
+    end
   end
 
   describe '#payload' do
