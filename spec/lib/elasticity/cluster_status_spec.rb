@@ -52,10 +52,10 @@ describe Elasticity::ClusterStatus do
   end
 
   subject do
-    Elasticity::ClusterStatus.new(JSON.parse(aws_cluster_status))
+    Elasticity::ClusterStatus.from_aws_data(JSON.parse(aws_cluster_status))
   end
 
-  describe '.from_json' do
+  describe '.from_aws_data' do
     it 'should hydate properly' do
       expect(subject.name).to eql('Elasticity Job Flow')
       expect(subject.cluster_id).to eql('j-3T0PHNUXCY7SX')
