@@ -2,7 +2,7 @@
 
 Amazon is in the process of transitioning from the notion of "Job Flows" to "Clusters" and is updating their APIs as such.  You've already seen this in the EMR web UI as all mentions of "job flows" are gone and now you create "Clusters".
 
-On the API side, all of the newer commands take `cluster_id` rather than `job_flow_id`.  On the API submission side, they are transitioning from a 'flat' structure to a nested JSON structure requiring no transformation. Finally, XML is all gone and commands return JSON.  
+On the API side, all of the newer commands take `cluster_id` rather than `job_flow_id`.  On the API submission side, they are transitioning from a 'flat' structure to a nested JSON structure requiring no transformation. Finally, XML is all gone and commands return JSON (i.e. no more Nokogiri as a dependency).
 
 They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given the sweeping set of changes, a major release was deemed appropriate.
 
@@ -21,7 +21,6 @@ They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given th
 - [#102](https://github.com/rslifka/elasticity/issues/102) - Simplify interface to `AddJobFlowSteps`; no longer require extraneous `:steps => []`.
 - [#104](https://github.com/rslifka/elasticity/issues/104) - Expose return value from `AddJobFlowSteps`.
 - [#105](https://github.com/rslifka/elasticity/issues/105) - `JobFlow#status` has been removed in favour of `JobFlow#cluster_status` and `JobFlow#cluster_step_status`.
-- [#108](https://github.com/rslifka/elasticity/issues/108) - `JobFlow#status` => `JobFlow#cluster_status`.
 
 ## 5.0.3 - July 8, 2015
 
