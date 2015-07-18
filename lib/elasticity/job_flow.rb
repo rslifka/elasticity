@@ -59,7 +59,7 @@ module Elasticity
       JobFlow.new(access, secret).tap do |j|
         j.instance_variable_set(:@region, region)
         j.instance_variable_set(:@jobflow_id, jobflow_id)
-        j.instance_variable_set(:@installed_steps, j.status.installed_steps)
+        j.instance_variable_set(:@installed_steps, ClusterStepStatus.installed_steps(j.cluster_step_status))
       end
     end
 
@@ -183,8 +183,8 @@ module Elasticity
     private
 
     def retry_check
-      jf_status = status
-      return status.active?, jf_status
+      jf_status = cluster_status
+      return cluster_status.active?, jf_status
     end
 
     def emr

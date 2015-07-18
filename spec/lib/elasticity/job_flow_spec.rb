@@ -734,7 +734,7 @@ describe Elasticity::JobFlow do
     context 'when the jobflow is active' do
       let(:jobflow_status) { double(:active? => true) }
       before do
-        subject.stub(:status).and_return(jobflow_status)
+        subject.stub(:cluster_status).and_return(jobflow_status)
       end
       it 'returns true and the result of #status' do
         subject.send(:retry_check).should == [true, jobflow_status]
@@ -744,7 +744,7 @@ describe Elasticity::JobFlow do
     context 'when the jobflow is not active' do
       let(:jobflow_status) { double(:active? => false) }
       before do
-        subject.stub(:status).and_return(jobflow_status)
+        subject.stub(:cluster_status).and_return(jobflow_status)
       end
       it 'returns true and the result of #status' do
         subject.send(:retry_check).should == [false, jobflow_status]
@@ -756,7 +756,7 @@ describe Elasticity::JobFlow do
   describe '.from_jobflow_id' do
 
     before do
-      Elasticity::JobFlow.any_instance.stub_chain(:status, :installed_steps => [])
+      Elasticity::JobFlow.any_instance.stub(:cluster_step_status).and_return([])
     end
 
     let(:jobflow) { Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', 'JOBFLOW_ID') }
@@ -793,7 +793,7 @@ describe Elasticity::JobFlow do
 
     context 'when no steps have been installed' do
       before do
-        Elasticity::JobFlow.any_instance.should_receive(:status).and_return(double('Elasticity::JobFlowStatus', :installed_steps => []))
+        Elasticity::JobFlow.any_instance.should_receive(:cluster_step_status).and_return([])
       end
       it 'should show that no steps are installed' do
         jobflow.instance_variable_get(:@installed_steps).should == []
@@ -802,7 +802,10 @@ describe Elasticity::JobFlow do
 
     context 'when steps have been installed do' do
       before do
-        Elasticity::JobFlow.any_instance.should_receive(:status).and_return(double('Elasticity::JobFlowStatus', :installed_steps => [Elasticity::HiveStep, Elasticity::PigStep]))
+        Elasticity::JobFlow.any_instance.should_receive(:cluster_step_status).and_return([
+          build(:cluster_step_status, :name => Elasticity::PigStep.aws_installation_step_name),
+          build(:cluster_step_status, :name => Elasticity::HiveStep.aws_installation_step_name)
+          ])
       end
       it 'should show that no steps are installed' do
         jobflow.instance_variable_get(:@installed_steps).should =~ [Elasticity::PigStep, Elasticity::HiveStep]
