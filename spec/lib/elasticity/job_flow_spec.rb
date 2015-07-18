@@ -591,39 +591,6 @@ describe Elasticity::JobFlow do
 
   end
 
-  describe '#status' do
-
-    context 'before the jobflow has been run' do
-      it 'should raise an error' do
-        expect {
-          subject.status
-        }.to raise_error(Elasticity::JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.')
-      end
-    end
-
-    context 'after the jobflow has been run' do
-      let(:emr) { double('Elasticity::EMR', :run_job_flow => 'JOBFLOW_ID') }
-      let(:running_jobflow) { Elasticity::JobFlow.new('_', '_') }
-      let(:jobflow_status) do
-        Elasticity::JobFlowStatus.new.tap do |js|
-          js.stub(:state => 'TERMINATED')
-        end
-      end
-      before do
-        Elasticity::EMR.stub(:new).and_return(emr)
-        running_jobflow.add_step(Elasticity::CustomJarStep.new('_'))
-        running_jobflow.run
-      end
-      it 'should return the AWS status' do
-        emr.should_receive(:describe_jobflow).with('JOBFLOW_ID').and_return(jobflow_status)
-        status = running_jobflow.status
-        status.should be_a(Elasticity::JobFlowStatus)
-        status.state.should == 'TERMINATED'
-      end
-    end
-
-  end
-
   describe '#cluster_status' do
 
     context 'before the jobflow has been run' do

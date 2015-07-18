@@ -154,13 +154,6 @@ module Elasticity
       emr.terminate_jobflows(@jobflow_id)
     end
 
-    def status
-      if !is_jobflow_running?
-        raise JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.'
-      end
-      emr.describe_jobflow(@jobflow_id)
-    end
-
     def cluster_status
       if !is_jobflow_running?
         raise JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.'
