@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.add_dependency('fog', '~> 1.0')
   s.add_dependency('unf', '~> 0.1')
 
+  s.add_development_dependency('factory_girl', '~> 4.0')
   s.add_development_dependency('fakefs', '~> 0.4.0')
   s.add_development_dependency('rake', '~> 0.9')
   s.add_development_dependency('rspec', '~> 3.0')

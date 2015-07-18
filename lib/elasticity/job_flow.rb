@@ -161,6 +161,13 @@ module Elasticity
       emr.describe_jobflow(@jobflow_id)
     end
 
+    def cluster_status
+      if !is_jobflow_running?
+        raise JobFlowNotStartedError, 'Please #run this job flow before attempting to retrieve status.'
+      end
+      ClusterStatus.from_aws_data(emr.describe_cluster(@jobflow_id))
+    end
+
     def wait_for_completion(&on_wait)
       l = Elasticity::Looper.new(method(:retry_check), on_wait)
       l.go
