@@ -57,6 +57,7 @@ module Elasticity
     attr_accessor :hive_site
     attr_accessor :access_key
     attr_accessor :secret_key
+    attr_accessor :security_token
   end
 
 end

@@ -57,16 +57,31 @@ describe Elasticity::AwsRequestV4 do
   end
 
   describe '#headers' do
-    it 'should create the proper headers' do
-      subject.headers.should == {
+
+    let(:base_headers) {
+      {
         'Authorization' => "AWS4-HMAC-SHA256 Credential=access/20110909/us-east-1/elasticmapreduce/aws4_request, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date;x-amz-target, Signature=#{subject.send(:aws_v4_signature)}",
         'Content-Type' => 'application/x-amz-json-1.1',
         'Host' => 'elasticmapreduce.us-east-1.amazonaws.com',
         'User-Agent' => "elasticity/#{Elasticity::VERSION}",
         'X-Amz-Content-SHA256' => Digest::SHA256.hexdigest(subject.payload),
         'X-Amz-Date' => '20110909T233600Z',
-        'X-Amz-Target' => 'ElasticMapReduce.DescribeJobFlows',
+        'X-Amz-Target' => 'ElasticMapReduce.DescribeJobFlows'
       }
+    }
+
+    context 'when a security token is specified' do
+      it 'should create the proper headers' do
+        Elasticity.configure {|c| c.security_token = 'SECURITY_TOKEN' }
+        subject.headers.should == base_headers.merge('X-Amz-Security-Token' => 'SECURITY_TOKEN')
+      end
+    end
+
+    context 'when a security token is not specified' do
+      it 'should create the proper headers' do
+        Elasticity.configure {|c| c.security_token = nil }
+        subject.headers.should == base_headers
+      end
     end
   end
 

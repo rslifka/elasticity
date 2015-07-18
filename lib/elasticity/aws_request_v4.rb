@@ -33,7 +33,7 @@ module Elasticity
     end
 
     def headers
-      {
+      headers = {
         'Authorization' => "AWS4-HMAC-SHA256 Credential=#{@access_key}/#{credential_scope}, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date;x-amz-target, Signature=#{aws_v4_signature}",
         'Content-Type' => 'application/x-amz-json-1.1',
         'Host' => host,
@@ -42,6 +42,8 @@ module Elasticity
         'X-Amz-Date' => @timestamp.strftime('%Y%m%dT%H%M%SZ'),
         'X-Amz-Target' => "ElasticMapReduce.#{@operation}",
       }
+      headers.merge!('X-Amz-Security-Token' => Elasticity.configuration.security_token) if Elasticity.configuration.security_token
+      headers
     end
 
     def url
