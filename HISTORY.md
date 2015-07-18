@@ -1,4 +1,4 @@
-## 6.0 - July XX, 2015 (IN DEVELOPMENT)
+## 6.0 - July 17, 2015
 
 Amazon is in the process of transitioning from the notion of "Job Flows" to "Clusters" and is updating their APIs as such.  You've already seen this in the EMR web UI as all mentions of "job flows" are gone and now you create "Clusters".
 
@@ -21,6 +21,7 @@ They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given th
 - [#102](https://github.com/rslifka/elasticity/issues/102) - Simplify interface to `AddJobFlowSteps`; no longer require extraneous `:steps => []`.
 - [#104](https://github.com/rslifka/elasticity/issues/104) - Expose return value from `AddJobFlowSteps`.
 - [#105](https://github.com/rslifka/elasticity/issues/105) - `JobFlow#status` has been removed in favour of `JobFlow#cluster_status` and `JobFlow#cluster_step_status`.
+- [#107](https://github.com/rslifka/elasticity/issues/107) - Add support for temporary credentials via `Elasticity.configure`.
 - [#109](https://github.com/rslifka/elasticity/issues/109) - Credential specification relocated to `Elasticity.configure`.
 
 ## 5.0.3 - July 8, 2015
