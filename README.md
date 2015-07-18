@@ -30,11 +30,14 @@ If you're familiar with the AWS EMR UI, you'll recall there are sample jobs Amaz
 ```ruby
 require 'elasticity'
 
-# Create a job flow with your AWS credentials
-jobflow = Elasticity::JobFlow.new('AWS access key', 'AWS secret key')
+# Specify your AWS credentials
+Elasticity.configure do |c|
+  c.access_key = ENV['AWS_ACCESS_KEY_ID']
+  c.secret_key = ENV['AWS_SECRET_ACCESS_KEY']
+end
 
-# Omit credentials to use the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables
-# jobflow = Elasticity::JobFlow.new
+# Create a job flow
+jobflow = Elasticity::JobFlow.new
 
 # NOTE: Amazon requires that all new accounts specify a VPC subnet when launching jobs.
 # If you're on an existing account, this is unnecessary however new AWS accounts require
@@ -44,7 +47,7 @@ jobflow = Elasticity::JobFlow.new('AWS access key', 'AWS secret key')
 # This is the first step in the jobflow - running a custom jar
 step = Elasticity::CustomJarStep.new('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar')
 
-# Here are the arguments to pass to the jar
+# Here are the arguments to pass to the jar (replace OUTPUT_BUCKET)
 step.arguments = %w(s3n://elasticmapreduce/samples/cloudburst/input/s_suis.br s3n://elasticmapreduce/samples/cloudburst/input/100k.br s3n://OUTPUT_BUCKET/cloudburst/output/2012-06-22 36 3 0 1 240 48 24 24 128 16)
 
 # Add the step to the jobflow
@@ -60,6 +63,7 @@ Note that this example is only for ```CustomJarStep```.  Other steps will have d
 
 Job flows are the center of the EMR universe.  The general order of operations is:
 
+  1. Specify AWS credentials
   1. Create a job flow.
   1. Specify options.
   1. (optional) Configure instance groups.
@@ -71,9 +75,16 @@ Job flows are the center of the EMR universe.  The general order of operations i
   1. (optional) Wait for the job flow to complete.
   1. (optional) Shutdown the job flow.
 
-## 1 - Create a Job Flow
+## 1 - Specify AWS Credentials
 
-Only your AWS credentials are needed.
+```ruby
+Elasticity.configure do |c|
+  c.access_key = ENV['AWS_ACCESS_KEY_ID']
+  c.secret_key = ENV['AWS_SECRET_ACCESS_KEY']
+end
+```
+
+## 2 - Create a Job Flow
 
 ```ruby
 # Manually specify AWS credentials
@@ -95,7 +106,7 @@ jobflow = Elasticity::JobFlow.from_jobflow_id(nil, nil, 'jobflow ID', 'region')
 
 This is useful if you'd like to attach to a running job flow and add more steps, etc.  The ```region``` parameter is necessary because job flows are only accessible from the the API when you connect to the same endpoint that created them (e.g. us-west-1).  If you don't specify the ```region``` parameter, us-east-1 is assumed.
 
-## 2 - Specifying Options
+## 3 - Specifying Options
 
 Configuration job flow options, shown below with default values.  Note that these defaults are subject to change - they are reasonable defaults at the time(s) I work on them (e.g. the latest version of Hadoop).
 
@@ -124,7 +135,7 @@ jobflow.master_instance_type              = 'm1.small'
 jobflow.slave_instance_type               = 'm1.small'
 ```
 
-## 3 - Configure Instance Groups (optional)
+## 4 - Configure Instance Groups (optional)
 
 Technically this is optional since Elasticity creates MASTER and CORE instance groups for you (one m1.small instance in each).  If you'd like your jobs to finish in an appreciable amount of time, you'll want to at least add a few instances to the CORE group :)
 
@@ -170,7 +181,7 @@ ig.set_spot_instances(0.25)         # Makes this a SPOT group with a $0.25 bid p
 jobflow.set_core_instance_group(ig)
 ```
 
-## 4 - Add Bootstrap Actions (optional)
+## 5 - Add Bootstrap Actions (optional)
 
 Bootstrap actions are run as part of setting up the job flow, so be sure to configure these before running the job.
 
@@ -206,7 +217,7 @@ action = Elasticity::HadoopFileBootstrapAction.new('s3n://my-bucket/job-config.x
 jobflow.add_bootstrap_action(action)
 ```
 
-## 5 - Add Steps (optional)
+## 6 - Add Steps (optional)
 
 Each type of step has ```#name``` and ```#action_on_failure``` fields that can be specified.  Apart from that, steps are configured differently - exhaustively described below.
 
@@ -308,7 +319,7 @@ copy_step.arguments = [...]
 jobflow.add_step(copy_step)
 ```
 
-## 6 - Upload Assets (optional)
+## 7 - Upload Assets (optional)
 
 This isn't part of ```JobFlow```; more of an aside.  Elasticity provides a very basic means of uploading assets to S3 so that your EMR job has access to them.  Most commonly this will be a set of resources to run the job (e.g. JAR files, streaming scripts, etc.) and a set of resources used by the job itself (e.g. a TSV file with a range of valid values, join tables, etc.).
 
@@ -332,7 +343,7 @@ If the bucket doesn't exist, it will be created.
 
 If a file already exists, there is an MD5 checksum evaluation.  If the checksums are the same, the file will be skipped.  Now you can use something like ```s3n://my-bucket/remote-dir/this-job/tables/join.tsv``` in your EMR jobs.
 
-## 7 - Run the Job Flow
+## 8 - Run the Job Flow
 
 Submit the job flow to Amazon, storing the ID of the running job flow.
 
@@ -340,11 +351,11 @@ Submit the job flow to Amazon, storing the ID of the running job flow.
 jobflow_id = jobflow.run
 ```
 
-## 8 - Add Additional Steps (optional)
+## 9 - Add Additional Steps (optional)
 
 Steps can be added to a running jobflow just by calling ```#add_step``` on the job flow exactly how you add them prior to submitting the job.
 
-## 9 - Wait For the Job Flow to Complete (optional)
+## 10 - Wait For the Job Flow to Complete (optional)
 
 Elasticity has the ability to block until the status of a job flow is not STARTING or RUNNING.  There are two flavours.  Without a status callback:
 
@@ -362,7 +373,7 @@ jobflow.wait_for_completion do |elapsed_time, job_flow_status|
 end
 ```
 
-## 10 - Shut Down the Job Flow (optional)
+## 11 - Shut Down the Job Flow (optional)
 
 By default, job flows are set to terminate when there are no more running steps.  You can tell the job flow to stay alive when it has nothing left to do:
 
@@ -378,10 +389,14 @@ jobflow.shutdown
 
 # Elasticity Configuration
 
-Elasticity supports a wide range of configuration options :) all of which are shown below.
+Elasticity supports a handful of configuration options, all of which are shown below.
 
 ```ruby
 Elasticity.configure do |config|
+
+  # AWS credentials
+  config.access_key = ENV['AWS_ACCESS_KEY_ID']
+  config.secret_key = ENV['AWS_SECRET_ACCESS_KEY']
 
   # If using Hive, it will be configured via the directives here
   config.hive_site = 's3://bucket/hive-site.xml'
