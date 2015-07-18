@@ -79,8 +79,9 @@ Job flows are the center of the EMR universe.  The general order of operations i
 
 ```ruby
 Elasticity.configure do |c|
-  c.access_key = ENV['AWS_ACCESS_KEY_ID']
-  c.secret_key = ENV['AWS_SECRET_ACCESS_KEY']
+  c.access_key = ENV['AWS_ACCESS_KEY_ID']      # required
+  c.secret_key = ENV['AWS_SECRET_ACCESS_KEY']  # required
+  c.security_token = ENV['AWS_SECURITY_TOKEN'] # optional, if you're using STS
 end
 ```
 
