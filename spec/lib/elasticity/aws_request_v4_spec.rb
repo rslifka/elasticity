@@ -2,6 +2,11 @@ describe Elasticity::AwsRequestV4 do
 
   before do
     Timecop.freeze(Time.at(1315611360))
+
+    Elasticity.configure do |c|
+      c.access_key = 'access'
+      c.secret_key = 'secret'
+    end
   end
 
   after do
@@ -10,9 +15,39 @@ describe Elasticity::AwsRequestV4 do
 
   subject do
     Elasticity::AwsRequestV4.new(
-      Elasticity::AwsSession.new('access', 'secret'),
+      Elasticity::AwsSession.new,
       {:operation => 'DescribeJobFlows', :job_flow_ids => ['TEST_JOBFLOW_ID']}
     )
+  end
+
+  describe '.initialize' do
+
+    describe 'access key' do
+      context 'when not provided' do
+        it 'should be an error' do
+          Elasticity.configure do |c|
+            c.access_key = nil
+          end
+          expect {
+            Elasticity::AwsRequestV4.new(nil, {})
+          }.to raise_error(ArgumentError, '.access_key must be set in the configuration block')
+        end
+      end
+    end
+
+    describe 'secret key' do
+      context 'when not provided' do
+        it 'should be an error' do
+          Elasticity.configure do |c|
+            c.secret_key = nil
+          end
+          expect {
+            Elasticity::AwsRequestV4.new(nil, {})
+          }.to raise_error(ArgumentError, '.secret_key must be set in the configuration block')
+        end
+      end
+    end
+
   end
 
   describe '#url' do

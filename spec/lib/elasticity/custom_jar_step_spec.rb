@@ -22,7 +22,7 @@ describe Elasticity::CustomJarStep do
       let(:cjs_with_no_args) { Elasticity::CustomJarStep.new('jar') }
 
       it 'should convert to aws step format' do
-        cjs_with_no_args.to_aws_step(Elasticity::JobFlow.new('access', 'secret')).should == {
+        cjs_with_no_args.to_aws_step(Elasticity::JobFlow.new).should == {
           :action_on_failure => 'TERMINATE_JOB_FLOW',
           :hadoop_jar_step => {
             :jar => 'jar'
@@ -40,7 +40,7 @@ describe Elasticity::CustomJarStep do
       end
 
       it 'should convert to aws step format' do
-        cjs_with_args.to_aws_step(Elasticity::JobFlow.new('access', 'secret')).should == {
+        cjs_with_args.to_aws_step(Elasticity::JobFlow.new).should == {
           :action_on_failure => 'TERMINATE_JOB_FLOW',
           :hadoop_jar_step => {
             :jar => 'jar',

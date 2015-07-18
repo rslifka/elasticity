@@ -55,6 +55,8 @@ module Elasticity
 
   class Configuration
     attr_accessor :hive_site
+    attr_accessor :access_key
+    attr_accessor :secret_key
   end
 
 end

@@ -18,7 +18,7 @@ describe Elasticity::PigStep do
   describe '#to_aws_step' do
 
     it 'should convert to aws step format' do
-      step = subject.to_aws_step(Elasticity::JobFlow.new('access', 'secret'))
+      step = subject.to_aws_step(Elasticity::JobFlow.new)
       step[:name].should == 'Elasticity Pig Step (script.pig)'
       step[:action_on_failure].should == 'TERMINATE_JOB_FLOW'
       step[:hadoop_jar_step][:jar].should == 's3://elasticmapreduce/libs/script-runner/script-runner.jar'
@@ -33,7 +33,7 @@ describe Elasticity::PigStep do
 
     describe 'E_PARALLELS' do
       it 'should include the correct value of E_PARALLELS' do
-        job_flow = Elasticity::JobFlow.new('access', 'secret')
+        job_flow = Elasticity::JobFlow.new
         job_flow.instance_count = 8
         {
           '_' => 7,
@@ -53,7 +53,7 @@ describe Elasticity::PigStep do
       let(:ps_with_no_variables) { Elasticity::PigStep.new('script.pig') }
 
       it 'should convert to aws step format' do
-        step = ps_with_no_variables.to_aws_step(Elasticity::JobFlow.new('access', 'secret'))
+        step = ps_with_no_variables.to_aws_step(Elasticity::JobFlow.new)
         step[:hadoop_jar_step][:args][5].should == 'script.pig'
       end
     end
@@ -69,7 +69,7 @@ describe Elasticity::PigStep do
       end
 
       it 'should convert to aws step format' do
-        step = ps_with_variables.to_aws_step(Elasticity::JobFlow.new('access', 'secret'))
+        step = ps_with_variables.to_aws_step(Elasticity::JobFlow.new)
         step[:hadoop_jar_step][:args][3..9].should == [
           '-p', 'VAR1=VALUE1',
           '-p', 'VAR2=VALUE2',

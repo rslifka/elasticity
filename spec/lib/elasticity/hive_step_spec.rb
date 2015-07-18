@@ -18,7 +18,7 @@ describe Elasticity::HiveStep do
   describe '#to_aws_step' do
 
     it 'should convert to aws step format' do
-      step = subject.to_aws_step(Elasticity::JobFlow.new('access', 'secret'))
+      step = subject.to_aws_step(Elasticity::JobFlow.new)
       step[:name].should == 'Elasticity Hive Step (script.hql)'
       step[:action_on_failure].should == 'TERMINATE_JOB_FLOW'
       step[:hadoop_jar_step][:jar].should == 's3://elasticmapreduce/libs/script-runner/script-runner.jar'
@@ -46,7 +46,7 @@ describe Elasticity::HiveStep do
       end
 
       it 'should convert to aws step format' do
-        step = hs_with_variables.to_aws_step(Elasticity::JobFlow.new('access', 'secret'))
+        step = hs_with_variables.to_aws_step(Elasticity::JobFlow.new)
         step[:hadoop_jar_step][:args][9..13].should == %w(-d VAR1=VALUE1 -d VAR2=VALUE2)
       end
     end

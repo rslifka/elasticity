@@ -21,7 +21,7 @@ describe Elasticity::StreamingStep do
   describe '#to_aws_step' do
 
     it 'should convert to aws step format' do
-      subject.to_aws_step(Elasticity::JobFlow.new('_', '_')).should == {
+      subject.to_aws_step(Elasticity::JobFlow.new).should == {
         :name => 'Elasticity Streaming Step',
         :action_on_failure => 'TERMINATE_JOB_FLOW',
         :hadoop_jar_step => {

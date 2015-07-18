@@ -7,15 +7,13 @@ module Elasticity
 
   class AwsSession
 
-    attr_reader :access_key
-    attr_reader :secret_key
     attr_reader :host
     attr_reader :region
 
     # Supported values for options:
     #  :region - AWS region (e.g. us-west-1)
     #  :secure - true or false, default true.
-    def initialize(access=nil, secret=nil, options={})
+    def initialize(options={})
       # There is a cryptic error if this isn't set
       if options.has_key?(:region) && options[:region] == nil
         raise MissingRegionError, 'A valid :region is required to connect to EMR'
@@ -23,8 +21,6 @@ module Elasticity
       options[:region] = 'us-east-1' unless options[:region]
       @region = options[:region]
 
-      @access_key = get_access_key(access)
-      @secret_key = get_secret_key(secret)
       @host = "elasticmapreduce.#@region.amazonaws.com"
     end
 
@@ -39,25 +35,11 @@ module Elasticity
 
     def ==(other)
       return false unless other.is_a? AwsSession
-      return false unless @access_key == other.access_key
-      return false unless @secret_key == other.secret_key
       return false unless @host == other.host
       true
     end
 
     private
-
-    def get_access_key(access)
-      return access if access
-      return ENV['AWS_ACCESS_KEY_ID'] if ENV['AWS_ACCESS_KEY_ID']
-      raise MissingKeyError, 'Please provide an access key or set AWS_ACCESS_KEY_ID.'
-    end
-
-    def get_secret_key(secret)
-      return secret if secret
-      return ENV['AWS_SECRET_ACCESS_KEY'] if ENV['AWS_SECRET_ACCESS_KEY']
-      raise MissingKeyError, 'Please provide a secret key or set AWS_SECRET_ACCESS_KEY.'
-    end
 
     # AWS error responses all follow the same form.  Extract the message from
     # the error document.

@@ -1,25 +1,20 @@
 describe Elasticity::EMR do
 
   subject do
-    Elasticity::EMR.new('ACCESS', 'SECRET')
+    Elasticity::EMR.new(:region => 'TEST_REGION')
   end
 
   describe '.initialize' do
 
     context 'when arguments are provided' do
       it 'should use the provided arguments' do
-        expect(subject.aws_request).to eq(Elasticity::AwsSession.new('ACCESS', 'SECRET', {}))
+        expect(subject.aws_request).to eq(Elasticity::AwsSession.new(:region => 'TEST_REGION'))
       end
     end
-
     context 'when arguments are not provided' do
-      before do
-        ENV.stub(:[]).with('AWS_ACCESS_KEY_ID').and_return('ENV_ACCESS')
-        ENV.stub(:[]).with('AWS_SECRET_ACCESS_KEY').and_return('ENV_SECRET')
-      end
       it 'should use environment variables' do
         emr = Elasticity::EMR.new
-        emr.aws_request.should == Elasticity::AwsSession.new('ENV_ACCESS', 'ENV_SECRET', {})
+        emr.aws_request.should == Elasticity::AwsSession.new({})
       end
     end
 
@@ -649,11 +644,10 @@ describe Elasticity::EMR do
   end
 
   describe '#==' do
-    let(:emr1) { Elasticity::EMR.new('ACCESS1', 'SECRET1') }
-    let(:emr2) { Elasticity::EMR.new('ACCESS2', 'SECRET2') }
+    let(:emr1) { Elasticity::EMR.new(:region => 'TEST_REGION1') }
 
     let(:same_object) { emr1 }
-    let(:same_values) { Elasticity::EMR.new('ACCESS1', 'SECRET1') }
+    let(:same_values) { Elasticity::EMR.new(:region => 'TEST_REGION1') }
     let(:diff_type) { Object.new }
 
     it 'should pass comparison checks' do

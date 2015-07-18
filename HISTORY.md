@@ -6,7 +6,7 @@ On the API side, all of the newer commands take `cluster_id` rather than `job_fl
 
 They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given the sweeping set of changes, a major release was deemed appropriate.
 
-- [#88](https://github.com/rslifka/elasticity/issues/88) - Removed support for deprecated `DescribeJobFlows`.
+- [#88](https://github.com/rslifka/elasticity/issues/88) - Removed support for deprecated `DescribeJobFlows`. 
 - [#89](https://github.com/rslifka/elasticity/issues/89) - Add support for `AddTags`.
 - [#90](https://github.com/rslifka/elasticity/issues/90) - Add support for `RemoveTags`.
 - [#91](https://github.com/rslifka/elasticity/issues/91) - Add support for `SetVisibleToAllUsers`.
@@ -21,6 +21,7 @@ They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given th
 - [#102](https://github.com/rslifka/elasticity/issues/102) - Simplify interface to `AddJobFlowSteps`; no longer require extraneous `:steps => []`.
 - [#104](https://github.com/rslifka/elasticity/issues/104) - Expose return value from `AddJobFlowSteps`.
 - [#105](https://github.com/rslifka/elasticity/issues/105) - `JobFlow#status` has been removed in favour of `JobFlow#cluster_status` and `JobFlow#cluster_step_status`.
+- [#109](https://github.com/rslifka/elasticity/issues/109) - Credential specification relocated to `Elasticity.configure`.
 
 ## 5.0.3 - July 8, 2015
 

@@ -20,11 +20,21 @@ module Elasticity
       @ruby_service_hash.delete(:operation)
 
       @timestamp = Time.now.utc
+
+      @access_key = Elasticity.configuration.access_key
+      if @access_key == nil
+        raise ArgumentError, '.access_key must be set in the configuration block'
+      end
+
+      @secret_key = Elasticity.configuration.secret_key
+      if @secret_key == nil
+        raise ArgumentError, '.secret_key must be set in the configuration block'
+      end
     end
 
     def headers
       {
-        'Authorization' => "AWS4-HMAC-SHA256 Credential=#{@aws_session.access_key}/#{credential_scope}, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date;x-amz-target, Signature=#{aws_v4_signature}",
+        'Authorization' => "AWS4-HMAC-SHA256 Credential=#{@access_key}/#{credential_scope}, SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date;x-amz-target, Signature=#{aws_v4_signature}",
         'Content-Type' => 'application/x-amz-json-1.1',
         'Host' => host,
         'User-Agent' => "elasticity/#{Elasticity::VERSION}",
@@ -85,7 +95,7 @@ module Elasticity
     # Task 3: Calculate the AWS Signature Version 4
     #   http://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
     def aws_v4_signature
-      date = OpenSSL::HMAC.digest('sha256', 'AWS4' + @aws_session.secret_key, @timestamp.strftime('%Y%m%d'))
+      date = OpenSSL::HMAC.digest('sha256', 'AWS4' + @secret_key, @timestamp.strftime('%Y%m%d'))
       region = OpenSSL::HMAC.digest('sha256', date, @aws_session.region)
       service = OpenSSL::HMAC.digest('sha256', region, SERVICE_NAME)
       signing_key = OpenSSL::HMAC.digest('sha256', service, 'aws4_request')

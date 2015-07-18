@@ -3,7 +3,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
   let(:emr) { double('Elasticity::EMR') }
 
   before do
-    Elasticity::EMR.should_receive(:new).with('access', 'secret', :region => 'us-west-1').and_return(emr)
+    Elasticity::EMR.should_receive(:new).with(:region => 'us-west-1').and_return(emr)
   end
 
   describe 'Hive' do
@@ -16,7 +16,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
     end
 
     let(:hive_jobflow) do
-      Elasticity::JobFlow.new('access', 'secret').tap do |jf|
+      Elasticity::JobFlow.new.tap do |jf|
         jf.placement = 'us-west-1a'
         jf.log_uri = 's3n://slif-test/output/logs'
         jf.add_step(hive_step)
@@ -101,7 +101,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
     end
 
     let(:pig_jobflow) do
-      Elasticity::JobFlow.new('access', 'secret').tap do |jf|
+      Elasticity::JobFlow.new.tap do |jf|
         jf.placement = 'us-west-1c'
         jf.instance_count = 8
         jf.slave_instance_type = 'm1.xlarge'
@@ -189,7 +189,7 @@ describe 'Elasticity::JobFlow Integration Examples' do
     end
 
     let(:custom_jar_jobflow) do
-      Elasticity::JobFlow.new('access', 'secret').tap do |jf|
+      Elasticity::JobFlow.new.tap do |jf|
         jf.placement = 'us-west-1b'
         jf.log_uri = 's3n://slif-test/output/logs'
         jf.add_step(custom_jar_step)

@@ -1,7 +1,7 @@
 describe Elasticity::JobFlow do
 
   subject do
-    Elasticity::JobFlow.new('access', 'secret')
+    Elasticity::JobFlow.new
   end
 
   describe '.initialize' do
@@ -22,23 +22,9 @@ describe Elasticity::JobFlow do
       expect(subject.enable_debugging).to eql(false)
       expect(subject.job_flow_role).to eql(nil)
       expect(subject.service_role).to eql(nil)
-      expect(subject.access_key).to eql('access')
-      expect(subject.secret_key).to eql('secret')
     end
   end
-
-  describe '.initialize' do
-    it 'should set the access and secret keys to nil by default' do
-      Elasticity::JobFlow.new.tap do |j|
-        j.access_key.should == nil
-        j.secret_key.should == nil
-      end
-      Elasticity::JobFlow.new('_') do |j|
-        j.secret_key.should == nil
-      end
-    end
-  end
-
+  
   describe '#placement=' do
 
     context 'when the placement is set' do
@@ -216,7 +202,7 @@ describe Elasticity::JobFlow do
       let(:emr) { double('Elasticity::EMR', :run_job_flow => 'RUNNING_JOBFLOW_ID') }
 
       let(:running_jobflow) do
-        Elasticity::JobFlow.new('access', 'secret').tap do |jf|
+        Elasticity::JobFlow.new.tap do |jf|
           jf.add_step(Elasticity::PigStep.new('_'))
         end
       end
@@ -283,7 +269,7 @@ describe Elasticity::JobFlow do
 
       let(:jobflow_steps) { [Elasticity::HiveStep.new('script.hql'), Elasticity::PigStep.new('script.pig'), Elasticity::CustomJarStep.new('script.jar')] }
       let(:jobflow_with_steps) do
-        Elasticity::JobFlow.new('_', '_').tap do |jobflow|
+        Elasticity::JobFlow.new.tap do |jobflow|
           jobflow_steps.each { |s| jobflow.add_step(s) }
         end
       end
@@ -328,7 +314,7 @@ describe Elasticity::JobFlow do
 
       context 'when a log URI is specified' do
         let(:jobflow_with_log_uri) do
-          Elasticity::JobFlow.new('_', '_').tap do |jf|
+          Elasticity::JobFlow.new.tap do |jf|
             jf.log_uri = 'LOG_URI'
           end
         end
@@ -339,7 +325,7 @@ describe Elasticity::JobFlow do
 
       context 'when a log URI is not specified' do
         let(:jobflow_with_no_log_uri) do
-          Elasticity::JobFlow.new('_', '_').tap do |jf|
+          Elasticity::JobFlow.new.tap do |jf|
             jf.log_uri = nil
           end
         end
@@ -354,7 +340,7 @@ describe Elasticity::JobFlow do
 
       context 'when a job flow role is specified' do
         let(:jobflow_with_job_flow_role) do
-          Elasticity::JobFlow.new('_', '_').tap do |jf|
+          Elasticity::JobFlow.new.tap do |jf|
             jf.job_flow_role = 'JOB_FLOW_ROLE'
           end
         end
@@ -365,7 +351,7 @@ describe Elasticity::JobFlow do
 
       context 'when a job flow role is not specified' do
         let(:jobflow_with_no_job_flow_role) do
-          Elasticity::JobFlow.new('_', '_').tap do |jf|
+          Elasticity::JobFlow.new.tap do |jf|
             jf.job_flow_role = nil
           end
         end
@@ -380,7 +366,7 @@ describe Elasticity::JobFlow do
 
       context 'when a service role is specified' do
         let(:jobflow_with_service_role) do
-          Elasticity::JobFlow.new('_', '_').tap do |jf|
+          Elasticity::JobFlow.new.tap do |jf|
             jf.service_role = 'SERVICE_ROLE'
           end
         end
@@ -391,7 +377,7 @@ describe Elasticity::JobFlow do
 
       context 'when a service role is not specified' do
         let(:jobflow_with_no_service_role) do
-          Elasticity::JobFlow.new('_', '_').tap do |jf|
+          Elasticity::JobFlow.new.tap do |jf|
             jf.service_role = nil
           end
         end
@@ -413,7 +399,7 @@ describe Elasticity::JobFlow do
           ]
         end
         let(:jobflow_with_bootstrap_actions) do
-          Elasticity::JobFlow.new('_', '_').tap do |jf|
+          Elasticity::JobFlow.new.tap do |jf|
             hadoop_bootstrap_actions.each do |action|
               jf.add_bootstrap_action(action)
             end
@@ -547,7 +533,7 @@ describe Elasticity::JobFlow do
 
     context 'when there are steps added' do
       let(:jobflow_with_steps) do
-        Elasticity::JobFlow.new('STEP_TEST_ACCESS', 'STEP_TEST_SECRET').tap do |jf|
+        Elasticity::JobFlow.new.tap do |jf|
           jf.add_step(Elasticity::CustomJarStep.new('_'))
         end
       end
@@ -556,7 +542,7 @@ describe Elasticity::JobFlow do
         let(:emr) { double('Elasticity::EMR', :run_job_flow => 'JOBFLOW_ID') }
 
         it 'should run the job with the supplied EMR credentials' do
-          Elasticity::EMR.stub(:new).with('STEP_TEST_ACCESS', 'STEP_TEST_SECRET', :region => 'us-east-1').and_return(emr)
+          Elasticity::EMR.stub(:new).with(:region => 'us-east-1').and_return(emr)
           emr.should_receive(:run_job_flow)
           jobflow_with_steps.run
         end
@@ -603,7 +589,7 @@ describe Elasticity::JobFlow do
 
     context 'after the jobflow has been run' do
       let(:emr) { double('Elasticity::EMR', :run_job_flow => 'JOBFLOW_ID') }
-      let(:running_jobflow) { Elasticity::JobFlow.new('_', '_') }
+      let(:running_jobflow) { Elasticity::JobFlow.new }
       let(:aws_cluster_status) { JSON.parse('{ "Cluster": { "Status": { "State": "TERMINATED" } } }') }
 
       before do
@@ -636,7 +622,7 @@ describe Elasticity::JobFlow do
 
     context 'after the jobflow has been run' do
       let(:emr) { double('Elasticity::EMR', :run_job_flow => 'JOBFLOW_ID') }
-      let(:running_jobflow) { Elasticity::JobFlow.new('_', '_') }
+      let(:running_jobflow) { Elasticity::JobFlow.new }
 
       before do
         Elasticity::EMR.stub(:new).and_return(emr)
@@ -661,7 +647,7 @@ describe Elasticity::JobFlow do
   describe '#shutdown' do
 
     context 'when the jobflow has not yet been started' do
-      let(:unstarted_job_flow) { Elasticity::JobFlow.new('_', '_') }
+      let(:unstarted_job_flow) { Elasticity::JobFlow.new }
       it 'should be an error' do
         expect {
           unstarted_job_flow.shutdown
@@ -671,7 +657,7 @@ describe Elasticity::JobFlow do
 
     context 'when the jobflow has been started' do
       let(:emr) { double('Elasticity::EMR', :run_job_flow => 'JOBFLOW_ID') }
-      let(:running_jobflow) { Elasticity::JobFlow.new('_', '_') }
+      let(:running_jobflow) { Elasticity::JobFlow.new }
       before do
         Elasticity::EMR.stub(:new).and_return(emr)
         running_jobflow.add_step(Elasticity::CustomJarStep.new('_'))
@@ -726,21 +712,21 @@ describe Elasticity::JobFlow do
       Elasticity::JobFlow.any_instance.stub(:cluster_step_status).and_return([])
     end
 
-    let(:jobflow) { Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', 'JOBFLOW_ID') }
+    let(:jobflow) { Elasticity::JobFlow.from_jobflow_id('JOBFLOW_ID') }
 
     describe 'creating a jobflow with the specified credentials' do
 
       context 'when the region is not specified' do
         it 'should use the default of us-east-1a' do
-          j = Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', '_')
-          j.send(:emr).should == Elasticity::EMR.new('ACCESS', 'SECRET', :region => 'us-east-1')
+          j = Elasticity::JobFlow.from_jobflow_id('_')
+          j.send(:emr).should == Elasticity::EMR.new(:region => 'us-east-1')
         end
       end
 
       context 'when the region is specified' do
         it 'should use the specified region' do
-          j = Elasticity::JobFlow.from_jobflow_id('ACCESS', 'SECRET', '_', 'us-west-1')
-          j.send(:emr).should == Elasticity::EMR.new('ACCESS', 'SECRET', :region => 'us-west-1')
+          j = Elasticity::JobFlow.from_jobflow_id('_', 'us-west-1')
+          j.send(:emr).should == Elasticity::EMR.new(:region => 'us-west-1')
         end
       end
 

@@ -25,10 +25,7 @@ module Elasticity
     attr_accessor :job_flow_role
     attr_accessor :service_role
 
-    attr_reader :access_key
-    attr_reader :secret_key
-
-    def initialize(access=nil, secret=nil)
+    def initialize
       @action_on_failure = 'TERMINATE_JOB_FLOW'
       @name = 'Elasticity Job Flow'
       @ami_version = 'latest'
@@ -36,8 +33,6 @@ module Elasticity
       self.placement = 'us-east-1a'
       @enable_debugging = false
 
-      @access_key = access
-      @secret_key = secret
       @visible_to_all_users = false
 
       @bootstrap_actions = []
@@ -50,13 +45,10 @@ module Elasticity
       @instance_count = 2
       @master_instance_type = 'm1.small'
       @slave_instance_type = 'm1.small'
-
-      @access_key = access
-      @secret_key = secret
     end
 
-    def self.from_jobflow_id(access, secret, jobflow_id, region = 'us-east-1')
-      JobFlow.new(access, secret).tap do |j|
+    def self.from_jobflow_id(jobflow_id, region = 'us-east-1')
+      JobFlow.new.tap do |j|
         j.instance_variable_set(:@region, region)
         j.instance_variable_set(:@jobflow_id, jobflow_id)
         j.instance_variable_set(:@installed_steps, ClusterStepStatus.installed_steps(j.cluster_step_status))
@@ -181,7 +173,7 @@ module Elasticity
     end
 
     def emr
-      @emr ||= Elasticity::EMR.new(@access_key, @secret_key, :region => @region)
+      @emr ||= Elasticity::EMR.new(:region => @region)
     end
 
     def is_jobflow_running?
