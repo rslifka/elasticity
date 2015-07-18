@@ -20,6 +20,7 @@ They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given th
 - [#101](https://github.com/rslifka/elasticity/issues/101) - Fix plurality of `TerminateJobFlows`; now requires an array of IDs to terminate.
 - [#102](https://github.com/rslifka/elasticity/issues/102) - Simplify interface to `AddJobFlowSteps`; no longer require extraneous `:steps => []`.
 - [#104](https://github.com/rslifka/elasticity/issues/104) - Expose return value from `AddJobFlowSteps`.
+- [#105](https://github.com/rslifka/elasticity/issues/105) - `JobFlow#status` has been removed in favour of `JobFlow#cluster_status` and `JobFlow#cluster_step_status`.
 - [#108](https://github.com/rslifka/elasticity/issues/108) - `JobFlow#status` => `JobFlow#cluster_status`.
 
 ## 5.0.3 - July 8, 2015
