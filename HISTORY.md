@@ -1,3 +1,7 @@
+## 6.0.1 - July 19, 2015
+
+- Including PR [#110](https://github.com/rslifka/elasticity/pull/110) - "Send bid price as string to aws api".  Thank you [@robert2d](https://github.com/robert2d)!
+
 ## 6.0 - July 17, 2015
 
 Amazon is in the process of transitioning from the notion of "Job Flows" to "Clusters" and is updating their APIs as such.  You've already seen this in the EMR web UI as all mentions of "job flows" are gone and now you create "Clusters".
