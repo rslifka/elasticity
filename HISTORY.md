@@ -1,3 +1,10 @@
+## 6.0.2 - July 20, 2015
+
+- Including PR [#111](https://github.com/rslifka/elasticity/pull/111) - "Handle steps status that hasn't run yet".  Thank you [@robert2d](https://github.com/robert2d)!
+- Including PR [#112](https://github.com/rslifka/elasticity/pull/112) - "Parse Dates when step/cluster still starting".  Thank you [@robert2d](https://github.com/robert2d)!
+- Including PR [#113](https://github.com/rslifka/elasticity/pull/113) - "Add job flow steps remove extra steps key".  Thank you [@robert2d](https://github.com/robert2d)!
+- Including PR [#114](https://github.com/rslifka/elasticity/pull/114) - "Allow tags to be set on runJobFlow".  Thank you [@robert2d](https://github.com/robert2d)!
+
 ## 6.0.1 - July 19, 2015
 
 - Including PR [#110](https://github.com/rslifka/elasticity/pull/110) - "Send bid price as string to aws api".  Thank you [@robert2d](https://github.com/robert2d)!
