@@ -119,6 +119,7 @@ jobflow.ami_version                       = 'latest'
 jobflow.log_uri                           = nil
 jobflow.enable_debugging                  = false # Requires a log_uri to enable
 
+jobflow.tags                              = {name: "app-name", department: 'marketing'}
 jobflow.ec2_key_name                      = nil
 jobflow.visible_to_all_users              = false
 jobflow.placement                         = 'us-east-1a'
