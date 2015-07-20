@@ -74,8 +74,8 @@ describe Elasticity::InstanceGroup do
 
     it 'should set the type and price' do
       subject.set_spot_instances(0.25)
-      subject.market.should == 'SPOT'
-      subject.bid_price.should == 0.25
+      expect(subject.market).to eq('SPOT')
+      expect(subject.bid_price).to eq('0.25')
     end
 
     context 'when the price is <= 0' do
@@ -131,7 +131,7 @@ describe Elasticity::InstanceGroup do
       it 'should generate an AWS config' do
         on_demand_instance_group.to_aws_instance_config.should == {
           :market => 'SPOT',
-          :bid_price => 0.25,
+          :bid_price => '0.25',
           :instance_count => 5,
           :instance_type => 'c1.medium',
           :instance_role => 'CORE',
