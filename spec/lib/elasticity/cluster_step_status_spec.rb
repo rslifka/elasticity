@@ -1,5 +1,15 @@
 describe Elasticity::ClusterStepStatus do
 
+  let(:timeline) do
+    <<-JSON
+      {
+        "CreationDateTime": 1436788464.416,
+        "StartDateTime": 1436788841.237,
+        "EndDateTime": 1436790944.162
+      }
+    JSON
+  end
+
   let(:aws_cluster_steps) do
     <<-JSON
       {
@@ -27,11 +37,7 @@ describe Elasticity::ClusterStepStatus do
                         "Code": "ALL_STEPS_COMPLETED",
                         "Message": "Steps completed"
                       },
-                      "Timeline": {
-                          "CreationDateTime": 1436788464.416,
-                          "EndDateTime": 1436790944.162,
-                          "StartDateTime": 1436788841.237
-                      }
+                      "Timeline": #{timeline}
                   }
               }
           ]
@@ -61,6 +67,22 @@ describe Elasticity::ClusterStepStatus do
       expect(status.created_at).to eql(Time.at(1436788464.416))
       expect(status.started_at).to eql(Time.at(1436788841.237))
       expect(status.ended_at).to eql(Time.at(1436790944.162))
+    end
+
+    context 'newly created step that hasn\'t started yet' do
+      let(:timeline) do
+        <<-JSON
+          {
+            "CreationDateTime": 1436788464.416
+          }
+        JSON
+      end
+
+      it 'sets started_at and ended_at to nil' do
+        status = cluster_step_statuses[0]
+        expect(status.started_at).not_to be
+        expect(status.ended_at).not_to be
+      end
     end
   end
 
