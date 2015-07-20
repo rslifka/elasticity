@@ -24,7 +24,7 @@ describe Elasticity::JobFlow do
       expect(subject.service_role).to eql(nil)
     end
   end
-  
+
   describe '#placement=' do
 
     context 'when the placement is set' do
@@ -218,9 +218,7 @@ describe Elasticity::JobFlow do
           let(:additional_step) { Elasticity::PigStep.new('_') }
 
           it 'should submit the step' do
-            emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', {
-                :steps => [additional_step.to_aws_step(running_jobflow)]
-              })
+            emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', [additional_step.to_aws_step(running_jobflow)])
             running_jobflow.add_step(additional_step)
           end
         end
@@ -229,9 +227,7 @@ describe Elasticity::JobFlow do
           let(:additional_step) { Elasticity::HiveStep.new('_') }
 
           it 'should submit the installation step and the step' do
-            emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', {
-                :steps => Elasticity::HiveStep.aws_installation_steps << additional_step.to_aws_step(running_jobflow)
-              })
+            emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', Elasticity::HiveStep.aws_installation_steps << additional_step.to_aws_step(running_jobflow))
             running_jobflow.add_step(additional_step)
           end
         end
@@ -243,9 +239,7 @@ describe Elasticity::JobFlow do
         let(:additional_step) { Elasticity::CustomJarStep.new('jar') }
 
         it 'should submit the step' do
-          emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', {
-              :steps => [additional_step.to_aws_step(running_jobflow)]
-            })
+          emr.should_receive(:add_jobflow_steps).with('RUNNING_JOBFLOW_ID', [additional_step.to_aws_step(running_jobflow)])
           running_jobflow.add_step(additional_step)
         end
 
@@ -331,6 +325,45 @@ describe Elasticity::JobFlow do
         end
         it 'should not make space for it in the jobflow config' do
           jobflow_with_no_log_uri.send(:jobflow_config).should_not have_key(:log_uri)
+        end
+      end
+
+    end
+
+    describe 'tags' do
+
+      context 'when a tag is specified' do
+        let(:jobflow_with_tags) do
+          Elasticity::JobFlow.new.tap do |jf|
+            jf.tags = {
+              name: 'app-name',
+              contact: 'admin@example.com'
+            }
+          end
+        end
+        it 'should incorporate it into the jobflow config' do
+          jobflow_with_tags.send(:jobflow_config).should be_a_hash_including(
+            tags: [
+              {
+                key: 'name',
+                value: 'app-name'
+              }, {
+                key: 'contact',
+                value: 'admin@example.com'
+              }
+            ]
+          )
+        end
+      end
+
+      context 'when a tag is not specified' do
+        let(:jobflow_with_no_tags) do
+          Elasticity::JobFlow.new.tap do |jf|
+            jf.tags = nil
+          end
+        end
+        it 'should not make space for it in the jobflow config' do
+          jobflow_with_no_tags.send(:jobflow_config).should_not have_key(:tags)
         end
       end
 
