@@ -40,7 +40,7 @@ module Elasticity
       if bid_price < 0
         raise ArgumentError, "The bid price for spot instances should be greater than 0 (#{bid_price} requested)"
       end
-      @bid_price = bid_price
+      @bid_price = "#{bid_price}"
       @market = 'SPOT'
     end
 
