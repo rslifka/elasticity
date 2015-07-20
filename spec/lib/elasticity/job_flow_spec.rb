@@ -336,6 +336,45 @@ describe Elasticity::JobFlow do
 
     end
 
+    describe 'tags' do
+
+      context 'when a tag is specified' do
+        let(:jobflow_with_tags) do
+          Elasticity::JobFlow.new.tap do |jf|
+            jf.tags = {
+              name: 'app-name',
+              contact: 'admin@example.com'
+            }
+          end
+        end
+        it 'should incorporate it into the jobflow config' do
+          jobflow_with_tags.send(:jobflow_config).should be_a_hash_including(
+            tags: [
+              {
+                key: 'name',
+                value: 'app-name'
+              }, {
+                key: 'contact',
+                value: 'admin@example.com'
+              }
+            ]
+          )
+        end
+      end
+
+      context 'when a tag is not specified' do
+        let(:jobflow_with_no_tags) do
+          Elasticity::JobFlow.new.tap do |jf|
+            jf.tags = nil
+          end
+        end
+        it 'should not make space for it in the jobflow config' do
+          jobflow_with_no_tags.send(:jobflow_config).should_not have_key(:tags)
+        end
+      end
+
+    end
+
     describe 'job flow role' do
 
       context 'when a job flow role is specified' do

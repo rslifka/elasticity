@@ -13,6 +13,7 @@ module Elasticity
     attr_accessor :name
     attr_accessor :instance_count
     attr_accessor :log_uri
+    attr_accessor :tags
     attr_accessor :master_instance_type
     attr_accessor :slave_instance_type
     attr_accessor :ami_version
@@ -186,10 +187,20 @@ module Elasticity
       steps.insert(0, Elasticity::SetupHadoopDebuggingStep.new.to_aws_step(self)) if @enable_debugging
       config[:steps] = steps
       config[:log_uri] = @log_uri if @log_uri
+      config[:tags] = jobflow_tags if @tags
       config[:job_flow_role] = @job_flow_role if @job_flow_role
       config[:service_role] = @service_role if @service_role
       config[:bootstrap_actions] = @bootstrap_actions.map{|a| a.to_aws_bootstrap_action} unless @bootstrap_actions.empty?
       config
+    end
+
+    def jobflow_tags
+      @tags.map do |key, value|
+        {
+          key: key.to_s,
+          value: value
+        }
+      end
     end
 
     def jobflow_preamble
