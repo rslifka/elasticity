@@ -126,7 +126,7 @@ module Elasticity
           jobflow_steps.concat(jobflow_step.aws_installation_steps)
         end
         jobflow_steps << jobflow_step.to_aws_step(self)
-        emr.add_jobflow_steps(@jobflow_id, {:steps => jobflow_steps})
+        emr.add_jobflow_steps(@jobflow_id, jobflow_steps)
       else
         @jobflow_steps << jobflow_step
       end
