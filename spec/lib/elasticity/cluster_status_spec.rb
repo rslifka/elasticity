@@ -1,6 +1,16 @@
 describe Elasticity::ClusterStatus do
 
   let(:cluster_state) { 'TERMINATED' }
+  let(:timeline) do
+    <<-JSON
+      {
+        "CreationDateTime": 1436788464.415,
+        "EndDateTime": 1436791032.097,
+        "ReadyDateTime": 1436788842.195
+      }
+    JSON
+  end
+
   let(:aws_cluster_status) do
     <<-JSON
       {
@@ -32,11 +42,7 @@ describe Elasticity::ClusterStatus do
               "Code": "ALL_STEPS_COMPLETED",
               "Message": "Steps completed"
             },
-            "Timeline": {
-              "CreationDateTime": 1436788464.415,
-              "EndDateTime": 1436791032.097,
-              "ReadyDateTime": 1436788842.195
-            }
+            "Timeline": #{timeline}
           },
           "Tags": [
             {
@@ -66,6 +72,21 @@ describe Elasticity::ClusterStatus do
       expect(subject.last_state_change_reason).to eql('ALL_STEPS_COMPLETED')
       expect(subject.master_public_dns_name).to eql('ec2-54-81-173-103.compute-1.amazonaws.com')
       expect(subject.normalized_instance_hours).to eql(2)
+    end
+
+    context 'when cluster is brand new' do
+      let(:timeline) do
+        <<-JSON
+          {
+            "CreationDateTime": 1436788464.415
+          }
+        JSON
+      end
+
+      it 'defaults ready_at and ended_at correctly' do
+        expect(subject.ready_at).not_to be
+        expect(subject.ended_at).not_to be
+      end
     end
   end
 
