@@ -31,8 +31,8 @@ module Elasticity
           c.state_change_reason = s['Status']['StateChangeReason']['Code']
           c.state_change_reason_message = s['Status']['StateChangeReason']['Message']
           c.created_at = Time.at(s['Status']['Timeline']['CreationDateTime'])
-          c.started_at = Time.at(s['Status']['Timeline']['StartDateTime'])
-          c.ended_at   = Time.at(s['Status']['Timeline']['EndDateTime'])
+          c.started_at = s['Status']['Timeline']['StartDateTime'] ? Time.at(s['Status']['Timeline']['StartDateTime']) : nil
+          c.ended_at   = s['Status']['Timeline']['EndDateTime'] ? Time.at(s['Status']['Timeline']['EndDateTime']) : nil
         end
       end
     end

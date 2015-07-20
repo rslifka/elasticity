@@ -20,8 +20,8 @@ module Elasticity
         c.cluster_id = cluster_data['Id']
         c.state = cluster_data['Status']['State']
         c.created_at = Time.at(cluster_data['Status']['Timeline']['CreationDateTime'])
-        c.ready_at = Time.at(cluster_data['Status']['Timeline']['ReadyDateTime'])
-        c.ended_at = Time.at(cluster_data['Status']['Timeline']['EndDateTime'])
+        c.ready_at = cluster_data['Status']['Timeline']['ReadyDateTime'] ? Time.at(cluster_data['Status']['Timeline']['ReadyDateTime']) : nil
+        c.ended_at = cluster_data['Status']['Timeline']['EndDateTime'] ? Time.at(cluster_data['Status']['Timeline']['EndDateTime']) : nil
         c.last_state_change_reason = cluster_data['Status']['StateChangeReason']['Code']
         c.master_public_dns_name = cluster_data['MasterPublicDnsName']
         c.normalized_instance_hours = cluster_data['NormalizedInstanceHours']
