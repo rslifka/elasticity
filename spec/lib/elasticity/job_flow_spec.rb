@@ -22,6 +22,7 @@ describe Elasticity::JobFlow do
       expect(subject.enable_debugging).to eql(false)
       expect(subject.job_flow_role).to eql(nil)
       expect(subject.service_role).to eql(nil)
+      expect(subject.jobflow_id).to eql(nil)
     end
   end
 
@@ -589,7 +590,8 @@ describe Elasticity::JobFlow do
 
         it 'should return the jobflow ID' do
           Elasticity::EMR.stub(:new).and_return(emr)
-          jobflow_with_steps.run.should == 'JOBFLOW_ID'
+          expect(jobflow_with_steps.run).to eq('JOBFLOW_ID')
+          expect(jobflow_with_steps.jobflow_id).to eq('JOBFLOW_ID')
         end
 
       end
