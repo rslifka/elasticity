@@ -25,6 +25,7 @@ module Elasticity
     attr_accessor :enable_debugging
     attr_accessor :job_flow_role
     attr_accessor :service_role
+    attr_accessor :jobflow_id
 
     def initialize
       @action_on_failure = 'TERMINATE_JOB_FLOW'
