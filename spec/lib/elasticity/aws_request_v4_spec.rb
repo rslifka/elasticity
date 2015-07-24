@@ -123,7 +123,7 @@ describe Elasticity::AwsRequestV4 do
 
   describe '.aws_v4_signature' do
     it 'should create the proper signature' do
-      subject.send(:aws_v4_signature).should == '05d406786907e37181060b8c744b5aea8451a7da93f20cacb6c6fd846cfcfa5d'
+      subject.send(:aws_v4_signature).should == 'a88225e952766aa7e9050ef7615db710e1c8f18e5af873392fd0493899c37a30'
     end
   end
 

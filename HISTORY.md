@@ -1,3 +1,7 @@
+## 6.0.3 - July 24, 2015
+
+- Including PR [#116](https://github.com/rslifka/elasticity/pull/116) - "Allow jobflow_id to be accessed after run".  Thank you [@robert2d](https://github.com/robert2d)!
+
 ## 6.0.2 - July 20, 2015
 
 - Including PR [#111](https://github.com/rslifka/elasticity/pull/111) - "Handle steps status that hasn't run yet".  Thank you [@robert2d](https://github.com/robert2d)!
