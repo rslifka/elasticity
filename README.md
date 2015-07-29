@@ -391,6 +391,9 @@ Elasticity.configure do |config|
   # AWS credentials
   config.access_key = ENV['AWS_ACCESS_KEY_ID']
   config.secret_key = ENV['AWS_SECRET_ACCESS_KEY']
+  
+  # if you use federated Identity Management
+  #config.security_token  = ENV['AWS_SECURITY_TOKEN']
 
   # If using Hive, it will be configured via the directives here
   config.hive_site = 's3://bucket/hive-site.xml'
