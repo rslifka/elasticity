@@ -1,3 +1,7 @@
+## 6.0.4 - August 3, 2015
+
+- Including PR [#118](https://github.com/rslifka/elasticity/pull/118) - "jobflow ids must be passed as an array to AWS".  Thank you [@robert2d](https://github.com/robert2d)!
+
 ## 6.0.3 - July 24, 2015
 
 - Including PR [#116](https://github.com/rslifka/elasticity/pull/116) - "Allow jobflow_id to be accessed after run".  Thank you [@robert2d](https://github.com/robert2d)!
