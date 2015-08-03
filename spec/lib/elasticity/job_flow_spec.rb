@@ -699,7 +699,7 @@ describe Elasticity::JobFlow do
         running_jobflow.run
       end
       it 'should shutdown the running jobflow' do
-        emr.should_receive(:terminate_jobflows).with('JOBFLOW_ID')
+        emr.should_receive(:terminate_jobflows).with(['JOBFLOW_ID'])
         running_jobflow.shutdown
       end
     end
