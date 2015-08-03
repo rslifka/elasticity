@@ -145,7 +145,7 @@ module Elasticity
       if !is_jobflow_running?
         raise JobFlowNotStartedError, 'Cannot #shutdown a job flow that has not yet been #run.'
       end
-      emr.terminate_jobflows(@jobflow_id)
+      emr.terminate_jobflows([@jobflow_id])
     end
 
     def cluster_status
