@@ -26,6 +26,7 @@ module Elasticity
     attr_accessor :job_flow_role
     attr_accessor :service_role
     attr_accessor :jobflow_id
+    attr_accessor :aws_applications
 
     def initialize
       @action_on_failure = 'TERMINATE_JOB_FLOW'
@@ -38,6 +39,7 @@ module Elasticity
       @visible_to_all_users = false
 
       @bootstrap_actions = []
+      @aws_applications = []
       @jobflow_steps = []
       @installed_steps = []
 
@@ -104,6 +106,13 @@ module Elasticity
         raise JobFlowRunningError, 'To modify bootstrap actions, please create a new job flow.'
       end
       @bootstrap_actions << bootstrap_action
+    end
+
+    def add_application(application)
+      raise JobFlowRunningError, 'To add applications, please create a new job flow.' if is_jobflow_running?
+      application = Application.new(name: application) if application.is_a?(String)
+      fail "application is not an Elasticity::Application" unless application.is_a?(Application)
+      @aws_applications << application
     end
 
     def set_master_instance_group(instance_group)
@@ -191,8 +200,13 @@ module Elasticity
       config[:tags] = jobflow_tags if @tags
       config[:job_flow_role] = @job_flow_role if @job_flow_role
       config[:service_role] = @service_role if @service_role
-      config[:bootstrap_actions] = @bootstrap_actions.map{|a| a.to_aws_bootstrap_action} unless @bootstrap_actions.empty?
+      config[:bootstrap_actions] = @bootstrap_actions.map(&:to_aws_bootstrap_action) unless @bootstrap_actions.empty?
+      config[:new_supported_products] = @aws_applications.map(&:to_hash) if valid_aws_applications?
       config
+    end
+
+    def valid_aws_applications?
+      !@aws_applications.empty?
     end
 
     def jobflow_tags
