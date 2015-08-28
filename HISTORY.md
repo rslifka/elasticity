@@ -1,3 +1,7 @@
+## 6.0.5 - August 28, 2015
+
+- - Including PR [#119](https://github.com/rslifka/elasticity/pull/119) - "Error handling for API rate limiting".  Thank you [@robert2d](https://github.com/robert2d)!
+
 ## 6.0.4 - August 3, 2015
 
 - Including PR [#118](https://github.com/rslifka/elasticity/pull/118) - "jobflow ids must be passed as an array to AWS".  Thank you [@robert2d](https://github.com/robert2d)!
