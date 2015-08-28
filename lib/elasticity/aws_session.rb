@@ -1,9 +1,8 @@
 module Elasticity
 
-  class MissingKeyError < StandardError;
-  end
-  class MissingRegionError < StandardError;
-  end
+  class MissingKeyError < StandardError; end
+  class MissingRegionError < StandardError; end
+  class ThrottlingException < StandardError; end
 
   class AwsSession
 
@@ -29,7 +28,9 @@ module Elasticity
       begin
         RestClient.post(aws_request.url, aws_request.payload, aws_request.headers)
       rescue RestClient::BadRequest => e
-        raise ArgumentError, AwsSession.parse_error_response(e.http_body)
+        type, message = AwsSession.parse_error_response(e.http_body)
+        raise ThrottlingException, message if type == 'ThrottlingException'
+        raise ArgumentError, message
       end
     end
 
@@ -45,7 +46,10 @@ module Elasticity
     # the error document.
     def self.parse_error_response(error_json)
       error = JSON.parse(error_json)
-      "AWS EMR API Error (#{error['__type']}): #{error['message']}"
+      [
+        error['__type'],
+        "AWS EMR API Error (#{error['__type']}): #{error['message']}"
+      ]
     end
 
   end
