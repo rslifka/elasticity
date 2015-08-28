@@ -94,6 +94,16 @@ describe Elasticity::AwsSession do
           subject.submit({})
         }.to raise_error(ArgumentError, "AWS EMR API Error (#{error_type}): #{error_message}")
       end
+
+      context 'EMR API rate limit hit' do
+        let(:error_type) { 'ThrottlingException' }
+        it 'should raise a Throttling error with the body of the error' do
+          RestClient.should_receive(:post).and_raise(error)
+          expect {
+            subject.submit({})
+          }.to raise_error(Elasticity::ThrottlingException, "AWS EMR API Error (#{error_type}): #{error_message}")
+        end
+      end
     end
 
   end
