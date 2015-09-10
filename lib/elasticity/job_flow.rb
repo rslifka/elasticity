@@ -17,6 +17,7 @@ module Elasticity
     attr_accessor :master_instance_type
     attr_accessor :slave_instance_type
     attr_accessor :ami_version
+    attr_accessor :release_label
     attr_accessor :keep_job_flow_alive_when_no_steps
     attr_accessor :ec2_subnet_id
     attr_accessor :placement
@@ -31,7 +32,6 @@ module Elasticity
     def initialize
       @action_on_failure = 'TERMINATE_JOB_FLOW'
       @name = 'Elasticity Job Flow'
-      @ami_version = 'latest'
       @keep_job_flow_alive_when_no_steps = false
       self.placement = 'us-east-1a'
       @enable_debugging = false
@@ -193,6 +193,7 @@ module Elasticity
 
     def jobflow_config
       config = jobflow_preamble
+      validate_and_apply_ami_or_release_version(config)
       steps = jobflow_steps
       steps.insert(0, Elasticity::SetupHadoopDebuggingStep.new.to_aws_step(self)) if @enable_debugging
       config[:steps] = steps
@@ -201,12 +202,20 @@ module Elasticity
       config[:job_flow_role] = @job_flow_role if @job_flow_role
       config[:service_role] = @service_role if @service_role
       config[:bootstrap_actions] = @bootstrap_actions.map(&:to_aws_bootstrap_action) unless @bootstrap_actions.empty?
-      config[:new_supported_products] = @aws_applications.map(&:to_hash) if valid_aws_applications?
+      config[:applications] = @aws_applications.map(&:to_hash) if valid_aws_applications?
       config
     end
 
     def valid_aws_applications?
       !@aws_applications.empty?
+    end
+
+    def validate_and_apply_ami_or_release_version(config)
+      fail "Please use an EMR release_label not ami_version" if !@aws_applications.empty? && !@ami_version.nil?
+      fail "Please set the EMR release_label" if !@aws_applications.empty? && @release_label.nil?
+      config[:ami_version] = 'latest' if @ami_version.nil? && release_label.nil?
+      config[:ami_version] = @ami_version unless @ami_version.nil?
+      config[:release_label] = @release_label unless @release_label.nil?
     end
 
     def jobflow_tags
@@ -221,7 +230,6 @@ module Elasticity
     def jobflow_preamble
       preamble = {
         :name => @name,
-        :ami_version => @ami_version,
         :visible_to_all_users => @visible_to_all_users,
         :instances => {
           :keep_job_flow_alive_when_no_steps => @keep_job_flow_alive_when_no_steps,
