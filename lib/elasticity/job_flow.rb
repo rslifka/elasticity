@@ -28,6 +28,7 @@ module Elasticity
     attr_accessor :service_role
     attr_accessor :jobflow_id
     attr_accessor :aws_applications
+    attr_accessor :additional_info
 
     def initialize
       @action_on_failure = 'TERMINATE_JOB_FLOW'
@@ -201,6 +202,7 @@ module Elasticity
       config[:tags] = jobflow_tags if @tags
       config[:job_flow_role] = @job_flow_role if @job_flow_role
       config[:service_role] = @service_role if @service_role
+      config[:additional_info] = @additional_info if @additional_info
       config[:bootstrap_actions] = @bootstrap_actions.map(&:to_aws_bootstrap_action) unless @bootstrap_actions.empty?
       config[:applications] = @aws_applications.map(&:to_hash) if valid_aws_applications?
       config
