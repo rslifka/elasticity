@@ -115,9 +115,13 @@ jobflow.service_role                      = nil
 
 jobflow.action_on_failure                 = 'TERMINATE_JOB_FLOW'
 jobflow.keep_job_flow_alive_when_no_steps = false
-jobflow.ami_version                       = 'latest'
 jobflow.log_uri                           = nil
 jobflow.enable_debugging                  = false # Requires a log_uri to enable
+
+# >= 4.0.0 release label is now the default
+jobflow.release_label                     = '4.0.0'
+# < 4.0.0 ... Haven't used this before? just set the release label then.
+jobflow.ami_version                       = 'latest'
 
 jobflow.tags                              = {name: "app-name", department: 'marketing'}
 jobflow.ec2_key_name                      = nil
@@ -128,6 +132,25 @@ jobflow.instance_count                    = 2
 jobflow.master_instance_type              = 'm1.small'
 jobflow.slave_instance_type               = 'm1.small'
 ```
+
+### EMR Applications (optional needs release_label >= 4.0.0)
+With the release of EMR 4.0.0 you can now supply applications which EMR will install for you on boot(rather than a manual bootstrap action. Which you can still use if required). You must set the `release_label` for the jobflow(>=4.0.0)
+
+```ruby
+jobflow.release_label = '4.3.0' 
+# the simple way
+jobflow.add_application("Spark") # Pig, Hive, Mahout
+# more verbose
+spark = Elasticity::Application.new({
+  name: 'Spark',
+  arguments: '--webui-port 18080',
+  version: '1.0.1',
+  additional_info: '' # This option is for advanced users only. This is meta information about third-party applications that third-party vendors use for testing purposes.
+})
+jobflow.add_application(spark)
+```
+
+Further reading: http://docs.aws.amazon.com/ElasticMapReduce/latest/ReleaseGuide/emr-configure-apps.html
 
 ## 4 - Configure Instance Groups (optional)
 
