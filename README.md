@@ -2,7 +2,7 @@
 
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently abstract away the complex EMR REST API and make working with job flows more productive and more enjoyable.
 
-[![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) 2.0.x, 2.1.x, 2.2.x
+[![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) 2.0.x, 2.1.x, 2.2.x, 2.3.x
 
 Elasticity provides two ways to access EMR:
 
