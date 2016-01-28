@@ -119,7 +119,7 @@ jobflow.log_uri                           = nil
 jobflow.enable_debugging                  = false # Requires a log_uri to enable
 
 # >= 4.0.0 release label is now the default
-jobflow.release_label                     = '4.0.0'
+jobflow.release_label                     = '4.3.0'
 # < 4.0.0 ... Haven't used this before? just set the release label then.
 jobflow.ami_version                       = 'latest'
 
