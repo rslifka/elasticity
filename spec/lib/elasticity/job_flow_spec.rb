@@ -13,7 +13,9 @@ describe Elasticity::JobFlow do
       expect(subject.log_uri).to eql(nil)
       expect(subject.master_instance_type).to eql('m1.small')
       expect(subject.slave_instance_type).to eql('m1.small')
-      expect(subject.ami_version).to eql('latest')
+      expect(subject.ami_version).to eql(nil)
+      expect(subject.release_label).to eql(nil)
+      expect(subject.aws_applications).to eql([])
       expect(subject.keep_job_flow_alive_when_no_steps).to eql(false)
       expect(subject.ec2_subnet_id).to eql(nil)
       expect(subject.placement).to eql('us-east-1a')
@@ -455,6 +457,50 @@ describe Elasticity::JobFlow do
 
     end
 
+    describe 'aws_applications' do
+      let(:application) { Elasticity::Application.new({}) }
+      let(:emr) { double(Elasticity::EMR, run_job_flow: true) }
+
+      before do
+        subject.stub(:emr).and_return(emr)
+      end
+
+      context 'with applications' do
+        context 'no release_label' do
+          it 'fails' do
+            subject.instance_variable_set(:@aws_applications, [application])
+            expect { subject.run }.to raise_error(RuntimeError, 'Please set the EMR release_label')
+          end
+        end
+
+        context 'ami_version set' do
+          it 'fails' do
+            subject.instance_variable_set(:@aws_applications, [application])
+            subject.instance_variable_set(:@ami_version, 'latest')
+            expect { subject.run }.to raise_error(RuntimeError, 'Please use an EMR release_label not ami_version')
+          end
+        end
+
+        context 'release_label set' do
+          it 'succeeds' do
+            subject.instance_variable_set(:@aws_applications, [application])
+            subject.instance_variable_set(:@release_label, '4.0.0')
+            subject.run
+            expect(subject.send(:jobflow_config)[:release_label]).to eql('4.0.0')
+          end
+        end
+      end
+
+      context 'with no applications' do
+        it 'sets default ami version and config doesn\'t contain applications' do
+          subject.run
+          config = subject.send(:jobflow_config)
+          expect(config[:ami_version]).to eql('latest')
+          expect(config[:applications]).to eql(nil)
+        end
+      end
+    end
+
   end
 
   describe '#jobflow_instance_groups' do
@@ -515,7 +561,6 @@ describe Elasticity::JobFlow do
     let(:basic_preamble) do
       {
         :name => 'Elasticity Job Flow',
-        :ami_version => 'latest',
         :visible_to_all_users => false,
         :instances => {
           :keep_job_flow_alive_when_no_steps => false,
@@ -801,5 +846,4 @@ describe Elasticity::JobFlow do
     end
 
   end
-
 end
