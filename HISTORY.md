@@ -1,7 +1,6 @@
 ## 6.0.6 - February 29, 2016
 
 - Including PR [#120](https://github.com/rslifka/elasticity/pull/120) - "EMR Applications and support for release_label".  Thank you [@robert2d](https://github.com/robert2d)!
-- 
 
 ## 6.0.5 - August 28, 2015
 
