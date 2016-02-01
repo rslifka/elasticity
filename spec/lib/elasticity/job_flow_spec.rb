@@ -24,6 +24,7 @@ describe Elasticity::JobFlow do
       expect(subject.enable_debugging).to eql(false)
       expect(subject.job_flow_role).to eql(nil)
       expect(subject.service_role).to eql(nil)
+      expect(subject.additional_info).to eql(nil)
       expect(subject.jobflow_id).to eql(nil)
     end
   end
@@ -61,6 +62,17 @@ describe Elasticity::JobFlow do
       end
     end
 
+  end
+
+  describe '#additional_info=' do
+    context 'when set' do
+      before do
+        subject.additional_info = 'additional info'
+      end
+      it 'additional_info is a string' do
+        expect(subject.additional_info).to eq('additional info')
+      end
+    end
   end
 
   describe '#enable_debugging=' do
