@@ -1,8 +1,8 @@
-## 6.0.7 - February 29, 2016
+## 6.0.7 - February 1, 2016
 
 - Including PR [#125](https://github.com/rslifka/elasticity/pull/125) - "AMI 4.x support".  Thank you [@fblundun](https://github.com/fblundun)!
 
-## 6.0.6 - February 29, 2016
+## 6.0.6 - January 29, 2016
 
 - Including PR [#120](https://github.com/rslifka/elasticity/pull/120) - "EMR Applications and support for release_label".  Thank you [@robert2d](https://github.com/robert2d)!
 
