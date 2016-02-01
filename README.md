@@ -131,6 +131,7 @@ jobflow.region                            = 'us-east-1'
 jobflow.instance_count                    = 2
 jobflow.master_instance_type              = 'm1.small'
 jobflow.slave_instance_type               = 'm1.small'
+jobflow.additonal_info                    = 'additonal info'
 ```
 
 ### EMR Applications (optional needs release_label >= 4.0.0)
@@ -334,6 +335,10 @@ copy_step = Elasticity::S3DistCpStep.new
 copy_step.arguments = [...]
 
 jobflow.add_step(copy_step)
+
+# For AMI < 4.x you need to specifify legacy argument
+copy_step = Elasticity::S3DistCpStep.new(true)
+
 ```
 
 ## 7 - Upload Assets (optional)
