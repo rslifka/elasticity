@@ -132,6 +132,8 @@ jobflow.instance_count                    = 2
 jobflow.master_instance_type              = 'm1.small'
 jobflow.slave_instance_type               = 'm1.small'
 jobflow.additonal_info                    = 'additonal info'
+jobflow.additional_master_security_groups = ['sg-1111', 'sg-2222']
+jobflow.additional_slave_security_groups  = ['sg-1111', 'sg-2222']
 ```
 
 ### EMR Applications (optional needs release_label >= 4.0.0)

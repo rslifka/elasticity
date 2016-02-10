@@ -26,6 +26,8 @@ describe Elasticity::JobFlow do
       expect(subject.service_role).to eql(nil)
       expect(subject.additional_info).to eql(nil)
       expect(subject.jobflow_id).to eql(nil)
+      expect(subject.additional_master_security_groups).to eql(nil)
+      expect(subject.additional_slave_security_groups).to eql(nil)
     end
   end
 
@@ -618,6 +620,19 @@ describe Elasticity::JobFlow do
       end
     end
 
+    context 'when additional master security groups is provided' do
+      it 'should include it in the preamble' do
+        subject.additional_master_security_groups = ['group1', 'group2']
+        subject.send(:jobflow_preamble)[:instances].should be_a_hash_including({:additional_master_security_groups => ['group1', 'group2']})
+      end
+    end
+
+    context 'when additional slave security groups is provided' do
+      it 'should include it in the preamble' do
+        subject.additional_slave_security_groups = ['group1', 'group2']
+        subject.send(:jobflow_preamble)[:instances].should be_a_hash_including({:additional_slave_security_groups => ['group1', 'group2']})
+      end
+    end
   end
 
   describe '#run' do
