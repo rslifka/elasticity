@@ -1,3 +1,7 @@
+## 6.0.8 - February 22, 2016
+
+- Including PR [#126](https://github.com/rslifka/elasticity/pull/126) - "Add support for additional security groups".  Thank you [@alistair](https://github.com/alistair)!
+
 ## 6.0.7 - February 1, 2016
 
 - Including PR [#125](https://github.com/rslifka/elasticity/pull/125) - "AMI 4.x support".  Thank you [@fblundun](https://github.com/fblundun)!
