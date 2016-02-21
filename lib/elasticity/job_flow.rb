@@ -29,6 +29,8 @@ module Elasticity
     attr_accessor :jobflow_id
     attr_accessor :aws_applications
     attr_accessor :additional_info
+    attr_accessor :additional_master_security_groups
+    attr_accessor :additional_slave_security_groups
 
     def initialize
       @action_on_failure = 'TERMINATE_JOB_FLOW'
@@ -246,6 +248,8 @@ module Elasticity
         preamble[:instances].delete(:placement)
       end
       preamble[:instances].merge!(:ec2_key_name => @ec2_key_name) if @ec2_key_name
+      preamble[:instances].merge!(:additional_master_security_groups => @additional_master_security_groups) if @additional_master_security_groups
+      preamble[:instances].merge!(:additional_slave_security_groups => @additional_slave_security_groups) if @additional_slave_security_groups
       preamble
     end
 
