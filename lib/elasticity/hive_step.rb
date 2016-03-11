@@ -17,7 +17,7 @@ module Elasticity
     end
 
     def to_aws_step(_)
-      args = %w(s3://elasticmapreduce/libs/hive/hive-script --base-path s3://elasticmapreduce/libs/hive/ --hive-versions latest --run-hive-script --args)
+      args = %w(s3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/hive-script --base-path s3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/ --hive-versions latest --run-hive-script --args)
       args.concat(['-f', @script])
       @variables.keys.sort.each do |name|
         args.concat(['-d', "#{name}=#{@variables[name]}"])
@@ -26,7 +26,7 @@ module Elasticity
         :name => @name,
         :action_on_failure => @action_on_failure,
         :hadoop_jar_step => {
-          :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+          :jar => 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar',
           :args => args
         }
       }
@@ -45,8 +45,8 @@ module Elasticity
         {
           :action_on_failure => 'TERMINATE_JOB_FLOW',
           :hadoop_jar_step => {
-            :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
-            :args => %w(s3://elasticmapreduce/libs/hive/hive-script --base-path s3://elasticmapreduce/libs/hive/ --install-hive --hive-versions latest)
+            :jar => 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar',
+            :args => %w(s3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/hive-script --base-path s3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/ --install-hive --hive-versions latest)
           },
           :name => aws_installation_step_name
         }
@@ -55,11 +55,11 @@ module Elasticity
         steps << {
           :action_on_failure => 'TERMINATE_JOB_FLOW',
           :hadoop_jar_step => {
-            :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+            :jar => 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar',
             :args => [
-              's3://elasticmapreduce/libs/hive/hive-script',
+              's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/hive-script',
               '--base-path',
-              's3://elasticmapreduce/libs/hive/',
+              's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/',
               '--install-hive-site',
               "--hive-site=#{Elasticity.configuration.hive_site}",
               '--hive-versions',

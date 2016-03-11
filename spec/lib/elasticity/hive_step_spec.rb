@@ -21,11 +21,11 @@ describe Elasticity::HiveStep do
       step = subject.to_aws_step(Elasticity::JobFlow.new)
       step[:name].should == 'Elasticity Hive Step (script.hql)'
       step[:action_on_failure].should == 'TERMINATE_JOB_FLOW'
-      step[:hadoop_jar_step][:jar].should == 's3://elasticmapreduce/libs/script-runner/script-runner.jar'
+      step[:hadoop_jar_step][:jar].should == 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar'
       step[:hadoop_jar_step][:args].should start_with([
-            's3://elasticmapreduce/libs/hive/hive-script',
+            's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/hive-script',
             '--base-path',
-            's3://elasticmapreduce/libs/hive/',
+            's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/',
             '--hive-versions',
             'latest',
             '--run-hive-script',
@@ -65,11 +65,11 @@ describe Elasticity::HiveStep do
       {
         :action_on_failure => 'TERMINATE_JOB_FLOW',
         :hadoop_jar_step => {
-          :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+          :jar => 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar',
           :args => [
-            's3://elasticmapreduce/libs/hive/hive-script',
+            's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/hive-script',
             '--base-path',
-            's3://elasticmapreduce/libs/hive/',
+            's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/',
             '--install-hive',
             '--hive-versions',
             'latest'
@@ -83,11 +83,11 @@ describe Elasticity::HiveStep do
       {
         :action_on_failure => 'TERMINATE_JOB_FLOW',
         :hadoop_jar_step => {
-          :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+          :jar => 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar',
           :args => [
-            's3://elasticmapreduce/libs/hive/hive-script',
+            's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/hive-script',
             '--base-path',
-            's3://elasticmapreduce/libs/hive/',
+            's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/',
             '--install-hive-site',
             '--hive-site=s3://TEST/hive-site.xml',
             '--hive-versions',

@@ -21,9 +21,9 @@ describe Elasticity::PigStep do
       step = subject.to_aws_step(Elasticity::JobFlow.new)
       step[:name].should == 'Elasticity Pig Step (script.pig)'
       step[:action_on_failure].should == 'TERMINATE_JOB_FLOW'
-      step[:hadoop_jar_step][:jar].should == 's3://elasticmapreduce/libs/script-runner/script-runner.jar'
+      step[:hadoop_jar_step][:jar].should == 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar'
       step[:hadoop_jar_step][:args].should start_with([
-        's3://elasticmapreduce/libs/pig/pig-script',
+        's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/pig/pig-script',
         '--run-pig-script',
         '--args',
         '-p'
@@ -94,11 +94,11 @@ describe Elasticity::PigStep do
         {
           :action_on_failure => 'TERMINATE_JOB_FLOW',
           :hadoop_jar_step => {
-            :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+            :jar => 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar',
             :args => [
-              's3://elasticmapreduce/libs/pig/pig-script',
+              's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/pig/pig-script',
               '--base-path',
-              's3://elasticmapreduce/libs/pig/',
+              's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/pig/',
               '--install-pig'
             ],
           },
