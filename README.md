@@ -119,7 +119,7 @@ jobflow.log_uri                           = nil
 jobflow.enable_debugging                  = false # Requires a log_uri to enable
 
 # >= 4.0.0 release label is now the default
-jobflow.release_label                     = '4.3.0'
+jobflow.release_label                     = 'emr-4.3.0'
 # < 4.0.0 ... Haven't used this before? just set the release label then.
 jobflow.ami_version                       = 'latest'
 
@@ -140,7 +140,7 @@ jobflow.additional_slave_security_groups  = ['sg-1111', 'sg-2222']
 With the release of EMR 4.0.0 you can now supply applications which EMR will install for you on boot(rather than a manual bootstrap action. Which you can still use if required). You must set the `release_label` for the jobflow(>=4.0.0)
 
 ```ruby
-jobflow.release_label = '4.3.0' 
+jobflow.release_label = 'emr-4.3.0'
 # the simple way
 jobflow.add_application("Spark") # Pig, Hive, Mahout
 # more verbose
@@ -421,7 +421,7 @@ Elasticity.configure do |config|
   # AWS credentials
   config.access_key = ENV['AWS_ACCESS_KEY_ID']
   config.secret_key = ENV['AWS_SECRET_ACCESS_KEY']
-  
+
   # if you use federated Identity Management
   #config.security_token  = ENV['AWS_SECURITY_TOKEN']
 
