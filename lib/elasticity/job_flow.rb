@@ -133,6 +133,18 @@ module Elasticity
       @instance_groups[:task] = instance_group
     end
 
+    def set_master_ebs_configuration(ebs_configuration)
+      @instance_groups[:master].set_ebs_configuration(ebs_configuration)
+    end
+
+    def set_core_ebs_configuration(ebs_configuration)
+      @instance_groups[:core].set_ebs_configuration(ebs_configuration)
+    end
+
+    def set_task_ebs_configuration(ebs_configuration)
+      @instance_groups[:task].set_ebs_configuration(ebs_configuration)
+    end
+
     def add_step(jobflow_step)
       if is_jobflow_running?
         jobflow_steps = []
