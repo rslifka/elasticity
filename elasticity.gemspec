@@ -3,13 +3,14 @@ $:.push File.expand_path('../lib', __FILE__)
 require 'elasticity/version'
 
 Gem::Specification.new do |s|
-  s.name        = 'elasticity'
-  s.version     = Elasticity::VERSION
-  s.platform    = Gem::Platform::RUBY
-  s.authors     = ['Robert Slifka']
-  s.homepage    = 'http://www.github.com/rslifka/elasticity'
-  s.summary     = %q{Streamlined, programmatic access to Amazon's Elastic Map Reduce service.}
-  s.description = %q{Streamlined, programmatic access to Amazon's Elastic Map Reduce service, driven by the Sharethrough team's requirements for belting out EMR jobs.}
+  s.name                  = 'elasticity'
+  s.version               = Elasticity::VERSION
+  s.required_ruby_version = '>= 2.2'
+  s.platform              = Gem::Platform::RUBY
+  s.authors               = ['Robert Slifka']
+  s.homepage              = 'http://www.github.com/rslifka/elasticity'
+  s.summary               = %q{Streamlined, programmatic access to Amazon's Elastic Map Reduce service.}
+  s.description           = %q{Streamlined, programmatic access to Amazon's Elastic Map Reduce service, driven by the Sharethrough team's requirements for belting out EMR jobs.}
 
   s.add_dependency('rest-client', '~> 1.0')
   s.add_dependency('fog', '~> 1.0')
