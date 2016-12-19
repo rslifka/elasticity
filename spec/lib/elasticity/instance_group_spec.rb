@@ -7,6 +7,7 @@ describe Elasticity::InstanceGroup do
       expect(subject.type).to eql('m1.small')
       expect(subject.market).to eql('ON_DEMAND')
       expect(subject.role).to eql('CORE')
+      expect(subject.ebs_configuration).to eql(nil)
     end
   end
 
@@ -98,6 +99,20 @@ describe Elasticity::InstanceGroup do
 
   end
 
+  describe '#set_ebs_configuration' do
+
+    it 'should not change if the type is incorrect' do
+      subject.set_ebs_configuration("ebs_configuration")
+      subject.ebs_configuration.should == nil
+    end
+
+    it 'should change if the type is correct' do
+      subject.set_ebs_configuration(Elasticity::EbsConfiguration.new)
+      subject.ebs_configuration.should_not == nil
+    end
+
+  end
+
   describe '#to_aws_instance_config' do
 
     context 'when an ON_DEMAND group' do
@@ -135,6 +150,58 @@ describe Elasticity::InstanceGroup do
           :instance_count => 5,
           :instance_type => 'c1.medium',
           :instance_role => 'CORE',
+        }
+      end
+    end
+
+    context 'when a EBS configuration' do
+      let(:on_demand_instance_group) do
+        Elasticity::InstanceGroup.new.tap do |i|
+          i.count = 5
+          i.type = 'c1.medium'
+          i.role = 'CORE'
+          i.set_ebs_configuration(
+            Elasticity::EbsConfiguration.new.tap do |ebs|
+              ebs.add_ebs_block_device_config(Elasticity::EbsBlockDeviceConfig.new)
+              ebs.add_ebs_block_device_config(
+                Elasticity::EbsBlockDeviceConfig.new.tap do |ebsc|
+                  ebsc.size_in_gb = 10000
+                  ebsc.volumes_per_instance = 10
+                  ebsc.iops = 9999
+                  ebsc.volume_type = "io1"
+                end
+              )
+            end
+          )
+        end
+      end
+      it 'should generate an AWS config' do
+        on_demand_instance_group.ebs_configuration.ebs_block_device_configs.length.should == 2
+        on_demand_instance_group.to_aws_instance_config.should == {
+          :market => 'ON_DEMAND',
+          :instance_count => 5,
+          :instance_type => 'c1.medium',
+          :instance_role => 'CORE',
+          :ebs_configuration => {
+            :ebs_block_device_configs => [
+              {
+                :volume_specification => {
+                  :volume_type => "gp2",
+                  :size_in_gb => 1,
+                },
+                :volumes_per_instance => 1
+              },
+              {
+                :volume_specification => {
+                  :volume_type => "io1",
+                  :iops => 9999,
+                  :size_in_gb => 10000,
+                },
+                :volumes_per_instance => 10
+              },
+            ],
+            :ebs_optimized => false,
+          },
         }
       end
     end
