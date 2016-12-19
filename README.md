@@ -2,7 +2,7 @@
 
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently abstract away the complex EMR REST API and make working with job flows more productive and more enjoyable.
 
-[![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) 2.0.x, 2.1.x, 2.2.x, 2.3.x
+[![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) 2.2.x, 2.3.x
 
 Elasticity provides two ways to access EMR:
 
@@ -10,6 +10,7 @@ Elasticity provides two ways to access EMR:
 * **Directly through access to the EMR REST API**. The less-discussed hidden darkside... I use this to enable the Elasticity API.  RubyDoc can be found at the RubyGems [auto-generated documentation site](http://rubydoc.info/gems/elasticity/frames).  Be forewarned: Making the calls directly requires that you understand how to structure EMR requests at the Amazon API level and from experience I can tell you there are more fun things you could be doing :)  Scroll to the end for more information on the Amazon API.
 
 # Installation
+You must be running a ruby >= 2.2
 
 ```
 gem install elasticity
