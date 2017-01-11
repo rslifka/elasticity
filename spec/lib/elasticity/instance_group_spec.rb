@@ -187,7 +187,7 @@ describe Elasticity::InstanceGroup do
               {
                 :volume_specification => {
                   :volume_type => "gp2",
-                  :size_in_gb => 1,
+                  :size_in_g_b => 1,
                 },
                 :volumes_per_instance => 1
               },
@@ -195,7 +195,7 @@ describe Elasticity::InstanceGroup do
                 :volume_specification => {
                   :volume_type => "io1",
                   :iops => 9999,
-                  :size_in_gb => 10000,
+                  :size_in_g_b => 10000,
                 },
                 :volumes_per_instance => 10
               },

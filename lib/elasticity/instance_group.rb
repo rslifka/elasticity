@@ -115,7 +115,7 @@ module Elasticity
       {
         :volume_specification => {
           :volume_type => @volume_type,
-          :size_in_gb => @size_in_gb,
+          :size_in_g_b => @size_in_gb,
         }.tap do |spec|
           spec.merge!(:iops => @iops) if @volume_type == "io1"
         end,
