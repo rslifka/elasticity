@@ -344,6 +344,27 @@ copy_step = Elasticity::S3DistCpStep.new(true)
 
 ```
 
+### Adding a Spark Step
+
+```ruby
+spark_step = Elasticity::SparkStep.new('jar_location', 'main_class_fqcn')
+
+# Specifying arguments relative to Spark
+spark_step.spark_arguments = { 'driver-memory' => '2G' }
+# Specifying arguments relative to your application
+spark_step.app_arguments = { 'arg1' => 'value1' }
+```
+
+This will be equivalent to the following script:
+
+```bash
+spark-submit \
+  --driver-memory 2G \
+  --class main_class_fqcn \
+  jar_location \
+  --arg1 value1
+```
+
 ## 7 - Upload Assets (optional)
 
 This isn't part of ```JobFlow```; more of an aside.  Elasticity provides a very basic means of uploading assets to S3 so that your EMR job has access to them.  Most commonly this will be a set of resources to run the job (e.g. JAR files, streaming scripts, etc.) and a set of resources used by the job itself (e.g. a TSV file with a range of valid values, join tables, etc.).
