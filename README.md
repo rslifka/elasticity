@@ -141,7 +141,7 @@ jobflow.additional_slave_security_groups  = ['sg-1111', 'sg-2222']
 With the release of EMR 4.0.0 you can now supply applications which EMR will install for you on boot(rather than a manual bootstrap action. Which you can still use if required). You must set the `release_label` for the jobflow(>=4.0.0)
 
 ```ruby
-jobflow.release_label = '4.3.0' 
+jobflow.release_label = '4.3.0'
 # the simple way
 jobflow.add_application("Spark") # Pig, Hive, Mahout
 # more verbose
@@ -341,7 +341,20 @@ jobflow.add_step(copy_step)
 
 # For AMI < 4.x you need to specifify legacy argument
 copy_step = Elasticity::S3DistCpStep.new(true)
+```
 
+### Adding a Scalding Step
+
+```ruby
+scalding_step = Elasticity::ScaldingStep.new('jar_location', 'main_class_fqcn', { 'arg1' => 'value1' })
+
+jobflow.add_step(scalding_step)
+```
+
+This will result in the following command line arguments:
+
+```bash
+main_class_fqcn --hdfs --arg1 value1
 ```
 
 ### Adding a Spark Step
@@ -443,7 +456,7 @@ Elasticity.configure do |config|
   # AWS credentials
   config.access_key = ENV['AWS_ACCESS_KEY_ID']
   config.secret_key = ENV['AWS_SECRET_ACCESS_KEY']
-  
+
   # if you use federated Identity Management
   #config.security_token  = ENV['AWS_SECURITY_TOKEN']
 

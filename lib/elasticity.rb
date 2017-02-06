@@ -35,6 +35,7 @@ require 'elasticity/pig_step'
 require 'elasticity/streaming_step'
 require 'elasticity/script_step'
 require 'elasticity/s3distcp_step'
+require 'elasticity/scalding_step'
 require 'elasticity/spark_step'
 
 module Elasticity
