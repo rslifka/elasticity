@@ -341,7 +341,6 @@ jobflow.add_step(copy_step)
 
 # For AMI < 4.x you need to specifify legacy argument
 copy_step = Elasticity::S3DistCpStep.new(true)
-
 ```
 
 ### Adding a Scalding Step
@@ -356,6 +355,27 @@ This will result in the following command line arguments:
 
 ```bash
 main_class_fqcn --hdfs --arg1 value1
+```
+
+### Adding a Spark Step
+
+```ruby
+spark_step = Elasticity::SparkStep.new('jar_location', 'main_class_fqcn')
+
+# Specifying arguments relative to Spark
+spark_step.spark_arguments = { 'driver-memory' => '2G' }
+# Specifying arguments relative to your application
+spark_step.app_arguments = { 'arg1' => 'value1' }
+```
+
+This will be equivalent to the following script:
+
+```bash
+spark-submit \
+  --driver-memory 2G \
+  --class main_class_fqcn \
+  jar_location \
+  --arg1 value1
 ```
 
 ## 7 - Upload Assets (optional)

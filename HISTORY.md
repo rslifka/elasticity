@@ -1,6 +1,10 @@
+## 6.0.10 - January 16, 2017
+
+- Including PR [#132](https://github.com/rslifka/elasticity/pull/132) - "Fix size_in_gb not being parsed correctly for EBS volumes".  Thank you [@jbeemster](https://github.com/jbeemster)!
+
 ## 6.0.9 - December 20, 2016
 
-- Including PR [#130](https://github.com/rslifka/elasticity/pull/130) - "AAdd support for EBS".  Thank you [@jbeemster](https://github.com/jbeemster)!
+- Including PR [#130](https://github.com/rslifka/elasticity/pull/130) - "Add support for EBS".  Thank you [@jbeemster](https://github.com/jbeemster)!
 - Including PR [#131](https://github.com/rslifka/elasticity/pull/131) - "Deprecated Support for Ruby <= 2.2".
 
 ## 6.0.8 - February 22, 2016
