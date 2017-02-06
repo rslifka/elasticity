@@ -10,7 +10,7 @@ describe Elasticity::GangliaBootstrapAction do
     it 'should set the fields appropriately' do
       expect(subject.name).to eql('Elasticity Bootstrap Action (Install Ganglia)')
       expect(subject.arguments).to eql([])
-      expect(subject.script).to eql('s3://elasticmapreduce/bootstrap-actions/install-ganglia')
+      expect(subject.script).to eql('s3://cxar-ato-team/snowplow-hosted-elasticmapreduce/bootstrap-actions/install-ganglia')
     end
   end
 

@@ -53,11 +53,11 @@ describe 'Elasticity::JobFlow Integration Examples' do
           {
             :action_on_failure => 'TERMINATE_JOB_FLOW',
             :hadoop_jar_step => {
-              :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+              :jar => 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar',
               :args => [
-                's3://elasticmapreduce/libs/hive/hive-script',
+                's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/hive-script',
                   '--base-path',
-                  's3://elasticmapreduce/libs/hive/',
+                  's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/',
                   '--install-hive',
                   '--hive-versions',
                   'latest'
@@ -68,11 +68,11 @@ describe 'Elasticity::JobFlow Integration Examples' do
             {
               :action_on_failure => 'CONTINUE',
               :hadoop_jar_step => {
-                :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+                :jar => 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar',
                 :args => [
-                  's3://elasticmapreduce/libs/hive/hive-script',
+                  's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/hive-script',
                   '--base-path',
-                  's3://elasticmapreduce/libs/hive/',
+                  's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/hive/',
                   '--hive-versions',
                   'latest',
                   '--run-hive-script',
@@ -141,11 +141,11 @@ describe 'Elasticity::JobFlow Integration Examples' do
           {
             :action_on_failure => 'TERMINATE_JOB_FLOW',
             :hadoop_jar_step => {
-              :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+              :jar => 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar',
               :args => [
-                's3://elasticmapreduce/libs/pig/pig-script',
+                's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/pig/pig-script',
                   '--base-path',
-                  's3://elasticmapreduce/libs/pig/',
+                  's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/pig/',
                   '--install-pig'
               ],
             },
@@ -154,9 +154,9 @@ describe 'Elasticity::JobFlow Integration Examples' do
             {
               :action_on_failure => 'CONTINUE',
               :hadoop_jar_step => {
-                :jar => 's3://elasticmapreduce/libs/script-runner/script-runner.jar',
+                :jar => 's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/script-runner/script-runner.jar',
                 :args => [
-                  's3://elasticmapreduce/libs/pig/pig-script',
+                  's3://cxar-ato-team/snowplow-hosted-elasticmapreduce/libs/pig/pig-script',
                     '--run-pig-script',
                     '--args',
                     '-p', 'OUTPUT=s3n://slif-pig-test/output',
@@ -178,10 +178,10 @@ describe 'Elasticity::JobFlow Integration Examples' do
   describe 'Custom Jar' do
 
     let(:custom_jar_step) do
-      Elasticity::CustomJarStep.new('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar').tap do |cj|
+      Elasticity::CustomJarStep.new('s3n://cxar-ato-team/snowplow-hosted-elasticmapreduce/samples/cloudburst/cloudburst.jar').tap do |cj|
         cj.arguments = [
-          's3n://elasticmapreduce/samples/cloudburst/input/s_suis.br',
-            's3n://elasticmapreduce/samples/cloudburst/input/100k.br',
+          's3n://cxar-ato-team/snowplow-hosted-elasticmapreduce/samples/cloudburst/input/s_suis.br',
+            's3n://cxar-ato-team/snowplow-hosted-elasticmapreduce/samples/cloudburst/input/100k.br',
             's3n://slif_hadoop_test/cloudburst/output/2011-12-09',
         ]
         cj.action_on_failure = 'TERMINATE_JOB_FLOW'
@@ -226,10 +226,10 @@ describe 'Elasticity::JobFlow Integration Examples' do
           {
             :action_on_failure => 'TERMINATE_JOB_FLOW',
             :hadoop_jar_step => {
-              :jar => 's3n://elasticmapreduce/samples/cloudburst/cloudburst.jar',
+              :jar => 's3n://cxar-ato-team/snowplow-hosted-elasticmapreduce/samples/cloudburst/cloudburst.jar',
               :args => [
-                's3n://elasticmapreduce/samples/cloudburst/input/s_suis.br',
-                  's3n://elasticmapreduce/samples/cloudburst/input/100k.br',
+                's3n://cxar-ato-team/snowplow-hosted-elasticmapreduce/samples/cloudburst/input/s_suis.br',
+                  's3n://cxar-ato-team/snowplow-hosted-elasticmapreduce/samples/cloudburst/input/100k.br',
                   's3n://slif_hadoop_test/cloudburst/output/2011-12-09',
               ],
             },

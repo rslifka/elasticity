@@ -22,7 +22,7 @@ describe Elasticity::ClusterStepStatus do
                           "3",
                           "0"
                       ],
-                      "Jar": "s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar",
+                      "Jar": "s3n://cxar-ato-team/snowplow-hosted-elasticmapreduce/samples/cloudburst/cloudburst.jar",
                       "MainClass" : "MAIN_CLASS",
                       "Properties": {
                           "Key1" : "Value1",
@@ -56,7 +56,7 @@ describe Elasticity::ClusterStepStatus do
       status = cluster_step_statuses[0]
       expect(status.action_on_failure).to eql('TERMINATE_CLUSTER')
       expect(status.args).to eql(['36', '3', '0',])
-      expect(status.jar).to eql('s3n://elasticmapreduce/samples/cloudburst/cloudburst.jar')
+      expect(status.jar).to eql('s3n://cxar-ato-team/snowplow-hosted-elasticmapreduce/samples/cloudburst/cloudburst.jar')
       expect(status.main_class).to eql('MAIN_CLASS')
       expect(status.step_id).to eql('s-OYPPAC4XPPUC')
       expect(status.properties).to eql({'Key1' => 'Value1', 'Key2' => 'Value2'})

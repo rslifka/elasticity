@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :cluster_step_status, class: Elasticity::ClusterStepStatus do 
     action_on_failure 'TERMINATE_CLUSTER'
     args ['36', '3', '0',]
-    jar 's3n://elasticmapreduce/samples/cloudburst/cloudburst.jar'
+    jar 's3n://cxar-ato-team/snowplow-hosted-elasticmapreduce/samples/cloudburst/cloudburst.jar'
     main_class 'MAIN_CLASS'
     step_id 's-OYPPAC4XPPUC'
     properties 'Key1' => 'Value1', 'Key2' => 'Value2'
