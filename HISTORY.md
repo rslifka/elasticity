@@ -1,3 +1,8 @@
+## 6.0.11 - February 7, 2017
+
+- Including PR [#134](https://github.com/rslifka/elasticity/pull/134) - "Spark step".  Thank you [@BenFradet](https://github.com/BenFradet)!
+- Including PR [#133](https://github.com/rslifka/elasticity/pull/133) - "Scalding step".  Thank you [@BenFradet](https://github.com/BenFradet)!
+
 ## 6.0.10 - January 16, 2017
 
 - Including PR [#132](https://github.com/rslifka/elasticity/pull/132) - "Fix size_in_gb not being parsed correctly for EBS volumes".  Thank you [@jbeemster](https://github.com/jbeemster)!
