@@ -614,7 +614,6 @@ describe Elasticity::JobFlow do
       end
     end
 
-
     context 'when a VPC subnet ID is specified' do
       before do
         subject.ec2_subnet_id = 'subnet-118b9d79'
