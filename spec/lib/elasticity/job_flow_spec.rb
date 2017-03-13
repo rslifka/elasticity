@@ -312,7 +312,7 @@ describe Elasticity::JobFlow do
         before do
           jobflow_with_steps.log_uri = '_'
           jobflow_with_steps.enable_debugging = true
-          aws_steps.insert(0, Elasticity::SetupHadoopDebuggingStep.new.to_aws_step(jobflow_with_steps))
+          aws_steps.insert(0, Elasticity::SetupHadoopDebuggingStep.new('us-east-1').to_aws_step(jobflow_with_steps))
         end
         it 'should incorporate the step to setup Hadoop debugging' do
           jobflow_with_steps.send(:jobflow_config).should be_a_hash_including({:steps => aws_steps})
