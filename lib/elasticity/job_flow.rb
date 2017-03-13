@@ -210,7 +210,7 @@ module Elasticity
       config = jobflow_preamble
       validate_and_apply_ami_or_release_version(config)
       steps = jobflow_steps
-      steps.insert(0, Elasticity::SetupHadoopDebuggingStep.new(@region).to_aws_step(self)) if @enable_debugging
+      steps.insert(0, Elasticity::SetupHadoopDebuggingStep.new.to_aws_step(self)) if @enable_debugging
       config[:steps] = steps
       config[:log_uri] = @log_uri if @log_uri
       config[:tags] = jobflow_tags if @tags
