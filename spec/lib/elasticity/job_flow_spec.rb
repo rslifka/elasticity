@@ -16,6 +16,7 @@ describe Elasticity::JobFlow do
       expect(subject.ami_version).to eql(nil)
       expect(subject.release_label).to eql(nil)
       expect(subject.aws_applications).to eql([])
+      expect(subject.aws_configurations).to eql([])
       expect(subject.keep_job_flow_alive_when_no_steps).to eql(false)
       expect(subject.ec2_subnet_id).to eql(nil)
       expect(subject.placement).to eql('us-east-1a')
@@ -207,6 +208,31 @@ describe Elasticity::JobFlow do
         expect {
           subject.add_bootstrap_action(nil)
         }.to raise_error(Elasticity::JobFlowRunningError, 'To modify bootstrap actions, please create a new job flow.')
+      end
+    end
+
+  end
+
+  describe '#add_configuration' do
+    let(:configuration) { {'Classification' => 'spark'} }
+    context 'when the jobflow is not yet started' do
+      it 'should not raise an error' do
+        expect {
+          subject.add_bootstrap_action(configuration)
+        }.to_not raise_error
+      end
+    end
+
+    context 'when the jobflow is already started' do
+      before do
+        Elasticity::EMR.any_instance.stub(:run_job_flow => '_')
+        subject.add_step(Elasticity::CustomJarStep.new('_'))
+        subject.run
+      end
+      it 'should raise an error' do
+        expect {
+          subject.add_configuration(configuration)
+        }.to raise_error(Elasticity::JobFlowRunningError, 'To add configurations, please create a new job flow.')
       end
     end
 
@@ -515,6 +541,27 @@ describe Elasticity::JobFlow do
       end
     end
 
+    describe 'aws_configurations' do
+      let(:configuration) {
+        { 'Classification' => 'spark',
+          'Properties' => { 'prop' => 'valule'} }
+      }
+
+      let(:emr) { double(Elasticity::EMR, run_job_flow: true) }
+
+      before do
+        subject.stub(:emr).and_return(emr)
+      end
+
+      context 'with configurations' do
+        it 'set' do
+          subject.instance_variable_set(:@aws_configurations, [configuration])
+          config = subject.send(:jobflow_config)
+          expect(config[:configurations]).to eql([configuration])
+        end
+      end
+
+    end
   end
 
   describe '#jobflow_instance_groups' do

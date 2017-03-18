@@ -28,6 +28,7 @@ module Elasticity
     attr_accessor :service_role
     attr_accessor :jobflow_id
     attr_accessor :aws_applications
+    attr_accessor :aws_configurations
     attr_accessor :additional_info
     attr_accessor :additional_master_security_groups
     attr_accessor :additional_slave_security_groups
@@ -43,6 +44,7 @@ module Elasticity
 
       @bootstrap_actions = []
       @aws_applications = []
+      @aws_configurations = []
       @jobflow_steps = []
       @installed_steps = []
 
@@ -116,6 +118,11 @@ module Elasticity
       application = Application.new(name: application) if application.is_a?(String)
       fail "application is not an Elasticity::Application" unless application.is_a?(Application)
       @aws_applications << application
+    end
+
+    def add_configuration(configuration)
+      raise JobFlowRunningError, 'To add configurations, please create a new job flow.' if is_jobflow_running?
+      @aws_configurations << configuration
     end
 
     def set_master_instance_group(instance_group)
@@ -219,6 +226,7 @@ module Elasticity
       config[:additional_info] = @additional_info if @additional_info
       config[:bootstrap_actions] = @bootstrap_actions.map(&:to_aws_bootstrap_action) unless @bootstrap_actions.empty?
       config[:applications] = @aws_applications.map(&:to_hash) if valid_aws_applications?
+      config[:configurations] = @aws_configurations unless @aws_configurations.empty?
       config
     end
 
