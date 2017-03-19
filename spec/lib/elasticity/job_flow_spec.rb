@@ -554,7 +554,7 @@ describe Elasticity::JobFlow do
       end
 
       context 'with configurations' do
-        it 'set' do
+        it 'sets the configurations as a part of its config' do
           subject.instance_variable_set(:@aws_configurations, [configuration])
           config = subject.send(:jobflow_config)
           expect(config[:configurations]).to eql([configuration])
