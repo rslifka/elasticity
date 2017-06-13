@@ -51,7 +51,12 @@ module Elasticity
     end
 
     def payload
-      AwsUtils.convert_ruby_to_aws_v4(@ruby_service_hash).to_json
+      configurations = @ruby_service_hash.delete(:configurations)
+      service_hash = AwsUtils.convert_ruby_to_aws_v4(@ruby_service_hash)
+      return service_hash.to_json if configurations.nil?
+      @ruby_service_hash[:configurations] = configurations
+      service_hash['Configurations'] = configurations
+      service_hash.to_json
     end
 
     private

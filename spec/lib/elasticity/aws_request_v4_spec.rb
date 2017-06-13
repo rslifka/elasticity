@@ -86,8 +86,29 @@ describe Elasticity::AwsRequestV4 do
   end
 
   describe '#payload' do
-    it 'should create the proper payload' do
-      subject.payload.should == '{"JobFlowIds":["TEST_JOBFLOW_ID"]}'
+    context 'when no configurations are given' do
+      it 'should create the proper payload' do
+        subject.payload.should == '{"JobFlowIds":["TEST_JOBFLOW_ID"]}'
+      end
+    end
+
+    context 'when configurations are given' do
+      subject do
+        Elasticity::AwsRequestV4.new(
+          Elasticity::AwsSession.new,
+          {:operation => 'DescribeJobFlows', :job_flow_ids => ['TEST_JOBFLOW_ID'],
+           :configurations => [
+            'Classification' => 'capacity-scheduler',
+            'Properties' => {
+              'yarn.scheduler.capacity.resource-calculator' =>
+                'org.apache.hadoop.yarn.util.resource.DominantResourceCalculator'
+            }]
+          }
+        )
+      end
+      it 'should create the proper payload' do
+        subject.payload.should == '{"JobFlowIds":["TEST_JOBFLOW_ID"],"Configurations":[{"Classification":"capacity-scheduler","Properties":{"yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DominantResourceCalculator"}}]}'
+      end
     end
   end
 
