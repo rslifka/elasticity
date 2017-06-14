@@ -8,6 +8,7 @@ describe Elasticity::JobFlow do
     it 'should set the fields appropriately' do
       expect(subject.action_on_failure).to eql('TERMINATE_JOB_FLOW')
       expect(subject.ec2_key_name).to eql(nil)
+      expect(subject.security_configuration).to eql(nil)
       expect(subject.name).to eql('Elasticity Job Flow')
       expect(subject.instance_count).to eql(2)
       expect(subject.log_uri).to eql(nil)
@@ -76,6 +77,18 @@ describe Elasticity::JobFlow do
       end
     end
   end
+
+  describe '#security_configuration=' do
+    context 'when set' do
+      before do
+        subject.security_configuration = 'security configuration'
+      end
+      it 'security_configuration is a string' do
+        expect(subject.security_configuration).to eq('security configuration')
+      end
+    end
+  end
+
 
   describe '#enable_debugging=' do
 

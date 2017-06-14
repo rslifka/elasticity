@@ -10,6 +10,7 @@ module Elasticity
 
     attr_accessor :action_on_failure
     attr_accessor :ec2_key_name
+    attr_accessor :security_configuration
     attr_accessor :name
     attr_accessor :instance_count
     attr_accessor :log_uri
@@ -217,6 +218,7 @@ module Elasticity
       config[:job_flow_role] = @job_flow_role if @job_flow_role
       config[:service_role] = @service_role if @service_role
       config[:additional_info] = @additional_info if @additional_info
+      config[:security_configuration] = @security_configuration if @security_configuration
       config[:bootstrap_actions] = @bootstrap_actions.map(&:to_aws_bootstrap_action) unless @bootstrap_actions.empty?
       config[:applications] = @aws_applications.map(&:to_hash) if valid_aws_applications?
       config
