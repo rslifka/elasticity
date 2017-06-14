@@ -1,3 +1,9 @@
+## 6.0.12 - February 7, 2017
+
+- Including PR [#140](https://github.com/rslifka/elasticity/pull/140) - "Update fog". Thank you [@BenFradet ](https://github.com/BenFradet )!
+- Including PR [#138](https://github.com/rslifka/elasticity/pull/138) - "Make application configuration available". Thank you [@henryhu666](https://github.com/henryhu666)!
+- Including PR [#136](https://github.com/rslifka/elasticity/pull/136) - "added security configuration attribute". Thank you [@devsaik](https://github.com/devsaik)!
+
 ## 6.0.11 - February 7, 2017
 
 - Including PR [#134](https://github.com/rslifka/elasticity/pull/134) - "Spark step".  Thank you [@BenFradet](https://github.com/BenFradet)!
