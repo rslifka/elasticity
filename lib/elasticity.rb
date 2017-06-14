@@ -3,7 +3,7 @@ require 'time'
 
 require 'rest_client'
 require 'nokogiri'
-require 'fog'
+require 'fog/aws'
 
 require 'elasticity/version'
 
