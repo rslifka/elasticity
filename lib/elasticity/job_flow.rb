@@ -33,6 +33,7 @@ module Elasticity
     attr_accessor :additional_info
     attr_accessor :additional_master_security_groups
     attr_accessor :additional_slave_security_groups
+    attr_accessor :timeout
 
     def initialize
       @action_on_failure = 'TERMINATE_JOB_FLOW'
@@ -55,6 +56,8 @@ module Elasticity
       @instance_count = 2
       @master_instance_type = 'm1.small'
       @slave_instance_type = 'm1.small'
+
+      @timeout = 60
     end
 
     def self.from_jobflow_id(jobflow_id, region = 'us-east-1')
@@ -207,7 +210,7 @@ module Elasticity
     end
 
     def emr
-      @emr ||= Elasticity::EMR.new(:region => @region)
+      @emr ||= Elasticity::EMR.new(:region => @region, :timeout => @timeout)
     end
 
     def is_jobflow_running?

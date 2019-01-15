@@ -30,6 +30,7 @@ describe Elasticity::JobFlow do
       expect(subject.jobflow_id).to eql(nil)
       expect(subject.additional_master_security_groups).to eql(nil)
       expect(subject.additional_slave_security_groups).to eql(nil)
+      expect(subject.timeout).to eql(60)
     end
   end
 
@@ -708,7 +709,7 @@ describe Elasticity::JobFlow do
         let(:emr) { double('Elasticity::EMR', :run_job_flow => 'JOBFLOW_ID') }
 
         it 'should run the job with the supplied EMR credentials' do
-          Elasticity::EMR.stub(:new).with(:region => 'us-east-1').and_return(emr)
+          Elasticity::EMR.stub(:new).with(:region => 'us-east-1', :timeout => 60).and_return(emr)
           emr.should_receive(:run_job_flow)
           jobflow_with_steps.run
         end

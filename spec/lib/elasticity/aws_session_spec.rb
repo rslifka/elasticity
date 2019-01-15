@@ -35,6 +35,18 @@ describe Elasticity::AwsSession do
       end
     end
 
+    context 'when :timeout is specified' do
+      it 'should be assigned' do
+        Elasticity::AwsSession.new(:region => 'TEST_REGION', :timeout => 120).timeout.should == 120
+      end
+    end
+
+    context 'when :timeout is not specified' do
+      it 'should be 60' do
+        Elasticity::AwsSession.new(:region => 'TEST_REGION').timeout.should == 60
+      end
+    end
+
   end
 
   describe '#host' do
@@ -66,7 +78,13 @@ describe Elasticity::AwsSession do
         @request.should_receive(:headers).and_return('TEST_HEADERS')
 
         Elasticity::AwsRequestV4.should_receive(:new).with(subject, {}).and_return(@request)
-        RestClient.should_receive(:post).with('TEST_URL', 'TEST_PAYLOAD', 'TEST_HEADERS')
+        RestClient.should_receive(:execute).with(
+          :method => :post,
+          :url => 'TEST_URL',
+          :payload => 'TEST_PAYLOAD',
+          :headers => 'TEST_HEADERS',
+          :timeout => 60
+        )
       end
 
       it 'should POST a properly assembled request' do
@@ -89,7 +107,7 @@ describe Elasticity::AwsSession do
       end
 
       it 'should raise an Argument error with the body of the error' do
-        RestClient.should_receive(:post).and_raise(error)
+        RestClient.should_receive(:execute).and_raise(error)
         expect {
           subject.submit({})
         }.to raise_error(ArgumentError, "AWS EMR API Error (#{error_type}): #{error_message}")
@@ -98,7 +116,7 @@ describe Elasticity::AwsSession do
       context 'EMR API rate limit hit' do
         let(:error_type) { 'ThrottlingException' }
         it 'should raise a Throttling error with the body of the error' do
-          RestClient.should_receive(:post).and_raise(error)
+          RestClient.should_receive(:execute).and_raise(error)
           expect {
             subject.submit({})
           }.to raise_error(Elasticity::ThrottlingException, "AWS EMR API Error (#{error_type}): #{error_message}")
