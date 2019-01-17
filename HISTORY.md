@@ -1,6 +1,10 @@
+## 6.0.14 - January 18, 2019
+
+- Including PR [#142](https://github.com/rslifka/elasticity/pull/142) - "Use Request.execute to make HTTP requests". Thank you [@BenFradet ](https://github.com/BenFradet )!
+
 ## 6.0.13 - January 17, 2019
 
-- Including PR [#141](https://github.com/rslifka/elasticity/pull/140) - "Add the ability to customize timeouts ". Thank you [@BenFradet ](https://github.com/BenFradet )!
+- Including PR [#141](https://github.com/rslifka/elasticity/pull/141) - "Add the ability to customize timeouts". Thank you [@BenFradet ](https://github.com/BenFradet )!
 
 ## 6.0.12 - February 7, 2017
 
