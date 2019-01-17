@@ -8,10 +8,12 @@ module Elasticity
 
     attr_reader :host
     attr_reader :region
+    attr_reader :timeout
 
     # Supported values for options:
     #  :region - AWS region (e.g. us-west-1)
     #  :secure - true or false, default true.
+    #  :timeout - the timeout, in seconds, when making a request to EMR, default 60.
     def initialize(options={})
       # There is a cryptic error if this isn't set
       if options.has_key?(:region) && options[:region] == nil
@@ -21,12 +23,21 @@ module Elasticity
       @region = options[:region]
 
       @host = "elasticmapreduce.#@region.amazonaws.com"
+
+      options[:timeout] = 60 unless options[:timeout]
+      @timeout = options[:timeout]
     end
 
     def submit(ruby_service_hash)
       aws_request = AwsRequestV4.new(self, ruby_service_hash)
       begin
-        RestClient.post(aws_request.url, aws_request.payload, aws_request.headers)
+        RestClient.execute(
+          :method => :post,
+          :url => aws_request.url,
+          :payload => aws_request.payload,
+          :headers => aws_request.headers,
+          :timeout => @timeout
+        )
       rescue RestClient::BadRequest => e
         type, message = AwsSession.parse_error_response(e.http_body)
         raise ThrottlingException, message if type == 'ThrottlingException'

@@ -3,7 +3,8 @@ describe 'Elasticity::JobFlow Integration Examples' do
   let(:emr) { double('Elasticity::EMR') }
 
   before do
-    Elasticity::EMR.should_receive(:new).with(:region => 'us-west-1').and_return(emr)
+    Elasticity::EMR.should_receive(:new).with(:region => 'us-west-1', :timeout => 60)
+      .and_return(emr)
   end
 
   describe 'Hive' do
