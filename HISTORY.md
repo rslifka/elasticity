@@ -1,3 +1,7 @@
+## 6.0.13 - January 17, 2019
+
+- Including PR [#141](https://github.com/rslifka/elasticity/pull/140) - "Add the ability to customize timeouts ". Thank you [@BenFradet ](https://github.com/BenFradet )!
+
 ## 6.0.12 - February 7, 2017
 
 - Including PR [#140](https://github.com/rslifka/elasticity/pull/140) - "Update fog". Thank you [@BenFradet ](https://github.com/BenFradet )!
@@ -61,7 +65,7 @@ On the API side, all of the newer commands take `cluster_id` rather than `job_fl
 
 They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given the sweeping set of changes, a major release was deemed appropriate.
 
-- [#88](https://github.com/rslifka/elasticity/issues/88) - Removed support for deprecated `DescribeJobFlows`. 
+- [#88](https://github.com/rslifka/elasticity/issues/88) - Removed support for deprecated `DescribeJobFlows`.
 - [#89](https://github.com/rslifka/elasticity/issues/89) - Add support for `AddTags`.
 - [#90](https://github.com/rslifka/elasticity/issues/90) - Add support for `RemoveTags`.
 - [#91](https://github.com/rslifka/elasticity/issues/91) - Add support for `SetVisibleToAllUsers`.
@@ -232,7 +236,7 @@ They've also begun deprecating APIs, starting with `DescribeJobFlows`.  Given th
 ## 2.1 - July 7, 2012
 
 + TASK instance group support added.
-+ SPOT instance support added for all instance group types. 
++ SPOT instance support added for all instance group types.
 + Removed name of jar from default name of ```CustomJarStep``` since the AWS UI already calls it out in a separate column when looking at job flow steps.
 
 ## 2.0 - June 26, 2012
