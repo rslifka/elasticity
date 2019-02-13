@@ -31,7 +31,7 @@ module Elasticity
     def submit(ruby_service_hash)
       aws_request = AwsRequestV4.new(self, ruby_service_hash)
       begin
-        RestClient.execute(
+        RestClient::Request.execute(
           :method => :post,
           :url => aws_request.url,
           :payload => aws_request.payload,
