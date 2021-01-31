@@ -1,4 +1,6 @@
-**2021 Update** As you can see from the modification dates, this gem hasn't been updated for years, though I suppose the same could be said for some AWS services (rimshot)! I'm kidding, EMR was tremendously valuable for us and worked terrifically well. We've been using other technologies for years now, which means a lack of utility for `Elasticity` for us hence the lack of maintenance on my end. I hope that it continues to provide utility for others though you should no longer expect updates -- Rob
+**2021 Update** As you can see from the modification dates, this gem hasn't been updated for years and the build is currently failing due to an ancient version of Ruby. Please consider this repository no longer maintained and not recommended for production use. I'm leaving it available in the off chance some portion of its source may be useful to others.
+
+Best of luck! -- Rob
 
 [![Gem Version](https://badge.fury.io/rb/elasticity.png)](http://badge.fury.io/rb/elasticity)
 
