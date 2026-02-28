@@ -1,12 +1,14 @@
-**2021 Update** As you can see from the modification dates, this gem hasn't been updated for years and the build is currently failing due to an ancient version of Ruby. Please consider this repository no longer maintained and not recommended for production use. I'm leaving it available in the off chance some portion of its source may be useful to others.
+# 2021 Update
+
+This gem hasn't been updated for years and the build is currently failing due to an unsupported version of Ruby. Please consider this repository no longer maintained and not recommended for production use. I'm leaving it available in the off chance some portion of its source may be useful to others.
 
 Best of luck! -- Rob
+
+# Original Documentation
 
 [![Gem Version](https://badge.fury.io/rb/elasticity.png)](http://badge.fury.io/rb/elasticity)
 
 Elasticity provides programmatic access to Amazon's Elastic Map Reduce service.  The aim is to conveniently abstract away the complex EMR REST API and make working with job flows more productive and more enjoyable.
-
-[![Build Status](https://secure.travis-ci.org/rslifka/elasticity.png)](http://travis-ci.org/rslifka/elasticity) 2.2.x, 2.3.x
 
 Elasticity provides two ways to access EMR:
 
